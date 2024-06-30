@@ -1,2 +1,1 @@
 selenium==4.22.0
-crawling/PRIVATE.py
