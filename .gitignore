@@ -2,3 +2,4 @@ env
 crawling/PRIVATE.py
 crawling/__pycache__
 crawling/gecko
+backend/test/__pycache__/1.cpython-311.pyc
