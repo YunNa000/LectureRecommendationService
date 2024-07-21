@@ -67,7 +67,7 @@ def read_lectures(request: LectureRequest):
         query += " AND lecCanTakeMultipleMajor = 1"
     if request.lecStars is not None:
         query += " AND lecStars >= ?"
-        parameters.append(request.lecStars)
+        parameters.append(str(request.lecStars))
     if request.lecAssignment is not None:
         query += " AND lecAssignment <= 35"
     if request.lecTeamplay is not None:
@@ -78,7 +78,7 @@ def read_lectures(request: LectureRequest):
         query += " AND lecIsPNP = 1"
     if request.lecCredit is not None:
         query += " AND lecCredit = ?"
-        parameters.append(request.lecCredit)
+        parameters.append(str(request.lecCredit))
     if request.lecIsTBL is not None:
         query += " AND lecIsTBL = 1"
     if request.lecIsPBL is not None:
