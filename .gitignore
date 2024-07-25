@@ -10,3 +10,4 @@ api-test/__pycache__/basic_pipeline.cpython-311.pyc
 .vscode
 api-test/__pycache__/google-login-api.cpython-311.pyc
 api-test/3-integrate-pipeline-n-login/__pycache__/main.cpython-311.pyc
+api-test/node/react-test/node_modules
