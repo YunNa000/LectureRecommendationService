@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>강의 요청</title>
+  </head>
+  <body>
+    <h1>강의 요청 폼</h1>
+    <form id="lectureRequestForm">
+      <label for="userGrade">학년:</label>
+      <input
+        type="number"
+        id="userGrade"
+        name="userGrade"
+        required
+      /><br /><br />
+
+      <label for="userBunban">분반:</label>
+      <input
+        type="text"
+        id="userBunban"
+        name="userBunban"
+        required
+      /><br /><br />
+
+      <label for="lecClassification">전공 분류:</label>
+      <input
+        type="text"
+        id="lecClassification"
+        name="lecClassification"
+        required
+      /><br /><br />
+
+      <button type="submit">강의 요청</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+      document
+        .getElementById("lectureRequestForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const userGrade = document.getElementById("userGrade").value;
+          const userBunban = document.getElementById("userBunban").value;
+          const lecClassification =
+            document.getElementById("lecClassification").value;
+
+          fetch("http://127.0.0.1:8000/lectures", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userGrade: userGrade,
+              userBunban: userBunban,
+              lecClassification: lecClassification,
+            }),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("네트워크 응답이 좋지 않습니다.");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const resultDiv = document.getElementById("result");
+              resultDiv.innerHTML = "<h2>강의 목록</h2>";
+              data.forEach((lecture) => {
+                resultDiv.innerHTML += `<p>${lecture.lecClassName} - ${lecture.lecNumber}</p>`;
+              });
+            })
+            .catch((error) => {
+              const resultDiv = document.getElementById("result");
+              resultDiv.innerHTML = `<p>오류 발생: ${error.message}</p>`;
+            });
+        });
+    </script>
+  </body>
+</html>
