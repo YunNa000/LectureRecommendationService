@@ -7,16 +7,20 @@ const App = () => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/", {
+        const response = await axios.get("http://localhost:8000/user/data", {
           withCredentials: true,
         });
-        console.log("========", response.data);
-        console.log("========data.message", response.data.message);
-        if (response.data.message.includes("Hello")) {
-          setUserName(response.data.message.split(", ")[1]);
+        const users = response.data;
+        if (users.length > 0) {
+          setUserName(users[0].userName);
+          console.log(users);
         }
       } catch (error) {
-        console.error("Error fetching user name:", error);
+        if (error.response && error.response.status === 400) {
+          setUserName(null);
+        } else {
+          console.error("err while fetching user name:", error);
+        }
       }
     };
 
@@ -30,10 +34,10 @@ const App = () => {
   return (
     <div>
       {userName ? (
-        <p>hello!, {userName}</p>
+        <p>Hello!, {userName}</p>
       ) : (
         <div>
-          <button onClick={handleLogin}>login</button>
+          <button onClick={handleLogin}>Login</button>
         </div>
       )}
     </div>
