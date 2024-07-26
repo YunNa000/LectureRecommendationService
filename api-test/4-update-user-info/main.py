@@ -12,19 +12,17 @@ import httpx
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta
+from typing import Union
 
 load_dotenv()
 
+# 노션 - 기타 - api key 참고
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
 user_sessions = {}
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="",
-    tokenUrl="",
-)
-
+# 실제 build나 deploy 전에는 db 환경 제대로 세팅하는 게 필요
 DATABASE = './kwu-lecture-database-v4.db'
 
 def db_connect():
@@ -34,6 +32,7 @@ def db_connect():
 
 app = FastAPI()
 
+# cors 관련 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -42,6 +41,7 @@ app.add_middleware(
     allow_headers=["*"],  
 )
 
+# LectureTable 테이블 클래스
 class LectureRequest(BaseModel):
     userGrade: int # 유저 학년 
     userBunban: str # 유저 분반 
@@ -64,6 +64,7 @@ class LectureRequest(BaseModel):
     lecIsArt: Optional[int] = None # 실습 강의 여부 
     lecSubName: Optional[List[str]] = None # 테마
 
+# user 테이블 클래스
 class PersonalInformation(BaseModel):
     user_id: str  # 유저 아이디
     userHakbun: int  # 학번
@@ -77,10 +78,11 @@ class PersonalInformation(BaseModel):
     userName: str
 
 @app.post("/lectures", response_model=List[dict])
-def read_lectures(request: LectureRequest):
+async def read_lectures(request: LectureRequest):
     conn = db_connect()
     cursor = conn.cursor()
     
+    # 기본 쿼리
     query = """
     SELECT lecClassName, lecNumber
     FROM LectureTable
@@ -96,6 +98,7 @@ def read_lectures(request: LectureRequest):
 
     parameters = [f"%{request.userBunban}%", request.lecClassification]
 
+    # 아래 조건들에 따라서 쿼리문이 추가됨
     if request.userTakenCourse:
         placeholders = ', '.join(['?'] * len(request.userTakenCourse))
         query += f" AND lecClassName NOT IN ({placeholders})"
@@ -145,16 +148,25 @@ def read_lectures(request: LectureRequest):
     if not lectures:
         raise HTTPException(status_code=404, detail="해당 조건에 맞는 강의가 없어요..😢")
     
+    # 우선 class name, lecture number만 반환되도록 함.
+    # 실제 페이지별로 필요한? 반환값들 확실히 해서 정리하는 것이 필요
     return [{"lecClassName": lecture["lecClassName"], "lecNumber": lecture["lecNumber"]} for lecture in lectures]
 
-@app.get("/")
-async def root(user_id: str = Cookie(None)):
+# 실제 루트 화면 보면서 재설계 필요
+class LoggedInResponse(BaseModel):
+    message: str
+    user_id: str
+class NotLoggedInResponse(BaseModel):
+    message: str
+
+@app.get("/", response_model=Union[LoggedInResponse, NotLoggedInResponse])
+async def root(user_id: str = Cookie(None)): #쿠키에서 user_id 가져옴, 없으면 None
     if user_id and user_id in user_sessions:
         return {
             "message": f"Hello, {user_sessions[user_id]['name']}!",
             "user_id": user_id
         }
-    return {"message": "please log in."}
+    return {"message": "log in required"}
 
 @app.get("/login")
 async def login():
@@ -186,13 +198,22 @@ async def auth_callback(code: str):
             headers={"Authorization": f"Bearer {token_json['access_token']}"}
         )
         user_info = user_info_response.json()
+        """
+        return 값들:
+            id: int
+            email: str
+            verified_email: boolen
+            name: str
+            given_name: str
+            family_name: str
+            picture: str // 링크 형식, 구글 프로필 이미지같음
+
+        여기서 실제로 의미있는 값은 id와 name정도
+        """
 
         user_id = user_info['sub']  # google 사용자 고유 ID는 sub 필드에 저장됨
         user_name = user_info['name']
 
-        print(user_info['sub'])
-        print(user_info['name'])
-        
         user_sessions[user_id] = user_info
 
         conn = db_connect()
@@ -204,13 +225,13 @@ async def auth_callback(code: str):
         conn.close()
 
         response = RedirectResponse(url="http://localhost:3000/")
-        max_age = 30000 
+        max_age = 300000 # 30000 초 
         response.set_cookie(key="user_id", value=user_id, max_age=max_age)
         
-        return response
+        return response # 쿠키 return
 
 @app.put("/user/update")
-def update_user_hakbun(request: PersonalInformation):
+async def update_user_hakbun(request: PersonalInformation):
     conn = db_connect()
     cursor = conn.cursor()
     
@@ -251,7 +272,7 @@ def update_user_hakbun(request: PersonalInformation):
 async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
     if not user_id:
-        raise HTTPException(status_code=400, detail="User ID not found in cookies")
+        raise HTTPException(status_code=400, detail="not exist")
     
     conn = db_connect()
     cursor = conn.cursor()
