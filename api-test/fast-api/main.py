@@ -23,7 +23,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 user_sessions = {}
 
 # 실제 build나 deploy 전에는 db 환경 제대로 세팅하는 게 필요
-DATABASE = './kwu-lecture-database-v4.db'
+DATABASE = './kwu-lecture-database-v5.db'
 
 def db_connect():
     conn = sqlite3.connect(DATABASE)
@@ -33,14 +33,18 @@ def db_connect():
 app = FastAPI()
 
 # cors 관련 설정
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:8000"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
 # LectureTable 테이블 클래스
 class LectureRequest(BaseModel):
     userGrade: int # 유저 학년 
@@ -64,24 +68,13 @@ class LectureRequest(BaseModel):
     lecIsArt: Optional[int] = None # 실습 강의 여부 
     lecSubName: Optional[List[str]] = None # 테마
 
-# user 테이블 클래스
-class PersonalInformation(BaseModel):
-    user_id: str  # 유저 아이디
-    userHakbun: int  # 학번
-    userIsForeign: bool  # 외국인 여부
-    userBunban: str  # 분반
-    userYear: str  # 학년
-    userMajor: str  # 전공
-    userIsMultipleMajor: bool  # 복수전공 여부
-    userWhatMultipleMajor: Optional[str] = None  # 복수전공 전공학과
-    userTakenLecture: Optional[str] = None  # 수강 강의
-    userName: str
 
 @app.post("/lectures", response_model=List[dict])
 async def read_lectures(request: LectureRequest):
     conn = db_connect()
     cursor = conn.cursor()
-    
+
+    # 일단, 전선 전필 일선 그런 거 구분 안하고, 들을 수 있는 거면 다 출력토록 함
     # 기본 쿼리
     query = """
     SELECT lecClassName, lecNumber
@@ -230,47 +223,22 @@ async def auth_callback(code: str):
         
         return response # 쿠키 return
 
-@app.put("/user/update")
-async def update_user_hakbun(request: PersonalInformation):
-    conn = db_connect()
-    cursor = conn.cursor()
-    
-    query = """
-    UPDATE user
-    SET userHakbun = ?,
-        userIsForeign = ?,
-        userBunban = ?,
-        userYear = ?,
-        userMajor = ?,
-        userIsMultipleMajor = ?,
-        userWhatMultipleMajor = ?,
-        userTakenLecture = ?
-    WHERE user_id = ?
-    """
-    
-    cursor.execute(query, (
-        request.userHakbun,
-        request.userIsForeign,
-        request.userBunban,
-        request.userYear,
-        request.userMajor,
-        request.userIsMultipleMajor,
-        request.userWhatMultipleMajor,
-        request.userTakenLecture,
-        request.user_id
-    ))
-    
-    conn.commit()
-    conn.close()
-    
-    if cursor.rowcount == 0:
-        raise HTTPException(status_code=404, detail="user not found")
-    
-    return {"message": "updated"}
+class PersonalInformation(BaseModel):
+    user_id: str  # 유저 아이디
+    userHakbun: int  # 학번
+    userIsForeign: bool  # 외국인 여부
+    userBunban: str  # 분반
+    userYear: str  # 학년
+    userMajor: str  # 전공
+    userIsMultipleMajor: bool  # 복수전공 여부
+    userWhatMultipleMajor: Optional[str] = None  # 복수전공 전공학과
+    userTakenLecture: Optional[str] = None  # 수강 강의
+    userName: str  # 추가된 필드
 
 @app.get("/user/data", response_model=List[PersonalInformation])
 async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
+    print(f"user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
     
@@ -288,6 +256,85 @@ async def get_user_data(request: Request):
     conn.close()
     
     return users
+
+
+@app.put("/user/update")
+async def update_user_hakbun(request: PersonalInformation):
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    query = """
+    UPDATE user
+    SET userHakbun = ?,
+        userIsForeign = ?,
+        userBunban = ?,
+        userYear = ?,
+        userMajor = ?,
+        userIsMultipleMajor = ?,
+        userWhatMultipleMajor = ?,
+        userTakenLecture = ?,
+        userName = ?
+    WHERE user_id = ?
+    """
+    
+    cursor.execute(query, (
+        request.userHakbun,
+        request.userIsForeign,
+        request.userBunban,
+        request.userYear,
+        request.userMajor,
+        request.userIsMultipleMajor,
+        request.userWhatMultipleMajor,
+        request.userTakenLecture,
+        request.userName,
+        request.user_id
+    ))
+    
+    conn.commit()
+    conn.close()
+    
+    if cursor.rowcount == 0:
+        raise HTTPException(status_code=404, detail="user not found")
+    
+    return {"message": "updated"}
+
+class LecturesUpdateRequest(BaseModel):
+    lecNumbers: List[str]
+    userId: str
+
+@app.post("/update_selected_lectures")
+async def update_selected_lectures(request: LecturesUpdateRequest):
+    user_id = request.userId
+    
+    print(f"user_id: {user_id}")
+
+    if not user_id:
+        raise HTTPException(status_code=403, detail="로그인이 필요합니다.")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    # user_id가 유효한지 확인
+    cursor.execute("SELECT user_id FROM user WHERE user_id = ?", (user_id,))
+    user = cursor.fetchone()
+    
+    if not user:
+        conn.close()
+        raise HTTPException(status_code=404, detail="유효하지 않은 사용자입니다.")
+    
+    for lecNumber in request.lecNumbers:
+        try:
+            cursor.execute('''
+            INSERT INTO userListedLecture (user_id, lecNumber) 
+            VALUES (?, ?)
+            ''', (user_id, lecNumber))
+        except sqlite3.IntegrityError:
+            continue
+    
+    conn.commit()
+    conn.close()
+    
+    return {"message": "선택한 강의들이 업데이트되었습니다."}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
