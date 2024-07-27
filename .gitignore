@@ -13,3 +13,4 @@ api-test/3-integrate-pipeline-n-login/__pycache__/main.cpython-311.pyc
 api-test/node/react-test/node_modules
 api-test/4-update-user-info/__pycache__/cors-test.cpython-311.pyc
 api-test/4-update-user-info/__pycache__/main.cpython-311.pyc
+api-test/fast-api/__pycache__/main.cpython-311.pyc
