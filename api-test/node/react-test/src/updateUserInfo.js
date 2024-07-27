@@ -20,6 +20,7 @@ const UpdateUserForm = () => {
    * @property {boolean} userIsMultipleMajor - 복전 여부
    * @property {string} userWhatMultipleMajor - 복전 전공학과
    * @property {string} userTakenLecture - 수강한 강의
+   * @property {string} userName - 유저 이름
    */
   const [formData, setFormData] = useState({
     user_id: "",
@@ -31,11 +32,30 @@ const UpdateUserForm = () => {
     userIsMultipleMajor: false,
     userWhatMultipleMajor: "",
     userTakenLecture: "",
+    userName: "",
   });
 
   /**
-   * 컴포넌트가 마운트 될 때 쿠키에서 유저 아이디 가져옴
-   * 초기 상태라고 보면 될듯
+   * 유저 정보를 가져와서 상태로 설정하는 함수
+   */
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await axios.get("http://localhost:8000/user/data", {
+        withCredentials: true,
+      });
+      const userData = response.data[0]; // 첫 번째 유저 데이터
+      setFormData((prevData) => ({
+        ...prevData,
+        ...userData,
+      }));
+    } catch (error) {
+      console.error("There was an error fetching the user data!", error);
+      alert(error.response?.data?.detail || "Error fetching user data");
+    }
+  };
+
+  /**
+   * 컴포넌트가 마운트 될 때 쿠키에서 유저 아이디 가져오고 유저 정보 가져옴
    */
   useEffect(() => {
     const userId = Cookies.get("user_id");
@@ -44,6 +64,7 @@ const UpdateUserForm = () => {
         ...prevData,
         user_id: userId,
       }));
+      fetchUserData(userId);
     }
   }, []);
 
@@ -79,7 +100,7 @@ const UpdateUserForm = () => {
       alert(response.data.message);
     } catch (error) {
       console.error("There was an error updating the user information!", error);
-      alert(error.response.data.detail);
+      alert(error.response?.data?.detail || "Error updating user information");
     }
   };
 
