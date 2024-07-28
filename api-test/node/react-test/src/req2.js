@@ -9,6 +9,7 @@ const LectureManagement = () => {
   const [lectures, setLectures] = useState([]);
   const [selectedLectures, setSelectedLectures] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [selectedLecNumbers, setSelectedLecNumbers] = useState([]);
 
   useEffect(() => {
     // 사용자 ID를 쿠키에서 가져오는 함수
@@ -34,6 +35,7 @@ const LectureManagement = () => {
         setUserGrade(userData.userYear || "");
         setUserBunban(userData.userBunban || "");
         setLecClassification(userData.userMajor || "");
+        setSelectedLecNumbers(userData.selectedLecNumbers || []);
       } catch (error) {
         console.error("유저 정보를 가져오는 중 오류가 발생했습니다.", error);
         alert(
@@ -85,7 +87,7 @@ const LectureManagement = () => {
 
     try {
       await axios.post(
-        "http://127.0.0.1:8000/update_selected_lectures",
+        "http://127.0.0.1:8000/user/update_select_lectures",
         {
           lecNumbers: selectedLectures,
           userId: userId,
