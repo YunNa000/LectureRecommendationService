@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+/**
+ * 유저 cookie가 서버 db에 있다면 ? 사용자 이름 가져옴. : 로그인 버튼
+ * `이러한 방식으로 로그인 요청 보낸다` 정도로만 해석하면 됨.
+ *
+ * @returns {JSX.Element} - login component
+ */
 const App = () => {
+  /**
+   * user name state
+   * @type {string|null}
+   */
   const [userName, setUserName] = useState(null);
 
   useEffect(() => {
+    /**
+     * user name 가져와서 받아와 졌다면 저장, 아니면 err
+     * @async
+     * @function fetchUserName
+     * @returns {Promise<void>}
+     */
     const fetchUserName = async () => {
       try {
         const response = await axios.get("http://localhost:8000/user/data", {
@@ -27,6 +43,10 @@ const App = () => {
     fetchUserName();
   }, []);
 
+  /**
+   * 로그인 버튼 클릭 시 server/login으로 리다이렉트
+   * @function handleLogin
+   */
   const handleLogin = () => {
     window.location.href = "http://localhost:8000/login";
   };

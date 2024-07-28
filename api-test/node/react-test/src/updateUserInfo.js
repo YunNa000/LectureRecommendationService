@@ -2,7 +2,26 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+/**
+ * 유저가 자신의 정보 업데이트 할 수 있도록 하는 -
+ * 이렇게 db에 값들 넣는다 정도로만 해석하면 됨
+ *
+ * @returns {JSX.Element} - UpdateUserForm component
+ */
 const UpdateUserForm = () => {
+  /**
+   * @type {Object}
+   * @property {string} user_id - user id
+   * @property {string} userHakbun - 학번
+   * @property {boolean} userIsForeign - 외국인 여부
+   * @property {string} userBunban - 분반
+   * @property {string} userYear - 학년
+   * @property {string} userMajor - 전공
+   * @property {boolean} userIsMultipleMajor - 복전 여부
+   * @property {string} userWhatMultipleMajor - 복전 전공학과
+   * @property {string} userTakenLecture - 수강한 강의
+   * @property {string} userName - 유저 이름
+   */
   const [formData, setFormData] = useState({
     user_id: "",
     userHakbun: "",
@@ -13,8 +32,31 @@ const UpdateUserForm = () => {
     userIsMultipleMajor: false,
     userWhatMultipleMajor: "",
     userTakenLecture: "",
+    userName: "",
   });
 
+  /**
+   * 유저 정보를 가져와서 상태로 설정하는 함수
+   */
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await axios.get("http://localhost:8000/user/data", {
+        withCredentials: true,
+      });
+      const userData = response.data[0]; // 첫 번째 유저 데이터
+      setFormData((prevData) => ({
+        ...prevData,
+        ...userData,
+      }));
+    } catch (error) {
+      console.error("There was an error fetching the user data!", error);
+      alert(error.response?.data?.detail || "Error fetching user data");
+    }
+  };
+
+  /**
+   * 컴포넌트가 마운트 될 때 쿠키에서 유저 아이디 가져오고 유저 정보 가져옴
+   */
   useEffect(() => {
     const userId = Cookies.get("user_id");
     if (userId) {
@@ -22,9 +64,13 @@ const UpdateUserForm = () => {
         ...prevData,
         user_id: userId,
       }));
+      fetchUserData(userId);
     }
   }, []);
 
+  /**
+   * @param {React.ChangeEvent<HTMLInputElement>} e - 입력 변경 이벤트
+   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -33,6 +79,11 @@ const UpdateUserForm = () => {
     }));
   };
 
+  /**
+   * 서버에 put 요청, response message를 alert
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - 폼 제출 이벤트
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -49,7 +100,7 @@ const UpdateUserForm = () => {
       alert(response.data.message);
     } catch (error) {
       console.error("There was an error updating the user information!", error);
-      alert(error.response.data.detail);
+      alert(error.response?.data?.detail || "Error updating user information");
     }
   };
 
