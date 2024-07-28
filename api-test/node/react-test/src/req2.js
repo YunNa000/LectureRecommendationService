@@ -36,6 +36,7 @@ const LectureManagement = () => {
         setUserBunban(userData.userBunban || "");
         setLecClassification(userData.userMajor || "");
         setSelectedLecNumbers(userData.selectedLecNumbers || []);
+        setSelectedLectures(userData.selectedLecNumbers || []); // 초기화 시 selectedLectures도 설정
       } catch (error) {
         console.error("유저 정보를 가져오는 중 오류가 발생했습니다.", error);
         alert(

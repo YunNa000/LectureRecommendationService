@@ -350,14 +350,12 @@ class LecturesUpdateRequest(BaseModel):
 async def update_selected_lectures(request: LecturesUpdateRequest):
     user_id = request.userId
     
-    print(f"user_id: {user_id}")
-
     if not user_id:
         raise HTTPException(status_code=403, detail="로그인이 필요합니다.")
 
     conn = db_connect()
     cursor = conn.cursor()
-    
+
     # user_id가 유효한지 확인
     cursor.execute("SELECT user_id FROM user WHERE user_id = ?", (user_id,))
     user = cursor.fetchone()
@@ -366,44 +364,21 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
         conn.close()
         raise HTTPException(status_code=404, detail="유효하지 않은 사용자입니다.")
     
-    for lecNumber in request.lecNumbers:
-        # 중복 체크
-        cursor.execute('''
-        SELECT 1 FROM userListedLecture WHERE user_id = ? AND lecNumber = ?
-        ''', (user_id, lecNumber))
-        exists = cursor.fetchone()
-        
-        if not exists:
-            try:
-                cursor.execute('''
-                INSERT INTO userListedLecture (user_id, lecNumber) 
-                VALUES (?, ?)
-                ''', (user_id, lecNumber))
-            except sqlite3.IntegrityError:
-                continue
-    
-    conn.commit()
-    conn.close()
-    
-    return {"message": "선택한 강의들이 업데이트되었습니다."}
-    
-    print(f"user_id: {user_id}")
+    # 현재 DB에 저장된 유저의 강의 목록 가져오기
+    cursor.execute('''
+    SELECT lecNumber FROM userListedLecture WHERE user_id = ?
+    ''', (user_id,))
+    current_lectures = cursor.fetchall()
+    current_lectures = {lec[0] for lec in current_lectures}  # set으로 변환
 
-    if not user_id:
-        raise HTTPException(status_code=403, detail="로그인이 필요합니다.")
+    incoming_lectures = set(request.lecNumbers)
 
-    conn = db_connect()
-    cursor = conn.cursor()
+    # 추가할 강의와 삭제할 강의 구분
+    lectures_to_add = incoming_lectures - current_lectures
+    lectures_to_remove = current_lectures - incoming_lectures
     
-    # user_id가 유효한지 확인
-    cursor.execute("SELECT user_id FROM user WHERE user_id = ?", (user_id,))
-    user = cursor.fetchone()
-    
-    if not user:
-        conn.close()
-        raise HTTPException(status_code=404, detail="유효하지 않은 사용자입니다.")
-    
-    for lecNumber in request.lecNumbers:
+    # 강의 추가
+    for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
             INSERT INTO userListedLecture (user_id, lecNumber) 
@@ -412,6 +387,12 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
         except sqlite3.IntegrityError:
             continue
     
+    # 강의 삭제
+    for lecNumber in lectures_to_remove:
+        cursor.execute('''
+        DELETE FROM userListedLecture WHERE user_id = ? AND lecNumber = ?
+        ''', (user_id, lecNumber))
+
     conn.commit()
     conn.close()
     
