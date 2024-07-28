@@ -45,6 +45,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # LectureTable 테이블 클래스
 class LectureRequest(BaseModel):
     userGrade: int # 유저 학년 
@@ -76,20 +77,32 @@ async def read_lectures(request: LectureRequest):
 
     # 일단, 전선 전필 일선 그런 거 구분 안하고, 들을 수 있는 거면 다 출력토록 함
     # 기본 쿼리
-    query = """
+
+
+    classification = request.lecClassification
+    user_grade = request.userGrade
+
+    # 공통 쿼리 템플릿
+    query_template = """
     SELECT lecClassName, lecNumber
     FROM LectureTable
-    WHERE lecCanTakeBunban LIKE ?
+    WHERE {bunban_condition}
     AND lecClassification = ?
     AND (
-        lecTakeOnly{userGrade}Year = 1 OR 
+        lecTakeOnly{user_grade}Year = 1 OR 
         (lecTakeOnly1Year is NULL AND lecTakeOnly2Year is NULL AND lecTakeOnly3Year is NULL AND lecTakeOnly4Year is NULL)
     )
     """
-    
-    query = query.format(userGrade=request.userGrade)
 
-    parameters = [f"%{request.userBunban}%", request.lecClassification]
+    if classification in ["전필", "전선"]:
+        bunban_condition = "lecMajorRecogBunban LIKE ?"
+    else:
+        bunban_condition = "lecCanTakeBunban LIKE ?"
+
+    query = query_template.format(bunban_condition=bunban_condition, user_grade=user_grade)
+
+    parameters = [f"%{request.userBunban}%", classification]
+
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
     if request.userTakenCourse:
@@ -233,12 +246,16 @@ class PersonalInformation(BaseModel):
     userIsMultipleMajor: bool  # 복수전공 여부
     userWhatMultipleMajor: Optional[str] = None  # 복수전공 전공학과
     userTakenLecture: Optional[str] = None  # 수강 강의
-    userName: str  # 추가된 필드
+    userName: str
+    selectedLecNumbers: List[str]
+
+class userSelectedLecture(BaseModel):
+    lecNumber: str
 
 @app.get("/user/data", response_model=List[PersonalInformation])
 async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
-    print(f"user_id: {user_id}")
+    print(f"|-- /user/data | user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
     
@@ -247,11 +264,38 @@ async def get_user_data(request: Request):
     
     cursor.execute("SELECT * FROM user WHERE user_id = ?", (user_id,))
     rows = cursor.fetchall()
-    
+
     if not rows:
+        conn.close()
         raise HTTPException(status_code=404, detail="User not found")
     
-    users = [PersonalInformation(**dict(row)) for row in rows]
+    users = []
+    for row in rows:
+        user_dict = dict(row)
+        
+        cursor.execute("SELECT lecNumber FROM userListedLecture WHERE user_id = ?", (user_dict['user_id'],))
+        lecNumbers = cursor.fetchall()
+        user_dict['selectedLecNumbers'] = [lecNumber[0] for lecNumber in lecNumbers]
+        
+        print("|-- /user/data | user_dict:", user_dict['selectedLecNumbers'])
+        
+        # Ensure all fields are included when creating PersonalInformation
+        user_info = PersonalInformation(
+            user_id=user_dict['user_id'],
+            userHakbun=user_dict['userHakbun'],
+            userIsForeign=user_dict['userIsForeign'],
+            userBunban=user_dict['userBunban'],
+            userYear=user_dict['userYear'],
+            userMajor=user_dict['userMajor'],
+            userIsMultipleMajor=user_dict['userIsMultipleMajor'],
+            userWhatMultipleMajor=user_dict['userWhatMultipleMajor'],
+            userTakenLecture=user_dict['userTakenLecture'],
+            userName=user_dict['userName'],
+            selectedLecNumbers=user_dict['selectedLecNumbers']
+        )
+        
+        users.append(user_info)
+        print("|-- /user/data | users:", users)
     
     conn.close()
     
@@ -299,21 +343,19 @@ async def update_user_hakbun(request: PersonalInformation):
     return {"message": "updated"}
 
 class LecturesUpdateRequest(BaseModel):
-    lecNumbers: List[str]
     userId: str
+    lecNumbers: List[str]
 
-@app.post("/update_selected_lectures")
+@app.post("/user/update_select_lectures")
 async def update_selected_lectures(request: LecturesUpdateRequest):
     user_id = request.userId
     
-    print(f"user_id: {user_id}")
-
     if not user_id:
         raise HTTPException(status_code=403, detail="로그인이 필요합니다.")
 
     conn = db_connect()
     cursor = conn.cursor()
-    
+
     # user_id가 유효한지 확인
     cursor.execute("SELECT user_id FROM user WHERE user_id = ?", (user_id,))
     user = cursor.fetchone()
@@ -322,7 +364,21 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
         conn.close()
         raise HTTPException(status_code=404, detail="유효하지 않은 사용자입니다.")
     
-    for lecNumber in request.lecNumbers:
+    # 현재 DB에 저장된 유저의 강의 목록 가져오기
+    cursor.execute('''
+    SELECT lecNumber FROM userListedLecture WHERE user_id = ?
+    ''', (user_id,))
+    current_lectures = cursor.fetchall()
+    current_lectures = {lec[0] for lec in current_lectures}  # set으로 변환
+
+    incoming_lectures = set(request.lecNumbers)
+
+    # 추가할 강의와 삭제할 강의 구분
+    lectures_to_add = incoming_lectures - current_lectures
+    lectures_to_remove = current_lectures - incoming_lectures
+    
+    # 강의 추가
+    for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
             INSERT INTO userListedLecture (user_id, lecNumber) 
@@ -331,6 +387,12 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
         except sqlite3.IntegrityError:
             continue
     
+    # 강의 삭제
+    for lecNumber in lectures_to_remove:
+        cursor.execute('''
+        DELETE FROM userListedLecture WHERE user_id = ? AND lecNumber = ?
+        ''', (user_id, lecNumber))
+
     conn.commit()
     conn.close()
     
