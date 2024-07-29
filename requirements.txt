@@ -4,3 +4,4 @@ langchain_community==0.2.6
 bs4==0.0.2
 pandas==2.2.2
 fastapi===0.111.0
+openai
