@@ -80,7 +80,7 @@ async def read_lectures(request: LectureRequest):
 
     # 공통 쿼리 템플릿
     query_template = """
-    SELECT lecClassName, lecNumber
+    SELECT lecClassName, lecNumber, lecProfessor, lecCredit, lecTime, lecSubName, lecAssignment, lecTeamplay, lecGrade, lecSummaryReview, lecStars, lecClassification, lecIsPNP, lecIsEngeneering, lecTakeOnly1Year, lecTakeOnly2Year, lecTakeOnly3Year, lecTakeOnly4Year, lecTakeOnly5Year, lecIsArt, lecIsDoExperiment, lecIsOnline, lecIsRecorded
     FROM LectureTable
     WHERE {bunban_condition}
     AND lecClassification = ?
@@ -151,13 +151,46 @@ async def read_lectures(request: LectureRequest):
     lectures = cursor.fetchall()
     
     conn.close()
+
+    print(lectures)
     
     if not lectures:
         raise HTTPException(status_code=404, detail="해당 조건에 맞는 강의가 없어요..😢")
     
     # 우선 class name, lecture number만 반환되도록 함.
     # 실제 페이지별로 필요한? 반환값들 확실히 해서 정리하는 것이 필요
-    return [{"lecClassName": lecture["lecClassName"], "lecNumber": lecture["lecNumber"]} for lecture in lectures]
+
+    return_data = []
+    for lecture in lectures:
+        lecClassName = lecture["lecClassName"] if lecture["lecClassName"] else "값이 비었어요"
+        lecNumber = lecture["lecNumber"] if lecture["lecNumber"] else "값이 비었어요"
+        lecProfessor = lecture["lecProfessor"] if lecture["lecProfessor"] else "값이 비었어요"
+        lecCredit = lecture["lecCredit"] if lecture["lecCredit"] else "값이 비었어요"
+        lecTime = lecture["lecTime"] if lecture["lecTime"] else "값이 비었어요"
+        lecSubName = lecture["lecSubName"] if lecture["lecSubName"] else "값이 비었어요"
+        lecAssignment = lecture["lecAssignment"] if lecture["lecAssignment"] else "값이 비었어요"
+        lecTeamplay = lecture["lecTeamplay"] if lecture["lecTeamplay"] else "값이 비었어요"
+        lecGrade = lecture["lecGrade"] if lecture["lecGrade"] else "값이 비었어요"
+        lecSummaryReview = lecture["lecSummaryReview"] if lecture["lecSummaryReview"] else "값이 비었어요"
+        lecStars = lecture["lecStars"] if lecture["lecStars"] else "값이 비었어요"
+        lecClassification = lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요"
+        
+        return_data.append({
+            "lecClassName": lecClassName,
+            "lecNumber": lecNumber,
+            "lecProfessor": lecProfessor,
+            "lecCredit": lecCredit,
+            "lecTime": lecTime,
+            "lecSubName": lecSubName,
+            "lecAssignment": lecAssignment,
+            "lecTeamplay": lecTeamplay,
+            "lecGrade": lecGrade,
+            "lecSummaryReview": lecSummaryReview,
+            "lecStars": lecStars,
+            "lecClassification": lecClassification
+        })
+
+    return return_data
 
 # 실제 루트 화면 보면서 재설계 필요
 class LoggedInResponse(BaseModel):

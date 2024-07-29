@@ -141,6 +141,12 @@ const LectureManagement = () => {
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
             handleSubmit={handleSubmit}
+            lecStars={lecStars}
+            setLecStars={setLecStars}
+            setlecAssignment={setlecAssignment}
+            setlecTeamplay={setlecTeamplay}
+            setlecGrade={setlecGrade}
+            setlecSubName={setlecSubName}
           />
         );
       case "전공":
