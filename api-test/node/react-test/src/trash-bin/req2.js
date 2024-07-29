@@ -9,7 +9,6 @@ const LectureManagement = () => {
   const [lectures, setLectures] = useState([]);
   const [selectedLectures, setSelectedLectures] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [selectedLecNumbers, setSelectedLecNumbers] = useState([]);
 
   useEffect(() => {
     // 사용자 ID를 쿠키에서 가져오는 함수
@@ -35,13 +34,12 @@ const LectureManagement = () => {
         setUserGrade(userData.userYear || "");
         setUserBunban(userData.userBunban || "");
         setLecClassification(userData.userMajor || "");
-        setSelectedLecNumbers(userData.selectedLecNumbers || []);
-        setSelectedLectures(userData.selectedLecNumbers || []); // 초기화 시 selectedLectures도 설정
+        setSelectedLectures(userData.selectedLecNumbers || []);
       } catch (error) {
-        console.error("유저 정보를 가져오는 중 오류가 발생했습니다.", error);
+        console.error("fetch user data errrr:", error);
         alert(
           error.response?.data?.detail ||
-            "유저 정보를 가져오는 중 오류가 발생했습니다."
+            "유저 정보를 가져오는 중 오류가 발생했어요."
         );
       }
     };
@@ -65,43 +63,38 @@ const LectureManagement = () => {
         setLectures(response.data);
       })
       .catch((error) => {
-        console.error("강의 리스트를 불러오는 중 오류가 발생했습니다.", error);
+        console.error("fetch lec list errrr:", error);
         setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
       });
   };
 
-  const handleLectureSelect = (lecNumber) => {
-    setSelectedLectures((prevSelected) => {
-      if (prevSelected.includes(lecNumber)) {
-        return prevSelected.filter((num) => num !== lecNumber);
-      } else {
-        return [...prevSelected, lecNumber];
-      }
-    });
-  };
-
-  const handleUpdateLectures = async () => {
+  const handleLectureSelect = async (lecNumber) => {
     if (!userId) {
-      alert("로그인이 필요합니다.");
+      alert("로그인이 필요해요.");
+      // 리다이렉트 하도록
       return;
     }
+
+    const updatedSelectedLectures = selectedLectures.includes(lecNumber)
+      ? selectedLectures.filter((num) => num !== lecNumber)
+      : [...selectedLectures, lecNumber];
+
+    setSelectedLectures(updatedSelectedLectures);
 
     try {
       await axios.post(
         "http://127.0.0.1:8000/user/update_select_lectures",
         {
-          lecNumbers: selectedLectures,
+          lecNumbers: updatedSelectedLectures,
           userId: userId,
         },
         {
           withCredentials: true,
         }
       );
-      alert("선택한 강의들이 업데이트되었습니다.");
     } catch (error) {
-      console.log(selectedLectures);
-      console.error("강의 업데이트 중 오류가 발생했습니다.", error);
-      alert("강의 업데이트 중 오류가 발생했습니다.");
+      console.error("update select lectures errrr:", error);
+      alert("강의 업데이트 중 오류가 발생했어요.");
     }
   };
 
@@ -163,7 +156,6 @@ const LectureManagement = () => {
             </li>
           ))}
         </ul>
-        <button onClick={handleUpdateLectures}>선택한 강의 업데이트</button>
       </div>
     </div>
   );
