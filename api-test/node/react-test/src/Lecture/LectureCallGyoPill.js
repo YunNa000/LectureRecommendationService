@@ -7,6 +7,14 @@ const LectureCallGyoPill = ({
   setUserBunban,
   lecClassification,
   setLecClassification,
+  lecStars,
+  setLecStars,
+  setlecAssignment,
+  lecAssignment,
+  lecTeamplay,
+  setlecTeamplay,
+  lecGrade,
+  setlecGrade,
   handleSubmit,
 }) => {
   React.useEffect(() => {
@@ -39,6 +47,43 @@ const LectureCallGyoPill = ({
         value={lecClassification}
         required
       />
+      <label>star</label>
+      <input
+        id="lecStars"
+        name="lecStars"
+        value={lecStars}
+        onChange={(e) => setLecStars(e.target.value)}
+      />
+      <label>assignment</label>
+      <select
+        id="lecAssignment"
+        name="lecAssignment"
+        value={lecAssignment}
+        onChange={(e) => setlecAssignment(parseInt(e.target.value))}
+      >
+        <option>상관없음</option>
+        <option value="1">적음</option>
+      </select>
+      <label>lecTeamplay</label>
+      <select
+        id="lecTeamplay"
+        name="lecTeamplay"
+        value={lecTeamplay}
+        onChange={(e) => setlecTeamplay(parseInt(e.target.value))}
+      >
+        <option>상관없음</option>
+        <option value="1">적음</option>
+      </select>
+      <label>lecGrade</label>
+      <select
+        id="lecGrade"
+        name="lecGrade"
+        value={lecGrade}
+        onChange={(e) => setlecGrade(parseInt(e.target.value))}
+      >
+        <option>상관없음</option>
+        <option value="1">너그러움</option>
+      </select>
       <button type="submit">강의 리스트 불러오기</button>
     </form>
   );

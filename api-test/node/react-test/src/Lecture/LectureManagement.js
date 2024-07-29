@@ -14,7 +14,11 @@ const LectureManagement = () => {
   const [lectures, setLectures] = useState([]);
   const [selectedLectures, setSelectedLectures] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [selectedButton, setSelectedButton] = useState("교양"); // 초기값은 "교양"
+  const [selectedButton, setSelectedButton] = useState("교양");
+  const [lecStars, setLecStars] = useState();
+  const [lecAssignment, setlecAssignment] = useState();
+  const [lecTeamplay, setlecTeamplay] = useState();
+  const [lecGrade, setlecGrade] = useState();
 
   useEffect(() => {
     const fetchUserId = () => {
@@ -61,6 +65,10 @@ const LectureManagement = () => {
         userGrade: userGrade,
         userBunban: userBunban,
         lecClassification: lecClassification,
+        lecStars: lecStars,
+        lecAssignment: lecAssignment,
+        lecTeamplay: lecTeamplay,
+        lecGrade: lecGrade,
         withCredentials: true,
       })
       .then((response) => {
@@ -113,6 +121,11 @@ const LectureManagement = () => {
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
             handleSubmit={handleSubmit}
+            lecStars={lecStars}
+            setLecStars={setLecStars}
+            setlecAssignment={setlecAssignment}
+            setlecTeamplay={setlecTeamplay}
+            setlecGrade={setlecGrade}
           />
         );
       case "교선":

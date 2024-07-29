@@ -75,10 +75,6 @@ async def read_lectures(request: LectureRequest):
     conn = db_connect()
     cursor = conn.cursor()
 
-    # 일단, 전선 전필 일선 그런 거 구분 안하고, 들을 수 있는 거면 다 출력토록 함
-    # 기본 쿼리
-
-
     classification = request.lecClassification
     user_grade = request.userGrade
 
@@ -102,6 +98,7 @@ async def read_lectures(request: LectureRequest):
     query = query_template.format(bunban_condition=bunban_condition, user_grade=user_grade)
 
     parameters = [f"%{request.userBunban}%", classification]
+    print("request.lecStars: ", request.lecStars)
 
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
@@ -117,15 +114,17 @@ async def read_lectures(request: LectureRequest):
         query += " AND lecForeignPeopleCanTake = 1"
     if request.isUserMultiple is not None:
         query += " AND lecCanTakeMultipleMajor = 1"
-    if request.lecStars is not None:
+    if request.lecStars:
+        print(request.lecStars)
         query += " AND lecStars >= ?"
         parameters.append(str(request.lecStars))
     if request.lecAssignment is not None:
-        query += " AND lecAssignment <= 35"
+        print("add queary: AND lecAssignment >= 65")
+        query += " AND lecAssignment >= 65"
     if request.lecTeamplay is not None:
-        query += " AND lecTeamplay <= 35"
+        query += " AND lecTeamplay >= 65"
     if request.lecGrade is not None:
-        query += " AND lecGrade <= 35"
+        query += " AND lecGrade >= 65"
     if request.lecIsPNP is not None:
         query += " AND lecIsPNP = 1"
     if request.lecCredit is not None:
@@ -145,6 +144,8 @@ async def read_lectures(request: LectureRequest):
         query += " AND (lecIseLearning = 1 OR lecIsDistance100 = 1)"
     if request.lecIsArt is not None:
         query += " AND lecIsArt = 1"
+
+    print("=======\n")
 
     cursor.execute(query, parameters)
     lectures = cursor.fetchall()
