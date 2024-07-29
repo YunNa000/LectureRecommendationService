@@ -67,7 +67,7 @@ class LectureRequest(BaseModel):
     lecIsConvergence: Optional[int] = None # 융합 강의 여부 
     lecIsNoneFace: Optional[int] = None # 100% 비대면 여부
     lecIsArt: Optional[int] = None # 실습 강의 여부 
-    lecSubName: Optional[List[str]] = None # 테마
+    lecSubName: Optional[str] = None # 테마
 
 
 @app.post("/lectures", response_model=List[dict])
@@ -99,6 +99,7 @@ async def read_lectures(request: LectureRequest):
 
     parameters = [f"%{request.userBunban}%", classification]
     print("request.lecStars: ", request.lecStars)
+    print("subname: ", request.lecSubName)
 
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
@@ -107,9 +108,8 @@ async def read_lectures(request: LectureRequest):
         query += f" AND lecClassName NOT IN ({placeholders})"
         parameters.extend(request.userTakenCourse)
     if request.lecSubName:
-        placeholders = ', '.join(['?'] * len(request.lecSubName))
-        query += f" AND lecSubName IN ({placeholders})"
-        parameters.extend(request.lecSubName)
+        query += " AND lecSubName = ?"
+        parameters.append(request.lecSubName)
     if request.isUserForeign is not None:
         query += " AND lecForeignPeopleCanTake = 1"
     if request.isUserMultiple is not None:

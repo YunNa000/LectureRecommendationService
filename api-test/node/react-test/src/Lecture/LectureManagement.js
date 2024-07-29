@@ -19,6 +19,7 @@ const LectureManagement = () => {
   const [lecAssignment, setlecAssignment] = useState();
   const [lecTeamplay, setlecTeamplay] = useState();
   const [lecGrade, setlecGrade] = useState();
+  const [lecSubName, setlecSubName] = useState();
 
   useEffect(() => {
     const fetchUserId = () => {
@@ -69,6 +70,7 @@ const LectureManagement = () => {
         lecAssignment: lecAssignment,
         lecTeamplay: lecTeamplay,
         lecGrade: lecGrade,
+        lecSubName: lecSubName,
         withCredentials: true,
       })
       .then((response) => {
@@ -126,6 +128,7 @@ const LectureManagement = () => {
             setlecAssignment={setlecAssignment}
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
+            setlecSubName={setlecSubName}
           />
         );
       case "교선":
