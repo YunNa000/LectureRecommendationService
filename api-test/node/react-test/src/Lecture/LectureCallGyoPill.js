@@ -15,6 +15,8 @@ const LectureCallGyoPill = ({
   setlecTeamplay,
   lecGrade,
   setlecGrade,
+  lecSubName,
+  setlecSubName,
   handleSubmit,
 }) => {
   React.useEffect(() => {
@@ -83,6 +85,19 @@ const LectureCallGyoPill = ({
       >
         <option>상관없음</option>
         <option value="1">너그러움</option>
+      </select>
+      <label>lecSubName</label>
+      <select
+        id="lecSubName"
+        name="lecSubName"
+        value={lecSubName}
+        onChange={(e) => setlecSubName(e.target.value)}
+      >
+        <option>전체보기</option>
+        <option value="광운인되기">광운인되기</option>
+        <option value="대학영어">대학영어</option>
+        <option value="정보">정보</option>
+        <option value="융합적사고와글쓰기">융합적사고와글쓰기</option>
       </select>
       <button type="submit">강의 리스트 불러오기</button>
     </form>
