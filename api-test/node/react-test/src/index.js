@@ -14,7 +14,7 @@ root.render(
     <Login />
     {/* <LectureRequestForm /> */}
     <UpdateUserInfo />
-    <LectureManagement />
+    {/* <LectureManagement /> */}
   </React.StrictMode>
 );
 
