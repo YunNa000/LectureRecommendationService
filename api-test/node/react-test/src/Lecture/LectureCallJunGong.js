@@ -93,8 +93,8 @@ const LectureCallGyoPill = ({
         onChange={(e) => setLecClassification(e.target.value)}
         required
       >
-        <option value="교선">전선</option>
-        <option value="교필">전필</option>
+        <option value="전선">전선</option>
+        <option value="전필">전필</option>
       </select>
       <button type="submit">강의 리스트 불러오기</button>
     </form>

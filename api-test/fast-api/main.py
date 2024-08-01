@@ -25,10 +25,12 @@ user_sessions = {}
 # 실제 build나 deploy 전에는 db 환경 제대로 세팅하는 게 필요
 DATABASE = './kwu-lecture-database-v5.db'
 
+
 def db_connect():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 app = FastAPI()
 
@@ -47,27 +49,29 @@ app.add_middleware(
 )
 
 # LectureTable 테이블 클래스
+
+
 class LectureRequest(BaseModel):
-    userGrade: int # 유저 학년 
-    userBunban: str # 유저 분반 
-    lecClassification: str # 전필/전전/교선/교필 ... 
-    userTakenCourse: Optional[List[str]] = None # 유저 수강 내역
-    isUserForeign: Optional[int] = None # 유저 외국인 여부  # lecForeignPeopleCanTake 
-    isUserMultiple: Optional[int] = None # 유저 복전 여부 # lecCanTakeMultipleMajor 
-    lecStars: Optional[float] = None # 별점 
-    lecAssignment: Optional[int] = None # 과제 
-    lecTeamplay: Optional[int] = None # 팀플 
-    lecGrade: Optional[int] = None # 성적 
-    lecIsPNP: Optional[int] = None # pnp 여부 
-    lecCredit: Optional[int] = None # 학점 
-    lecIsTBL: Optional[int] = None # TBL 여부 
-    lecIsPBL: Optional[int] = None # PBL 여부 
-    lecIsSeminar: Optional[int] = None # 세미나 강의 여부 
-    lecIsSmall: Optional[int] = None # 소규모 강의 여부 
-    lecIsConvergence: Optional[int] = None # 융합 강의 여부 
-    lecIsNoneFace: Optional[int] = None # 100% 비대면 여부
-    lecIsArt: Optional[int] = None # 실습 강의 여부 
-    lecSubName: Optional[str] = None # 테마
+    userGrade: int  # 유저 학년
+    userBunban: str  # 유저 분반
+    lecClassification: str  # 전필/전전/교선/교필 ...
+    userTakenCourse: Optional[List[str]] = None  # 유저 수강 내역
+    isUserForeign: Optional[int] = None  # 유저 외국인 여부  # lecForeignPeopleCanTake
+    isUserMultiple: Optional[int] = None  # 유저 복전 여부 # lecCanTakeMultipleMajor
+    lecStars: Optional[float] = None  # 별점
+    lecAssignment: Optional[int] = None  # 과제
+    lecTeamplay: Optional[int] = None  # 팀플
+    lecGrade: Optional[int] = None  # 성적
+    lecIsPNP: Optional[int] = None  # pnp 여부
+    lecCredit: Optional[int] = None  # 학점
+    lecIsTBL: Optional[int] = None  # TBL 여부
+    lecIsPBL: Optional[int] = None  # PBL 여부
+    lecIsSeminar: Optional[int] = None  # 세미나 강의 여부
+    lecIsSmall: Optional[int] = None  # 소규모 강의 여부
+    lecIsConvergence: Optional[int] = None  # 융합 강의 여부
+    lecIsNoneFace: Optional[int] = None  # 100% 비대면 여부
+    lecIsArt: Optional[int] = None  # 실습 강의 여부
+    lecSubName: Optional[str] = None  # 테마
 
 
 @app.post("/lectures", response_model=List[dict])
@@ -95,12 +99,12 @@ async def read_lectures(request: LectureRequest):
     else:
         bunban_condition = "lecCanTakeBunban LIKE ?"
 
-    query = query_template.format(bunban_condition=bunban_condition, user_grade=user_grade)
+    query = query_template.format(
+        bunban_condition=bunban_condition, user_grade=user_grade)
 
     parameters = [f"%{request.userBunban}%", classification]
     print("request.lecStars: ", request.lecStars)
     print("subname: ", request.lecSubName)
-
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
     if request.userTakenCourse:
@@ -149,14 +153,14 @@ async def read_lectures(request: LectureRequest):
 
     cursor.execute(query, parameters)
     lectures = cursor.fetchall()
-    
+
     conn.close()
 
     print(lectures)
-    
+
     if not lectures:
         raise HTTPException(status_code=404, detail="해당 조건에 맞는 강의가 없어요..😢")
-    
+
     # 우선 class name, lecture number만 반환되도록 함.
     # 실제 페이지별로 필요한? 반환값들 확실히 해서 정리하는 것이 필요
 
@@ -174,7 +178,7 @@ async def read_lectures(request: LectureRequest):
         lecSummaryReview = lecture["lecSummaryReview"] if lecture["lecSummaryReview"] else "값이 비었어요"
         lecStars = lecture["lecStars"] if lecture["lecStars"] else "값이 비었어요"
         lecClassification = lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요"
-        
+
         return_data.append({
             "lecClassName": lecClassName,
             "lecNumber": lecNumber,
@@ -193,14 +197,19 @@ async def read_lectures(request: LectureRequest):
     return return_data
 
 # 실제 루트 화면 보면서 재설계 필요
+
+
 class LoggedInResponse(BaseModel):
     message: str
     user_id: str
+
+
 class NotLoggedInResponse(BaseModel):
     message: str
 
+
 @app.get("/", response_model=Union[LoggedInResponse, NotLoggedInResponse])
-async def root(user_id: str = Cookie(None)): #쿠키에서 user_id 가져옴, 없으면 None
+async def root(user_id: str = Cookie(None)):  # 쿠키에서 user_id 가져옴, 없으면 None
     if user_id and user_id in user_sessions:
         return {
             "message": f"Hello, {user_sessions[user_id]['name']}!",
@@ -208,12 +217,14 @@ async def root(user_id: str = Cookie(None)): #쿠키에서 user_id 가져옴, �
         }
     return {"message": "log in required"}
 
+
 @app.get("/login")
 async def login():
     redirect_uri = "http://localhost:8000/auth/callback"
     return RedirectResponse(
         f"https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid%20profile%20email&response_type=code"
     )
+
 
 @app.get("/auth/callback")
 async def auth_callback(code: str):
@@ -231,7 +242,8 @@ async def auth_callback(code: str):
         )
         token_json = token_response.json()
         if "access_token" not in token_json:
-            raise HTTPException(status_code=400, detail="Invalid token response")
+            raise HTTPException(
+                status_code=400, detail="Invalid token response")
 
         user_info_response = await client.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -258,17 +270,18 @@ async def auth_callback(code: str):
 
         conn = db_connect()
         conn.execute(
-            'INSERT OR IGNORE INTO user (user_id, userName) VALUES (?, ?)', 
+            'INSERT OR IGNORE INTO user (user_id, userName) VALUES (?, ?)',
             (user_id, user_name)
         )
         conn.commit()
         conn.close()
 
         response = RedirectResponse(url="http://localhost:3000/")
-        max_age = 300000 # 30000 초 
+        max_age = 300000  # 30000 초
         response.set_cookie(key="user_id", value=user_id, max_age=max_age)
-        
-        return response # 쿠키 return
+
+        return response  # 쿠키 return
+
 
 class PersonalInformation(BaseModel):
     user_id: str  # 유저 아이디
@@ -282,9 +295,12 @@ class PersonalInformation(BaseModel):
     userTakenLecture: Optional[str] = None  # 수강 강의
     userName: str
     selectedLecNumbers: List[str]
+    userTakenLectures: List[str]  # 유저가 수강한 강의(db에서가져온)
+
 
 class userSelectedLecture(BaseModel):
     lecNumber: str
+
 
 @app.get("/user/data", response_model=List[PersonalInformation])
 async def get_user_data(request: Request):
@@ -292,28 +308,36 @@ async def get_user_data(request: Request):
     print(f"|-- /user/data | user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
-    
+
     conn = db_connect()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT * FROM user WHERE user_id = ?", (user_id,))
     rows = cursor.fetchall()
 
     if not rows:
         conn.close()
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     users = []
     for row in rows:
         user_dict = dict(row)
-        
-        cursor.execute("SELECT lecNumber FROM userListedLecture WHERE user_id = ?", (user_dict['user_id'],))
+
+        cursor.execute(
+            "SELECT lecNumber FROM userListedLecture WHERE user_id = ?", (user_dict['user_id'],))
         lecNumbers = cursor.fetchall()
-        user_dict['selectedLecNumbers'] = [lecNumber[0] for lecNumber in lecNumbers]
-        
-        print("|-- /user/data | user_dict:", user_dict['selectedLecNumbers'])
-        
-        # Ensure all fields are included when creating PersonalInformation
+        user_dict['selectedLecNumbers'] = [lecNumber[0]
+                                           for lecNumber in lecNumbers]
+
+        cursor.execute(
+            "SELECT takenLecName FROM userTakenLecture WHERE user_id = ?", (user_dict['user_id'],))
+        takenLectures = cursor.fetchall()
+        user_dict['userTakenLectures'] = [lecture[0]
+                                          for lecture in takenLectures]
+
+        print("|-- /user/data | user_dict:",
+              user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
+
         user_info = PersonalInformation(
             user_id=user_dict['user_id'],
             userHakbun=user_dict['userHakbun'],
@@ -325,14 +349,15 @@ async def get_user_data(request: Request):
             userWhatMultipleMajor=user_dict['userWhatMultipleMajor'],
             userTakenLecture=user_dict['userTakenLecture'],
             userName=user_dict['userName'],
-            selectedLecNumbers=user_dict['selectedLecNumbers']
+            selectedLecNumbers=user_dict['selectedLecNumbers'],
+            userTakenLectures=user_dict['userTakenLectures']
         )
-        
+
         users.append(user_info)
         print("|-- /user/data | users:", users)
-    
+
     conn.close()
-    
+
     return users
 
 
@@ -340,7 +365,8 @@ async def get_user_data(request: Request):
 async def update_user_hakbun(request: PersonalInformation):
     conn = db_connect()
     cursor = conn.cursor()
-    
+
+    # user 테이블 업데이트 쿼리
     query = """
     UPDATE user
     SET userHakbun = ?,
@@ -350,11 +376,10 @@ async def update_user_hakbun(request: PersonalInformation):
         userMajor = ?,
         userIsMultipleMajor = ?,
         userWhatMultipleMajor = ?,
-        userTakenLecture = ?,
         userName = ?
     WHERE user_id = ?
     """
-    
+
     cursor.execute(query, (
         request.userHakbun,
         request.userIsForeign,
@@ -363,55 +388,67 @@ async def update_user_hakbun(request: PersonalInformation):
         request.userMajor,
         request.userIsMultipleMajor,
         request.userWhatMultipleMajor,
-        request.userTakenLecture,
         request.userName,
         request.user_id
     ))
-    
+
+    if cursor.rowcount == 0:
+        conn.rollback()
+        conn.close()
+        raise HTTPException(status_code=404, detail="user not found")
+
+    cursor.execute(
+        "DELETE FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
+
+    if request.userTakenLecture:
+        if isinstance(request.userTakenLecture, list):
+            lectures = ",".join(request.userTakenLecture).split(',')
+        else:
+            lectures = request.userTakenLecture.split(',')
+
+        query = "INSERT INTO userTakenLecture (user_id, takenLecName) VALUES (?, ?)"
+        for lecture in lectures:
+            cursor.execute(query, (request.user_id, lecture.strip()))
+
     conn.commit()
     conn.close()
-    
-    if cursor.rowcount == 0:
-        raise HTTPException(status_code=404, detail="user not found")
-    
+
     return {"message": "updated"}
+
 
 class LecturesUpdateRequest(BaseModel):
     userId: str
     lecNumbers: List[str]
 
+
 @app.post("/user/update_select_lectures")
 async def update_selected_lectures(request: LecturesUpdateRequest):
     user_id = request.userId
-    
+
     if not user_id:
-        raise HTTPException(status_code=403, detail="로그인이 필요합니다.")
+        raise HTTPException(status_code=403, detail="login required")
 
     conn = db_connect()
     cursor = conn.cursor()
 
-    # user_id가 유효한지 확인
     cursor.execute("SELECT user_id FROM user WHERE user_id = ?", (user_id,))
     user = cursor.fetchone()
-    
+
     if not user:
         conn.close()
-        raise HTTPException(status_code=404, detail="유효하지 않은 사용자입니다.")
-    
-    # 현재 DB에 저장된 유저의 강의 목록 가져오기
+        raise HTTPException(status_code=404, detail="not user")
+
     cursor.execute('''
     SELECT lecNumber FROM userListedLecture WHERE user_id = ?
     ''', (user_id,))
     current_lectures = cursor.fetchall()
-    current_lectures = {lec[0] for lec in current_lectures}  # set으로 변환
+    current_lectures = {lec[0] for lec in current_lectures}
 
     incoming_lectures = set(request.lecNumbers)
 
-    # 추가할 강의와 삭제할 강의 구분
     lectures_to_add = incoming_lectures - current_lectures
     lectures_to_remove = current_lectures - incoming_lectures
-    
-    # 강의 추가
+
     for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
@@ -420,8 +457,7 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
             ''', (user_id, lecNumber))
         except sqlite3.IntegrityError:
             continue
-    
-    # 강의 삭제
+
     for lecNumber in lectures_to_remove:
         cursor.execute('''
         DELETE FROM userListedLecture WHERE user_id = ? AND lecNumber = ?
@@ -429,8 +465,39 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
 
     conn.commit()
     conn.close()
-    
-    return {"message": "선택한 강의들이 업데이트되었습니다."}
+
+    return {"message": "updated"}
+
+
+class OCRRequest(BaseModel):
+    text: str
+
+
+class OCRResponse(BaseModel):
+    lecClassNames: List[str]
+
+
+@app.post("/user/update/ocr", response_model=OCRResponse)
+async def process_text(request: OCRRequest):
+    text = request.text
+    words = text.split()
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    lec_class_names = set()
+
+    for word in words:
+        if len(word) > 3:
+            cursor.execute(
+                "SELECT lecClassName FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
+            rows = cursor.fetchall()
+            for row in rows:
+                lec_class_names.add(row['lecClassName'])
+
+    conn.close()
+    print(lec_class_names)
+    return OCRResponse(lecClassNames=list(lec_class_names))
 
 
 #손원택 작성

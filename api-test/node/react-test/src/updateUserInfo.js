@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from "react";
+import Tesseract from "tesseract.js";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-/**
- * 유저가 자신의 정보 업데이트 할 수 있도록 하는 -
- * 이렇게 db에 값들 넣는다 정도로만 해석하면 됨
- *
- * @returns {JSX.Element} - UpdateUserForm component
- */
 const UpdateUserForm = () => {
-  /**
-   * @type {Object}
-   * @property {string} user_id - user id
-   * @property {string} userHakbun - 학번
-   * @property {boolean} userIsForeign - 외국인 여부
-   * @property {string} userBunban - 분반
-   * @property {string} userYear - 학년
-   * @property {string} userMajor - 전공
-   * @property {boolean} userIsMultipleMajor - 복전 여부
-   * @property {string} userWhatMultipleMajor - 복전 전공학과
-   * @property {string} userTakenLecture - 수강한 강의
-   * @property {string} userName - 유저 이름
-   */
+  const [images, setImages] = useState([]);
+  const [ocrResults, setOcrResults] = useState([]);
+  const [lecClassNames, setLecClassNames] = useState([]);
   const [formData, setFormData] = useState({
     user_id: "",
     userHakbun: "",
@@ -31,32 +16,71 @@ const UpdateUserForm = () => {
     userMajor: "",
     userIsMultipleMajor: false,
     userWhatMultipleMajor: "",
-    userTakenLecture: "",
+    userTakenLectures: [],
     userName: "",
   });
+  const [lectureInputs, setLectureInputs] = useState([""]);
 
-  /**
-   * 유저 정보를 가져와서 상태로 설정하는 함수
-   */
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImages(files);
+  };
+
+  const performOCR = async () => {
+    const results = [];
+    const allLecClassNames = new Set();
+
+    for (const image of images) {
+      const result = await Tesseract.recognize(
+        URL.createObjectURL(image),
+        "kor",
+        {
+          logger: (m) => console.log(m),
+        }
+      );
+      results.push(result.data.text);
+    }
+
+    setOcrResults(results);
+
+    for (const result of results) {
+      const response = await fetch("http://127.0.0.1:8000/user/update/ocr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: result }),
+      });
+
+      const data = await response.json();
+      data.lecClassNames.forEach((lecClassName) => {
+        allLecClassNames.add(lecClassName);
+      });
+    }
+
+    const newLecClassNames = Array.from(allLecClassNames);
+    setLecClassNames(newLecClassNames);
+    setLectureInputs((prevInputs) => [...prevInputs, ...newLecClassNames]);
+  };
+
   const fetchUserData = async (userId) => {
     try {
       const response = await axios.get("http://localhost:8000/user/data", {
         withCredentials: true,
       });
-      const userData = response.data[0]; // 첫 번째 유저 데이터
+      const userData = response.data[0];
       setFormData((prevData) => ({
         ...prevData,
         ...userData,
+        userTakenLectures: userData.userTakenLectures,
       }));
+      setLectureInputs(userData.userTakenLectures);
     } catch (error) {
-      console.error("There was an error fetching the user data!", error);
-      alert(error.response?.data?.detail || "Error fetching user data");
+      console.error("errr fetching user data", error);
+      alert(error.response?.data?.detail || "errr fetching user data");
     }
   };
 
-  /**
-   * 컴포넌트가 마운트 될 때 쿠키에서 유저 아이디 가져오고 유저 정보 가져옴
-   */
   useEffect(() => {
     const userId = Cookies.get("user_id");
     if (userId) {
@@ -68,9 +92,6 @@ const UpdateUserForm = () => {
     }
   }, []);
 
-  /**
-   * @param {React.ChangeEvent<HTMLInputElement>} e - 입력 변경 이벤트
-   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -79,18 +100,35 @@ const UpdateUserForm = () => {
     }));
   };
 
-  /**
-   * 서버에 put 요청, response message를 alert
-   *
-   * @param {React.FormEvent<HTMLFormElement>} e - 폼 제출 이벤트
-   */
+  const handleLectureChange = (index, e) => {
+    const newLectureInputs = [...lectureInputs];
+    newLectureInputs[index] = e.target.value;
+    setLectureInputs(newLectureInputs);
+  };
+
+  const addLectureInput = () => {
+    setLectureInputs([...lectureInputs, ""]);
+  };
+
+  const removeLectureInput = (index) => {
+    const newLectureInputs = [...lectureInputs];
+    newLectureInputs.splice(index, 1);
+    setLectureInputs(newLectureInputs);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const cleanedLectures = lectureInputs
+      .map((lecture) => lecture.replace(/\s/g, ""))
+      .join(",");
 
     try {
       const response = await axios.put(
         "http://localhost:8000/user/update",
-        formData,
+        {
+          ...formData,
+          userTakenLecture: cleanedLectures,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -99,8 +137,8 @@ const UpdateUserForm = () => {
       );
       alert(response.data.message);
     } catch (error) {
-      console.error("There was an error updating the user information!", error);
-      alert(error.response?.data?.detail || "Error updating user information");
+      console.error("errr updating user info", error);
+      alert(error.response?.data?.detail || "errr updating user info");
     }
   };
 
@@ -180,13 +218,26 @@ const UpdateUserForm = () => {
         />
       </div>
       <div>
-        <label>수강 강의:</label>
-        <input
-          type="text"
-          name="userTakenLecture"
-          value={formData.userTakenLecture}
-          onChange={handleChange}
-        />
+        <input type="file" multiple onChange={handleImageChange} />
+        <button onClick={performOCR}>OCR</button>
+      </div>
+      <div>
+        <label>수강한 강의 목록:</label>
+        {lectureInputs.map((lecture, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              value={lecture}
+              onChange={(e) => handleLectureChange(index, e)}
+            />
+            <button type="button" onClick={() => removeLectureInput(index)}>
+              삭제
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={addLectureInput}>
+          수강한 강의 추가
+        </button>
       </div>
       <button type="submit">업데이트</button>
     </form>
