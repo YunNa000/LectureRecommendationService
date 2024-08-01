@@ -6,7 +6,6 @@ import Cookies from "js-cookie";
 const UpdateUserForm = () => {
   const [images, setImages] = useState([]);
   const [ocrResults, setOcrResults] = useState([]);
-  const [lecClassNames, setLecClassNames] = useState([]);
   const [formData, setFormData] = useState({
     user_id: "",
     userHakbun: "",
@@ -19,7 +18,9 @@ const UpdateUserForm = () => {
     userTakenLectures: [],
     userName: "",
   });
-  const [lectureInputs, setLectureInputs] = useState([""]);
+  const [lectureInputs, setLectureInputs] = useState([
+    { lectureName: "", lecCredit: "", lecClassification: "" },
+  ]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleImageChange = async (e) => {
@@ -32,20 +33,22 @@ const UpdateUserForm = () => {
   const performOCR = async (files) => {
     setIsLoading(true);
     const results = [];
-    const allLecClassNames = new Set();
 
     for (const image of files) {
       const result = await Tesseract.recognize(
         URL.createObjectURL(image),
         "kor",
         {
-          logger: (m) => console.log(m),
+          logger: (m) => console.log(m), // 여기 progress 있는데, 이거 바탕으로 로딩바 만들면 좋을 거 같음
         }
       );
       results.push(result.data.text);
     }
 
     setOcrResults(results);
+
+    const allLecClassNames = new Set();
+    const newLectureInputs = [];
 
     for (const result of results) {
       const response = await fetch("http://127.0.0.1:8000/user/update/ocr", {
@@ -57,14 +60,16 @@ const UpdateUserForm = () => {
       });
 
       const data = await response.json();
-      data.lecClassNames.forEach((lecClassName) => {
-        allLecClassNames.add(lecClassName);
+      data.userTakenLectures.forEach((lecture) => {
+        newLectureInputs.push({
+          lectureName: lecture.lectureName,
+          lecCredit: lecture.lecCredit,
+          lecClassification: lecture.lecClassification,
+        });
       });
     }
 
-    const newLecClassNames = Array.from(allLecClassNames);
-    setLecClassNames(newLecClassNames);
-    setLectureInputs((prevInputs) => [...prevInputs, ...newLecClassNames]);
+    setLectureInputs((prevInputs) => [...prevInputs, ...newLectureInputs]);
     setIsLoading(false);
   };
 
@@ -106,13 +111,17 @@ const UpdateUserForm = () => {
   };
 
   const handleLectureChange = (index, e) => {
+    const { name, value } = e.target;
     const newLectureInputs = [...lectureInputs];
-    newLectureInputs[index] = e.target.value;
+    newLectureInputs[index][name] = value;
     setLectureInputs(newLectureInputs);
   };
 
   const addLectureInput = () => {
-    setLectureInputs([...lectureInputs, ""]);
+    setLectureInputs([
+      ...lectureInputs,
+      { lectureName: "", lecCredit: "", lecClassification: "" },
+    ]);
   };
 
   const removeLectureInput = (index) => {
@@ -123,16 +132,12 @@ const UpdateUserForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const cleanedLectures = lectureInputs
-      .map((lecture) => lecture.replace(/\s/g, ""))
-      .join(",");
-
     try {
       const response = await axios.put(
         "http://localhost:8000/user/update",
         {
           ...formData,
-          userTakenLecture: cleanedLectures,
+          userTakenLectures: lectureInputs,
         },
         {
           headers: {
@@ -231,8 +236,24 @@ const UpdateUserForm = () => {
           <div key={index}>
             <input
               type="text"
-              value={lecture}
+              name="lectureName"
+              value={lecture.lectureName}
               onChange={(e) => handleLectureChange(index, e)}
+              placeholder="강의 명"
+            />
+            <input
+              type="text"
+              name="lecCredit"
+              value={lecture.lecCredit}
+              onChange={(e) => handleLectureChange(index, e)}
+              placeholder="학점"
+            />
+            <input
+              type="text"
+              name="lecClassification"
+              value={lecture.lecClassification}
+              onChange={(e) => handleLectureChange(index, e)}
+              placeholder="분류"
             />
             <button type="button" onClick={() => removeLectureInput(index)}>
               삭제

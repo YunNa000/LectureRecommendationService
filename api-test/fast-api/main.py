@@ -1,3 +1,4 @@
+from typing import List, Dict
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Optional
@@ -474,7 +475,7 @@ class OCRRequest(BaseModel):
 
 
 class OCRResponse(BaseModel):
-    lecClassNames: List[str]
+    userTakenLectures: List[Dict[str, str]]
 
 
 @app.post("/user/update/ocr", response_model=OCRResponse)
@@ -485,19 +486,29 @@ async def process_text(request: OCRRequest):
     conn = db_connect()
     cursor = conn.cursor()
 
-    lec_class_names = set()
+    user_taken_lectures = []
+    lecture_names_set = set()
 
     for word in words:
         if len(word) > 3:
             cursor.execute(
-                "SELECT lecClassName FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
+                "SELECT lecClassName, lecClassification, lecCredit FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
             rows = cursor.fetchall()
             for row in rows:
-                lec_class_names.add(row['lecClassName'])
+                lecture_name = row['lecClassName']
+                if lecture_name not in lecture_names_set:
+                    lecture_info = {
+                        'lectureName': lecture_name,
+                        'lecClassification': row['lecClassification'],
+                        'lecCredit': str(row['lecCredit'])
+                    }
+                    user_taken_lectures.append(lecture_info)
+                    lecture_names_set.add(lecture_name)
 
     conn.close()
-    print(lec_class_names)
-    return OCRResponse(lecClassNames=list(lec_class_names))
+    print(user_taken_lectures)
+    return OCRResponse(userTakenLectures=user_taken_lectures)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
