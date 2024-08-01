@@ -7,6 +7,10 @@ import LectureRequestForm from "./trash-bin/req";
 import UpdateUserInfo from "./updateUserInfo";
 import LectureSelection from "./trash-bin/req2";
 import LectureManagement from "./Lecture/LectureManagement";
+//import FriendList from "./Friend/FriendList";
+import UserList from "./Friend/UserList";
+
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,8 +18,14 @@ root.render(
     <Login />
     {/* <LectureRequestForm /> */}
     <UpdateUserInfo />
+<<<<<<< Updated upstream
     <LectureManagement />
+=======
+    {/* <LectureManagement /> */}
+    <UserList />
+>>>>>>> Stashed changes
   </React.StrictMode>
+  
 );
 
 reportWebVitals();
