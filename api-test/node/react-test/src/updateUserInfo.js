@@ -21,16 +21,18 @@ const UpdateUserForm = () => {
   });
   const [lectureInputs, setLectureInputs] = useState([""]);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
+
+    await performOCR(files);
   };
 
-  const performOCR = async () => {
+  const performOCR = async (files) => {
     const results = [];
     const allLecClassNames = new Set();
 
-    for (const image of images) {
+    for (const image of files) {
       const result = await Tesseract.recognize(
         URL.createObjectURL(image),
         "kor",
@@ -219,7 +221,6 @@ const UpdateUserForm = () => {
       </div>
       <div>
         <input type="file" multiple onChange={handleImageChange} />
-        <button onClick={performOCR}>OCR</button>
       </div>
       <div>
         <label>수강한 강의 목록:</label>
