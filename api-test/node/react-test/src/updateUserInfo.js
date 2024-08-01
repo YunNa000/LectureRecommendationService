@@ -20,6 +20,7 @@ const UpdateUserForm = () => {
     userName: "",
   });
   const [lectureInputs, setLectureInputs] = useState([""]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -29,6 +30,7 @@ const UpdateUserForm = () => {
   };
 
   const performOCR = async (files) => {
+    setIsLoading(true);
     const results = [];
     const allLecClassNames = new Set();
 
@@ -63,6 +65,7 @@ const UpdateUserForm = () => {
     const newLecClassNames = Array.from(allLecClassNames);
     setLecClassNames(newLecClassNames);
     setLectureInputs((prevInputs) => [...prevInputs, ...newLecClassNames]);
+    setIsLoading(false);
   };
 
   const fetchUserData = async (userId) => {
@@ -240,6 +243,7 @@ const UpdateUserForm = () => {
           수강한 강의 추가
         </button>
       </div>
+      {isLoading && <div>로딩 중...</div>}
       <button type="submit">업데이트</button>
     </form>
   );
