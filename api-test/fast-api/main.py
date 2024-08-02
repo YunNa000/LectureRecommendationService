@@ -1,3 +1,4 @@
+from typing import List, Dict
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Optional
@@ -23,7 +24,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 user_sessions = {}
 
 # 실제 build나 deploy 전에는 db 환경 제대로 세팅하는 게 필요
-DATABASE = './kwu-lecture-database-v5.db'
+DATABASE = './kwu-lecture-database-v6.db'
 
 
 def db_connect():
@@ -47,8 +48,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# LectureTable 테이블 클래스
 
 
 class LectureRequest(BaseModel):
@@ -103,8 +102,8 @@ async def read_lectures(request: LectureRequest):
         bunban_condition=bunban_condition, user_grade=user_grade)
 
     parameters = [f"%{request.userBunban}%", classification]
-    print("request.lecStars: ", request.lecStars)
-    print("subname: ", request.lecSubName)
+    # print("request.lecStars: ", request.lecStars)
+    # print("subname: ", request.lecSubName)
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
     if request.userTakenCourse:
@@ -119,11 +118,11 @@ async def read_lectures(request: LectureRequest):
     if request.isUserMultiple is not None:
         query += " AND lecCanTakeMultipleMajor = 1"
     if request.lecStars:
-        print(request.lecStars)
+        # print(request.lecStars)
         query += " AND lecStars >= ?"
         parameters.append(str(request.lecStars))
     if request.lecAssignment is not None:
-        print("add queary: AND lecAssignment >= 65")
+        # print("add queary: AND lecAssignment >= 65")
         query += " AND lecAssignment >= 65"
     if request.lecTeamplay is not None:
         query += " AND lecTeamplay >= 65"
@@ -195,8 +194,6 @@ async def read_lectures(request: LectureRequest):
         })
 
     return return_data
-
-# 실제 루트 화면 보면서 재설계 필요
 
 
 class LoggedInResponse(BaseModel):
@@ -295,7 +292,8 @@ class PersonalInformation(BaseModel):
     userTakenLecture: Optional[str] = None  # 수강 강의
     userName: str
     selectedLecNumbers: List[str]
-    userTakenLectures: List[str]  # 유저가 수강한 강의(db에서가져온)
+    userTakenLectures: List[dict]  # 유저가 수강한 강의(db에서가져온)
+    userCredit: Optional[str] = None  # 유저가 받은 학점
 
 
 class userSelectedLecture(BaseModel):
@@ -330,10 +328,23 @@ async def get_user_data(request: Request):
                                            for lecNumber in lecNumbers]
 
         cursor.execute(
-            "SELECT takenLecName FROM userTakenLecture WHERE user_id = ?", (user_dict['user_id'],))
+            # userCredit을 함께 가져오기 위한 쿼리 수정
+            "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?",
+            (user_dict['user_id'],)
+        )
         takenLectures = cursor.fetchall()
-        user_dict['userTakenLectures'] = [lecture[0]
-                                          for lecture in takenLectures]
+        user_dict['userTakenLectures'] = [
+            # userCredit을 포함하도록 수정
+            {
+                "lectureName": lecture[0],
+                "lecClassification": lecture[1],
+                "lecCredit": lecture[2],
+                "userCredit": lecture[3]  # userCredit 추가
+            }
+            for lecture in takenLectures
+        ]
+
+        user_dict['userCredit'] = user_dict.get('userCredit')
 
         print("|-- /user/data | user_dict:",
               user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
@@ -350,7 +361,8 @@ async def get_user_data(request: Request):
             userTakenLecture=user_dict['userTakenLecture'],
             userName=user_dict['userName'],
             selectedLecNumbers=user_dict['selectedLecNumbers'],
-            userTakenLectures=user_dict['userTakenLectures']
+            userTakenLectures=user_dict['userTakenLectures'],
+            userCredit=user_dict['userCredit']
         )
 
         users.append(user_info)
@@ -400,15 +412,19 @@ async def update_user_hakbun(request: PersonalInformation):
     cursor.execute(
         "DELETE FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
 
-    if request.userTakenLecture:
-        if isinstance(request.userTakenLecture, list):
-            lectures = ",".join(request.userTakenLecture).split(',')
-        else:
-            lectures = request.userTakenLecture.split(',')
-
-        query = "INSERT INTO userTakenLecture (user_id, takenLecName) VALUES (?, ?)"
-        for lecture in lectures:
-            cursor.execute(query, (request.user_id, lecture.strip()))
+    if request.userTakenLectures:
+        query = """
+        INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit)
+        VALUES (?, ?, ?, ?, ?)
+        """
+        for lecture in request.userTakenLectures:
+            cursor.execute(query, (
+                request.user_id,
+                lecture.get('lectureName'),
+                lecture.get('lecClassification'),
+                lecture.get('lecCredit'),
+                lecture.get('userCredit')
+            ))
 
     conn.commit()
     conn.close()
@@ -474,7 +490,7 @@ class OCRRequest(BaseModel):
 
 
 class OCRResponse(BaseModel):
-    lecClassNames: List[str]
+    userTakenLectures: List[Dict[str, str]]
 
 
 @app.post("/user/update/ocr", response_model=OCRResponse)
@@ -485,19 +501,29 @@ async def process_text(request: OCRRequest):
     conn = db_connect()
     cursor = conn.cursor()
 
-    lec_class_names = set()
+    user_taken_lectures = []
+    lecture_names_set = set()
 
     for word in words:
         if len(word) > 3:
             cursor.execute(
-                "SELECT lecClassName FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
+                "SELECT lecClassName, lecClassification, lecCredit FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
             rows = cursor.fetchall()
             for row in rows:
-                lec_class_names.add(row['lecClassName'])
+                lecture_name = row['lecClassName']
+                if lecture_name not in lecture_names_set:
+                    lecture_info = {
+                        'lectureName': lecture_name,
+                        'lecClassification': row['lecClassification'],
+                        'lecCredit': str(row['lecCredit'])
+                    }
+                    user_taken_lectures.append(lecture_info)
+                    lecture_names_set.add(lecture_name)
 
     conn.close()
-    print(lec_class_names)
-    return OCRResponse(lecClassNames=list(lec_class_names))
+    # print(user_taken_lectures)
+    return OCRResponse(userTakenLectures=user_taken_lectures)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
