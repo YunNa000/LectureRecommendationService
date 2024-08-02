@@ -137,7 +137,11 @@ const UpdateUserForm = () => {
         "http://localhost:8000/user/update",
         {
           ...formData,
-          userTakenLectures: lectureInputs,
+          userTakenLectures: lectureInputs.map((lecture) => ({
+            lectureName: lecture.lectureName,
+            lecCredit: lecture.lecCredit,
+            lecClassification: lecture.lecClassification,
+          })),
         },
         {
           headers: {

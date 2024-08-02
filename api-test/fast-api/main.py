@@ -296,7 +296,7 @@ class PersonalInformation(BaseModel):
     userTakenLecture: Optional[str] = None  # 수강 강의
     userName: str
     selectedLecNumbers: List[str]
-    userTakenLectures: List[str]  # 유저가 수강한 강의(db에서가져온)
+    userTakenLectures: List[dict]  # 유저가 수강한 강의(db에서가져온)
 
 
 class userSelectedLecture(BaseModel):
@@ -331,10 +331,13 @@ async def get_user_data(request: Request):
                                            for lecNumber in lecNumbers]
 
         cursor.execute(
-            "SELECT takenLecName FROM userTakenLecture WHERE user_id = ?", (user_dict['user_id'],))
+            "SELECT takenLecName, takenLecClassification, takenLecCredit FROM userTakenLecture WHERE user_id = ?", (user_dict['user_id'],))
         takenLectures = cursor.fetchall()
-        user_dict['userTakenLectures'] = [lecture[0]
-                                          for lecture in takenLectures]
+        user_dict['userTakenLectures'] = [
+            {"lectureName": lecture[0],
+                "lecClassification": lecture[1], "lecCredit": lecture[2]}
+            for lecture in takenLectures
+        ]
 
         print("|-- /user/data | user_dict:",
               user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
@@ -401,15 +404,18 @@ async def update_user_hakbun(request: PersonalInformation):
     cursor.execute(
         "DELETE FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
 
-    if request.userTakenLecture:
-        if isinstance(request.userTakenLecture, list):
-            lectures = ",".join(request.userTakenLecture).split(',')
-        else:
-            lectures = request.userTakenLecture.split(',')
-
-        query = "INSERT INTO userTakenLecture (user_id, takenLecName) VALUES (?, ?)"
-        for lecture in lectures:
-            cursor.execute(query, (request.user_id, lecture.strip()))
+    if request.userTakenLectures:
+        query = """
+        INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit)
+        VALUES (?, ?, ?, ?)
+        """
+        for lecture in request.userTakenLectures:
+            cursor.execute(query, (
+                request.user_id,
+                lecture.get('lectureName'),
+                lecture.get('lecClassification'),
+                lecture.get('lecCredit')
+            ))
 
     conn.commit()
     conn.close()
