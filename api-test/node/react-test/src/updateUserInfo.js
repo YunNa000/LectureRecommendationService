@@ -83,6 +83,7 @@ const UpdateUserForm = () => {
         ...prevData,
         ...userData,
         userTakenLectures: userData.userTakenLectures,
+        userCredit: userData.userCredit, // userCredit 필드 추가
       }));
       setLectureInputs(userData.userTakenLectures);
     } catch (error) {
@@ -141,7 +142,9 @@ const UpdateUserForm = () => {
             lectureName: lecture.lectureName,
             lecCredit: lecture.lecCredit,
             lecClassification: lecture.lecClassification,
+            userCredit: lecture.userCredit, // userCredit 필드 추가
           })),
+          userCredit: formData.userCredit,
         },
         {
           headers: {
@@ -259,6 +262,16 @@ const UpdateUserForm = () => {
               onChange={(e) => handleLectureChange(index, e)}
               placeholder="분류"
             />
+            <select
+              name="userCredit"
+              value={lecture.userCredit || ""}
+              onChange={(e) => handleLectureChange(index, e)}
+            >
+              <option value="">받은 학점</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="F">F</option>
+            </select>
             <button type="button" onClick={() => removeLectureInput(index)}>
               삭제
             </button>
