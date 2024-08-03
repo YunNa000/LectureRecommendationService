@@ -209,7 +209,6 @@ class NotLoggedInResponse(BaseModel):
 async def root(user_id: str = Cookie(None)):  # 쿠키에서 user_id 가져옴, 없으면 None
     if user_id and user_id in user_sessions:
         return {
-            "message": f"Hello, {user_sessions[user_id]['name']}!",
             "user_id": user_id
         }
     return {"message": "log in required"}
@@ -378,7 +377,15 @@ async def update_user_hakbun(request: PersonalInformation):
     conn = db_connect()
     cursor = conn.cursor()
 
-    # user 테이블 업데이트 쿼리
+    cursor.execute("SELECT COUNT(*) FROM user WHERE userName = ? AND user_id != ?",
+                   (request.userName, request.user_id))
+    count = cursor.fetchone()[0]
+
+    if count > 0:
+        conn.close()
+        raise HTTPException(
+            status_code=400, detail="userName is duplicated")
+
     query = """
     UPDATE user
     SET userHakbun = ?,

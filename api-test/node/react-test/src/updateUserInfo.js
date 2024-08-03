@@ -83,7 +83,7 @@ const UpdateUserForm = () => {
         ...prevData,
         ...userData,
         userTakenLectures: userData.userTakenLectures,
-        userCredit: userData.userCredit, // userCredit 필드 추가
+        userCredit: userData.userCredit,
       }));
       setLectureInputs(userData.userTakenLectures);
     } catch (error) {
@@ -142,7 +142,7 @@ const UpdateUserForm = () => {
             lectureName: lecture.lectureName,
             lecCredit: lecture.lecCredit,
             lecClassification: lecture.lecClassification,
-            userCredit: lecture.userCredit, // userCredit 필드 추가
+            userCredit: lecture.userCredit,
           })),
           userCredit: formData.userCredit,
         },
@@ -152,7 +152,7 @@ const UpdateUserForm = () => {
           },
         }
       );
-      alert(response.data.message);
+      console.log("user info update", response.data.message);
     } catch (error) {
       console.error("errr updating user info", error);
       alert(error.response?.data?.detail || "errr updating user info");
@@ -169,6 +169,15 @@ const UpdateUserForm = () => {
           value={formData.user_id}
           onChange={handleChange}
           disabled
+        />
+      </div>
+      <div>
+        <label>닉네임: </label>
+        <input
+          type="text"
+          name="userName"
+          value={formData.userName}
+          onChange={handleChange}
         />
       </div>
       <div>

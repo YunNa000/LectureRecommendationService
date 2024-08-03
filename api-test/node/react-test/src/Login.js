@@ -54,7 +54,7 @@ const App = () => {
   return (
     <div>
       {userName ? (
-        <p>Hello!, {userName}</p>
+        <p>hello, {userName}!</p>
       ) : (
         <div>
           <button onClick={handleLogin}>Login</button>
