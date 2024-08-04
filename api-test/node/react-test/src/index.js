@@ -7,14 +7,16 @@ import LectureRequestForm from "./trash-bin/req";
 import UpdateUserInfo from "./updateUserInfo";
 import LectureSelection from "./trash-bin/req2";
 import LectureManagement from "./Lecture/LectureManagement";
+import Chat from "./chatbot";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Login />
+    {/* <Login /> */}
     {/* <LectureRequestForm /> */}
-    <UpdateUserInfo />
-    <LectureManagement />
+    {/* <UpdateUserInfo /> */}
+    {/* <LectureManagement /> */}
+    <Chat />
   </React.StrictMode>
 );
 

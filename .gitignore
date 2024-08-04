@@ -16,3 +16,7 @@ api-test/4-update-user-info/__pycache__/main.cpython-311.pyc
 api-test/fast-api/__pycache__/main.cpython-311.pyc
 api-test\fastAPI_chatbot\PRIVATE.py
 api-test/fastAPI_chatbot/PRIVATE.py
+api-test/fastAPI_chatbot/__pycache__/PRIVATE.cpython-311.pyc
+api-test/fastAPI_chatbot/__pycache__/main.cpython-311.pyc
+api-test/fastAPI_chatbot/__pycache__/langchain_utils.cpython-311.pyc
+api-test/fastAPI_chatbot/__pycache__/main.cpython-311.pyc
