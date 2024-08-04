@@ -1,16 +1,16 @@
 1. 디렉토리 구조 설정
 
 /
-|-- main.py
-|-- db.py
-|-- models.py
-|-- routers/
-| |-- **init**.py
-| |-- auth.py
-| |-- lectures.py
-| |-- users.py
-| |-- ocr.py
-|-- .env
+<br>|-- main.py
+<br>|-- db.py
+<br>|-- models.py
+<br>|-- routers/
+<br>| |-- init.py
+<br>| |-- auth.py
+<br>| |-- lectures.py
+<br>| |-- users.py
+<br>| |-- ocr.py
+<br>|-- .env
 
 2. main.py - app 생성 & 라우터 포함
 
