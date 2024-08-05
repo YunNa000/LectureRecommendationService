@@ -1,6 +1,6 @@
 import sqlite3
 
-DATABASE = './kwu-lecture-database-v6.db'
+DATABASE = './kwu-lecture-database-v6-clear.db'
 
 
 def db_connect():
