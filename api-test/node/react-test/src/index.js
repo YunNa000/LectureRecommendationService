@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import UpdateUserInfo from "./updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
 import Chat from "./chatbot";
+import GetListedLectureData from "./GetListedLectureData";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,6 +15,7 @@ root.render(
     <UpdateUserInfo />
     <LectureManagement />
     <Chat />
+    <GetListedLectureData />
   </React.StrictMode>
 );
 

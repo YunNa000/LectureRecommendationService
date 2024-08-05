@@ -25,6 +25,28 @@ class LectureRequest(BaseModel):
     lecSubName: Optional[str] = None  # 테마
 
 
+class LectureListed(BaseModel):
+    lecClassName: str
+    lecNumber: str
+    lecProfessor: str
+    lecTime: str
+    lecClassification: str
+    lecStars: Optional[float] = None  # 별점
+    lecAssignment: Optional[int] = None  # 과제
+    lecTeamplay: Optional[int] = None  # 팀플
+    lecGrade: Optional[int] = None  # 성적
+    lecIsPNP: Optional[int] = None  # pnp 여부
+    lecCredit: Optional[int] = None  # 학점
+    lecIsTBL: Optional[int] = None  # TBL 여부
+    lecIsPBL: Optional[int] = None  # PBL 여부
+    lecIsSeminar: Optional[int] = None  # 세미나 강의 여부
+    lecIsSmall: Optional[int] = None  # 소규모 강의 여부
+    lecIsConvergence: Optional[int] = None  # 융합 강의 여부
+    lecIsNoneFace: Optional[int] = None  # 100% 비대면 여부
+    lecIsArt: Optional[int] = None  # 실습 강의 여부
+    lecSubName: Optional[str] = None  # 테마
+
+
 class LoggedInResponse(BaseModel):
     message: str
     user_id: str
