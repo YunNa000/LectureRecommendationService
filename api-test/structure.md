@@ -1,14 +1,13 @@
 1. 디렉토리 구조 설정
 
-/
+server/
 <br>|-- main.py
 <br>|-- db.py
-<br>|-- models.py
-<br>|-- routers/
-<br>| |-- init.py
+<br>|-- model.py
+<br>|-- router/
 <br>| |-- auth.py
-<br>| |-- lectures.py
-<br>| |-- users.py
+<br>| |-- lecture.py
+<br>| |-- user.py
 <br>| |-- ocr.py
 <br>|-- .env
 
