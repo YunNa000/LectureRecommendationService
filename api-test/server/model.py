@@ -69,3 +69,7 @@ class OCRResponse(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
+
+
+class UserListedLectureTotalCredit(BaseModel):
+    total_credits: int

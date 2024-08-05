@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest
+from model import PersonalInformation, LecturesUpdateRequest, UserListedLectureTotalCredit
 from typing import List
 from db import db_connect
 import sqlite3
@@ -193,3 +193,27 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     conn.close()
 
     return {"message": "updated"}
+
+
+@router.get("/user/data/listed_lecture_total_credit", response_model=UserListedLectureTotalCredit)
+async def get_user_listed_lecture_total_credit(request: Request):
+    user_id = request.cookies.get("user_id")
+    print(f"|-- /user/data/listed_lecture_total_credit | user_id: {user_id}")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+SELECT u.user_id, SUM(l.lecCredit) AS totalCredits FROM userListedLecture u JOIN LectureTable l ON u.lecNumber = l.lecNumber WHERE u.user_id = ? GROUP BY u.user_id;""", (user_id,))
+
+    result = cursor.fetchone()
+    conn.close()
+
+    if result:
+        user_id, total_credits = result
+        print(result)
+        return {"total_credits": total_credits}
+    else:
+        raise HTTPException(status_code=404, detail="user not found")
