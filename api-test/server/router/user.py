@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, UserListedLectureTotalCredit
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed
 from typing import List
 from db import db_connect
 import sqlite3
@@ -10,7 +10,7 @@ router = APIRouter()
 @router.get("/user/data", response_model=List[PersonalInformation])
 async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
-    print(f"|-- /user/data | user_id: {user_id}")
+    # print(f"|-- /user/data | user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
 
@@ -53,8 +53,8 @@ async def get_user_data(request: Request):
 
         user_dict['userCredit'] = user_dict.get('userCredit')
 
-        print("|-- /user/data | user_dict:",
-              user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
+        # print("|-- /user/data | user_dict:",
+        #       user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
 
         user_info = PersonalInformation(
             user_id=user_dict['user_id'],
@@ -73,7 +73,7 @@ async def get_user_data(request: Request):
         )
 
         users.append(user_info)
-        print("|-- /user/data | users:", users)
+        # print("|-- /user/data | users:", users)
 
     conn.close()
 
@@ -195,25 +195,50 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     return {"message": "updated"}
 
 
-@router.get("/user/data/listed_lecture_total_credit", response_model=UserListedLectureTotalCredit)
-async def get_user_listed_lecture_total_credit(request: Request):
+@router.get("/user/data/listed_lectures_data", response_model=List[LectureListed])
+async def listed_lectures_data(request: Request):
     user_id = request.cookies.get("user_id")
-    print(f"|-- /user/data/listed_lecture_total_credit | user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
 
     conn = db_connect()
     cursor = conn.cursor()
 
-    cursor.execute("""
-SELECT u.user_id, SUM(l.lecCredit) AS totalCredits FROM userListedLecture u JOIN LectureTable l ON u.lecNumber = l.lecNumber WHERE u.user_id = ? GROUP BY u.user_id;""", (user_id,))
+    query = """
+    SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
+           lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
+           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName
+    FROM userListedLecture ull
+    JOIN LectureTable lt ON ull.lecNumber = lt.lecNumber
+    WHERE ull.user_id = ?
+    """
+    cursor.execute(query, (user_id,))
+    lectures = cursor.fetchall()
 
-    result = cursor.fetchone()
-    conn.close()
+    if not lectures:
+        raise HTTPException(status_code=404, detail="선택한 강의가 없어요.")
 
-    if result:
-        user_id, total_credits = result
-        print(result)
-        return {"total_credits": total_credits}
-    else:
-        raise HTTPException(status_code=404, detail="user not found")
+    user_listed_lectures = []
+    for lecture in lectures:
+        user_listed_lectures.append({
+            "lecClassName": lecture["lecClassName"] if lecture["lecClassName"] else "값이 비었어요",
+            "lecNumber": lecture["lecNumber"] if lecture["lecNumber"] else "값이 비었어요",
+            "lecProfessor": lecture["lecProfessor"] if lecture["lecProfessor"] else "값이 비었어요",
+            "lecTime": lecture["lecTime"] if lecture["lecTime"] else "값이 비었어요",
+            "lecClassification": lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요",
+            "lecStars": lecture["lecStars"] if lecture["lecStars"] else None,
+            "lecAssignment": int(lecture["lecAssignment"]) if lecture["lecAssignment"] is not None else None,
+            "lecTeamplay": int(lecture["lecTeamplay"]) if lecture["lecTeamplay"] is not None else None,
+            "lecGrade": int(lecture["lecGrade"]) if lecture["lecGrade"] is not None else None,
+            "lecIsPNP": int(lecture["lecIsPNP"]) if lecture["lecIsPNP"] is not None else None,
+            "lecCredit": int(lecture["lecCredit"]) if lecture["lecCredit"] is not None else None,
+            "lecIsTBL": int(lecture["lecIsTBL"]) if lecture["lecIsTBL"] is not None else None,
+            "lecIsPBL": int(lecture["lecIsPBL"]) if lecture["lecIsPBL"] is not None else None,
+            "lecIsSeminar": int(lecture["lecIsSeminar"]) if lecture["lecIsSeminar"] is not None else None,
+            "lecIsSmall": int(lecture["lecIsSmall"]) if lecture["lecIsSmall"] is not None else None,
+            "lecIsConvergence": int(lecture["lecIsConvergence"]) if lecture["lecIsConvergence"] is not None else None,
+            "lecIsArt": int(lecture["lecIsArt"]) if lecture["lecIsArt"] is not None else None,
+            "lecSubName": lecture["lecSubName"] if lecture["lecSubName"] else "값이 비었어요",
+        })
+
+    return user_listed_lectures
