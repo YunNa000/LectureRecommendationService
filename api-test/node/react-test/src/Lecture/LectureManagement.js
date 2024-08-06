@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import LectureCallGyoPill from "./LectureCallGyoPill";
 import LectureCallGyoSun from "./LectureCallGyoSun";
 import LectureCallJunGong from "./LectureCallJunGong";
+import LectureCallTotal from "./LectureCallTotal";
 import LectureList from "./LectureList";
 
 const LectureManagement = () => {
@@ -58,21 +59,53 @@ const LectureManagement = () => {
     }
   }, [userId]);
 
+  const handleSubmitTotalLec = (event) => {
+    event.preventDefault();
+
+    axios
+      .post(
+        "http://127.0.0.1:8000/lectures/total",
+        {
+          userGrade: userGrade,
+          userBunban: userBunban,
+          lecClassification: lecClassification,
+          lecStars: lecStars,
+          lecAssignment: lecAssignment,
+          lecTeamplay: lecTeamplay,
+          lecGrade: lecGrade,
+          lecSubName: lecSubName,
+          userId: userId,
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        setLectures(response.data);
+      })
+      .catch((error) => {
+        console.error("fetch lec list errrr:", error);
+        setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
+      });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     axios
-      .post("http://127.0.0.1:8000/lectures", {
-        userGrade: userGrade,
-        userBunban: userBunban,
-        lecClassification: lecClassification,
-        lecStars: lecStars,
-        lecAssignment: lecAssignment,
-        lecTeamplay: lecTeamplay,
-        lecGrade: lecGrade,
-        lecSubName: lecSubName,
-        withCredentials: true,
-      })
+      .post(
+        "http://127.0.0.1:8000/lectures",
+        {
+          userGrade: userGrade,
+          userBunban: userBunban,
+          lecClassification: lecClassification,
+          lecStars: lecStars,
+          lecAssignment: lecAssignment,
+          lecTeamplay: lecTeamplay,
+          lecGrade: lecGrade,
+          lecSubName: lecSubName,
+          userId: userId,
+        },
+        { withCredentials: true }
+      )
       .then((response) => {
         setLectures(response.data);
       })
@@ -158,7 +191,26 @@ const LectureManagement = () => {
             setUserBunban={setUserBunban}
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
+            setLecStars={setLecStars}
+            setlecAssignment={setlecAssignment}
+            setlecTeamplay={setlecTeamplay}
+            setlecGrade={setlecGrade}
             handleSubmit={handleSubmit}
+          />
+        );
+      case "전체":
+        return (
+          <LectureCallTotal
+            userGrade={userGrade}
+            setUserGrade={setUserGrade}
+            userBunban={userBunban}
+            setUserBunban={setUserBunban}
+            handleSubmit={handleSubmitTotalLec}
+            lecStars={lecStars}
+            setLecStars={setLecStars}
+            setlecAssignment={setlecAssignment}
+            setlecTeamplay={setlecTeamplay}
+            setlecGrade={setlecGrade}
           />
         );
       default:
@@ -172,6 +224,7 @@ const LectureManagement = () => {
         <button onClick={() => setSelectedButton("교필")}>교필</button>
         <button onClick={() => setSelectedButton("교선")}>교선</button>
         <button onClick={() => setSelectedButton("전공")}>전공</button>
+        <button onClick={() => setSelectedButton("전체")}>전체</button>
       </div>
       {renderSelectedComponent()}
       <LectureList
