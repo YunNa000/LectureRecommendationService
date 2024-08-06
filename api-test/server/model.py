@@ -25,6 +25,8 @@ class LectureRequest(BaseModel):
     lecIsArt: Optional[int] = None  # 실습 강의 여부
     lecSubName: Optional[str] = None  # 테마
     userId: str
+    year: Optional[int] = 24
+    semester: Optional[str] = "1학기"
 
 
 class LectureListed(BaseModel):

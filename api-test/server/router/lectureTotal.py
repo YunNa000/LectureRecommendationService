@@ -41,6 +41,12 @@ async def read_lectures_all(request: LectureRequest):
     if request.lecSubName:
         conditions.append("lecSubName = ?")
         parameters.append(request.lecSubName)
+    if request.year:
+        conditions.append("year = ?")
+        parameters.append(request.year)
+    if request.semester:
+        conditions.append("semester = ?")
+        parameters.append(request.semester)
     if request.isUserForeign is not None:
         conditions.append("lecForeignPeopleCanTake = 1")
     if request.lecClassName:

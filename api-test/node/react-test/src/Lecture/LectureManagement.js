@@ -22,6 +22,8 @@ const LectureManagement = () => {
   const [lecGrade, setlecGrade] = useState();
   const [lecSubName, setlecSubName] = useState();
   const [lecClassName, setLecClassName] = useState("");
+  const [year, setYear] = useState("");
+  const [semester, setSemester] = useState("");
 
   useEffect(() => {
     const fetchUserId = () => {
@@ -76,6 +78,8 @@ const LectureManagement = () => {
           lecGrade: lecGrade,
           lecSubName: lecSubName,
           lecClassName: lecClassName,
+          year: year,
+          semester: semester,
           userId: userId,
         },
         { withCredentials: true }
@@ -222,6 +226,10 @@ const LectureManagement = () => {
             setlecGrade={setlecGrade}
             lecClassName={lecClassName}
             setLecClassName={setLecClassName}
+            year={year}
+            semester={semester}
+            setYear={setYear}
+            setSemester={setSemester}
           />
         );
       default:

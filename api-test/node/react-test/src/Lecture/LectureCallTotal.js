@@ -16,6 +16,10 @@ const LectureCallTotal = ({
   handleSubmit,
   lecClassName,
   setLecClassName,
+  semester,
+  setSemester,
+  year,
+  setYear,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -42,6 +46,25 @@ const LectureCallTotal = ({
         value={lecStars}
         onChange={(e) => setLecStars(e.target.value)}
       />
+      <label>year</label>
+      <input
+        id="year"
+        name="year"
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+      />
+      <label>semester</label>
+      <select
+        id="semester"
+        name="semester"
+        value={semester}
+        onChange={(e) => setSemester(parseInt(e.target.value))}
+      >
+        <option value="1학기">1학기</option>
+        <option value="여름학기">여름학기</option>
+        <option value="2학기">2학기</option>
+        <option value="겨울학기">겨울학기</option>
+      </select>
       <label>assignment</label>
       <select
         id="lecAssignment"
