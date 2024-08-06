@@ -22,7 +22,7 @@ class User(BaseModel):
     userName: str
 
 def get_db_connection():
-    conn = sqlite3.connect('../kwu-lecture-database-v6.db')
+    conn = sqlite3.connect('./kwu-lecture-database-v6.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -37,7 +37,7 @@ async def get_users(userName: Optional[str] = Query(None, description="Filter us
             cursor.execute("SELECT user_id, userName FROM user WHERE userName LIKE ?", (f"%{userName}%",))
         else:
             cursor.execute("SELECT user_id, userName FROM user")
-        
+
         users = cursor.fetchall()
         
         if not users:
@@ -56,11 +56,6 @@ async def get_users(userName: Optional[str] = Query(None, description="Filter us
 class FriendRequest(BaseModel):
     user_id1: str
     user_id2: str
-
-def get_db_connection():
-    conn = sqlite3.connect('kwu-lecture-database-v5.db')
-    conn.row_factory = sqlite3.Row
-    return conn
 
 @router.post("/add_friend")
 async def add_friend(request: FriendRequest):

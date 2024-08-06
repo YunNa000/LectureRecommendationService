@@ -7,6 +7,7 @@ import UpdateUserInfo from "./updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
 import Chat from "./chatbot";
 import GetListedLectureData from "./GetListedLectureData";
+import UserList from "./Friend/UserList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,6 +17,7 @@ root.render(
     <LectureManagement />
     <Chat />
     <GetListedLectureData />
+    <UserList />
   </React.StrictMode>
 );
 
