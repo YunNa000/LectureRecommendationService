@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback  } from 'react';
 import Cookies from "js-cookie"
+
+
 
 
 const FriendList = () => {
@@ -7,7 +9,7 @@ const FriendList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [myUserId, setMyUserId] = useState(''); // 문자열로 저장
-
+    const [statusFriend, setStatus] = useState(false); // 문자열로 저장
     useEffect(() => {
       const fetchUserId = () => {
         const cookieUserId = Cookies.get("user_id");
@@ -18,51 +20,61 @@ const FriendList = () => {
   
       fetchUserId();
     }, []);
-
-    
+  
     useEffect(() => {
-      const fetchUsers = async () => {
-        try {
-          const response = await fetch('http://localhost:8000/friends?userId=104216379361715837223');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-          setUsers(data);
-          setLoading(false);
-        } catch (e) {
-          setError('유저 데이터 가져오기 오류: ' + e.message);
-          setLoading(false);
-        }
-      };
-  
-      fetchUsers();
-      //setMyUserId('104216379361715837223');
-    }, []);
-  
+      const fetchFriends = async () => {
+          if (!myUserId) return; // myUserId가 없으면 함수 종료
+          setLoading(true);
+          try {
+              const response = await fetch(`http://localhost:8000/friends?userId=${myUserId}`);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`+myUserId);
+              }
+              const data = await response.json();
+              setUsers(data);
+              console.log(myUserId+"니키니콜");
+            } catch (e) {
+                setError(e.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        setStatus(false);
+        fetchFriends();
+
+    }, [myUserId, statusFriend]); // myUserId가 변경될 때마다 실행
+
+
     const deleteFriendRequest = async (friendId) => {
-      try {
-        const response = await fetch(`http://localhost:8000/friends`,{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_id1: myUserId.toString(),//.toString()
-            user_id2: friendId.toString(), // 문자열로 변환
-          }),
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!myUserId) {
+            alert('사용자 ID가 설정되지 않았습니다. 다시 로그인해주세요.');
+            return;
         }
-  
-        const result = await response.json();
-        alert(result.message); // 성공 또는 실패 메시지를 표시
-      } catch (e) {
-        alert('친구 추가 오류:'  + e.message);
-      }
+
+        try {
+            const response = await fetch(`http://localhost:8000/delete_friend`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id1: myUserId.toString(),
+                    user_id2: friendId.toString(),
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result.message);
+            setStatus(true);
+        } catch (e) {
+            alert('친구 삭제 오류: ' + e.message);
+        }
     };
-  
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
   
@@ -83,7 +95,7 @@ const FriendList = () => {
             {users.map((user) => (
               <tr key={user.user_id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}{myUserId.type}</td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                   <button onClick={() => deleteFriendRequest(user.user_id)}>Delete Friend</button>
                 </td>

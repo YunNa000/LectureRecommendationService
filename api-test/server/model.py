@@ -96,3 +96,14 @@ class ChatRequest(BaseModel):
 
 class UserListedLectureTotalCredit(BaseModel):
     total_credits: int
+
+
+#손원택 작성 친구 관련
+class User(BaseModel):
+    user_id: str
+    userName: Optional[str] = None  
+
+class FriendRequest(BaseModel):
+    user_id1: str
+    user_id2: str
+    friendRequest: Optional[bool] = None  
