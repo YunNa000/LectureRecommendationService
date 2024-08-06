@@ -62,6 +62,24 @@ const LectureManagement = () => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const fetchLatestYearSemester = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/other/now_year_n_semester"
+        );
+        const { latest_year, latest_semester } = response.data;
+        setYear(latest_year);
+        setSemester(latest_semester);
+      } catch (error) {
+        console.error("fetch latest year and semester error:", error);
+        alert(error.response?.data?.detail || "errr fetching year & semester");
+      }
+    };
+
+    fetchLatestYearSemester();
+  }, []);
+
   const handleSubmitTotalLec = (event) => {
     event.preventDefault();
 

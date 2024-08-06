@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv import load_dotenv
-from router import user, auth, lecture, ocr, chat, friend
-from router import user, auth, lecture, ocr, chat, lectureTotal
+from router import user, auth, lecture, ocr, chat, lectureTotal, friend, other
 
 load_dotenv()
 
@@ -30,6 +29,7 @@ app.include_router(ocr.router)
 app.include_router(chat.router)
 app.include_router(friend.router)
 app.include_router(lectureTotal.router)
+app.include_router(other.router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
