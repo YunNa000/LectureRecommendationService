@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import Cookies from "js-cookie"
+
 
 const FriendList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [myUserId, setMyUserId] = useState(''); // 문자열로 저장
+
+    useEffect(() => {
+      const fetchUserId = () => {
+        const cookieUserId = Cookies.get("user_id");
+        if (cookieUserId) {
+          setMyUserId(cookieUserId);
+        }
+      };
   
+      fetchUserId();
+    }, []);
+
+    
     useEffect(() => {
       const fetchUsers = async () => {
         try {
@@ -23,12 +37,12 @@ const FriendList = () => {
       };
   
       fetchUsers();
-      setMyUserId('104216379361715837223');
+      //setMyUserId('104216379361715837223');
     }, []);
   
     const deleteFriendRequest = async (friendId) => {
       try {
-        const response = await fetch('http://localhost:8000/delete_friend', {
+        const response = await fetch(`http://localhost:8000/friends`,{
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,15 +76,19 @@ const FriendList = () => {
               <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>User ID</th>
               <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Username</th>
               <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.user_id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}{myUserId.type}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
                   <button onClick={() => deleteFriendRequest(user.user_id)}>Delete Friend</button>
+                </td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                  <button>친구 시간표</button>
                 </td>
               </tr>
             ))}

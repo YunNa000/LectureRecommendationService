@@ -21,17 +21,21 @@ class User(BaseModel):
     user_id: str
     userName: Optional[str] = None  
 
+class FriendRequest(BaseModel):
+    user_id1: str
+    user_id2: str
+    friendRequest: Optional[bool] = None  
+
 def get_db_connection():
     conn = sqlite3.connect('./kwu-lecture-database-v6.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-
 @router.get("/users", response_model=list[User])
 async def get_users(userName: Optional[str] = Query(None, description="Filter users by userName")):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+    #친구검색 허용 토글 추가
     try:
         if userName:
             cursor.execute("SELECT user_id, userName FROM user WHERE userName LIKE ?", (f"%{userName}%",))
@@ -89,9 +93,6 @@ async def get_friends(
         cursor.close()
         conn.close()
 
-class FriendRequest(BaseModel):
-    user_id1: str
-    user_id2: str
 
 @router.post("/add_friend")
 async def add_friend(request: FriendRequest):
@@ -192,3 +193,8 @@ async def delete_friend(request: FriendRequest):
     finally:
         cursor.close()
         conn.close()
+
+
+@router.post("/set_friendrequest")#boolean이랑 아이디 받아서 친구요청 수락
+async def delete_friend(request: FriendRequest):
+    return {"message": "Friend request removed"}

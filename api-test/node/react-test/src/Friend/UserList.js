@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import Cookies from "js-cookie"
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [myUserId, setMyUserId] = useState(''); // 문자열로 저장
+
+    useEffect(() => {
+      const fetchUserId = () => {
+        const cookieUserId = Cookies.get("user_id");
+        if (cookieUserId) {
+          setMyUserId(cookieUserId);
+        }
+      };
   
+      fetchUserId();
+    }, []);
+
+
     useEffect(() => {
       const fetchUsers = async () => {
         try {
@@ -23,7 +36,7 @@ const UserList = () => {
       };
   
       fetchUsers();
-      setMyUserId('104216379361715837223');
+      //setMyUserId('104216379361715837223');
     }, []);
   
     const handleFriendRequest = async (friendId) => {
