@@ -23,7 +23,7 @@ const UserList = () => {
       };
   
       fetchUsers();
-      setMyUserId('104216379361715830000');
+      setMyUserId('104216379361715837223');
     }, []);
   
     const handleFriendRequest = async (friendId) => {

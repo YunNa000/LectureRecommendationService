@@ -9,7 +9,7 @@ const FriendList = () => {
     useEffect(() => {
       const fetchUsers = async () => {
         try {
-          const response = await fetch('http://localhost:8000/friends');
+          const response = await fetch('http://localhost:8000/friends?userId=104216379361715837223');
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -23,26 +23,21 @@ const FriendList = () => {
       };
   
       fetchUsers();
-      setMyUserId('104216379361715830000');
+      setMyUserId('104216379361715837223');
     }, []);
   
-    const handleFriendRequest = async (friendId) => {
+    const deleteFriendRequest = async (friendId) => {
       try {
-        const response = await fetch('http://localhost:8000/add_friend', {
+        const response = await fetch('http://localhost:8000/delete_friend', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user_id1: myUserId,//.toString()
+            user_id1: myUserId.toString(),//.toString()
             user_id2: friendId.toString(), // 문자열로 변환
           }),
         });
-        // input 필드에서 user_id 값을 가져와 setMyUserId에 설정(수정 필수)
-        const userIdInput = document.querySelector('input[name="user_id"]');
-        if (userIdInput) {
-          setMyUserId(userIdInput.value);
-        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -75,7 +70,7 @@ const FriendList = () => {
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => handleFriendRequest(user.user_id)}>Delete Friend</button>
+                  <button onClick={() => deleteFriendRequest(user.user_id)}>Delete Friend</button>
                 </td>
               </tr>
             ))}
