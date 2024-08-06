@@ -17,14 +17,13 @@ const UserList = () => {
           setUsers(data);
           setLoading(false);
         } catch (e) {
-          setError('Failed to fetch users: ' + e.message);
+          setError('유저 데이터 가져오기 오류: ' + e.message);
           setLoading(false);
         }
       };
   
       fetchUsers();
-      // 여기에서 실제 사용자 ID를 설정해야 합니다. 예를 들어:
-      setMyUserId('1'); // 문자열로 설정
+      setMyUserId('104216379361715830000');
     }, []);
   
     const handleFriendRequest = async (friendId) => {
@@ -39,7 +38,11 @@ const UserList = () => {
             user_id2: friendId.toString(), // 문자열로 변환
           }),
         });
-  
+        // input 필드에서 user_id 값을 가져와 setMyUserId에 설정(수정 필수)
+        const userIdInput = document.querySelector('input[name="user_id"]');
+        if (userIdInput) {
+          setMyUserId(userIdInput.value);
+        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -47,7 +50,7 @@ const UserList = () => {
         const result = await response.json();
         alert(result.message); // 성공 또는 실패 메시지를 표시
       } catch (e) {
-        alert('Failed to add friend: ' + e.message);
+        alert('친구 추가 오류:'  + e.message);
       }
     };
   
