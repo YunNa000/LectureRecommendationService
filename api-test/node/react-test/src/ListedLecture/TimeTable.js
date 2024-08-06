@@ -8,20 +8,22 @@ const Timetable = ({ checkedLectures }) => {
 
     checkedLectures.forEach((lecture) => {
       const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
-      times.forEach((time) => {
-        const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
+      if (times) {
+        times.forEach((time) => {
+          const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
 
-        while (timetable.length < row) {
-          timetable.push(Array(timetable[0].length).fill(null));
-        }
-        while (timetable[0].length < col) {
-          timetable = timetable.map((row) => [...row, null]);
-        }
+          while (timetable.length < row) {
+            timetable.push(Array(timetable[0].length).fill(null));
+          }
+          while (timetable[0].length < col) {
+            timetable = timetable.map((row) => [...row, null]);
+          }
 
-        timetable[row - 1][
-          col - 1
-        ] = `${lecture.lecClassName} (${lecture.lecProfessor})`;
-      });
+          timetable[row - 1][
+            col - 1
+          ] = `${lecture.lecClassName} (${lecture.lecProfessor})`;
+        });
+      }
     });
 
     return timetable.map((row, rowIndex) => (
@@ -33,10 +35,23 @@ const Timetable = ({ checkedLectures }) => {
     ));
   };
 
+  const renderNullLectures = () => {
+    return checkedLectures
+      .filter((lecture) => !lecture.lecTime.match(/\((\d+):(\d+)\)/g))
+      .map((lecture, index) => (
+        <p key={index}>
+          {lecture.lecClassName} ({lecture.lecProfessor})
+        </p>
+      ));
+  };
+
   return (
-    <table border="1">
-      <tbody>{renderTimetable()}</tbody>
-    </table>
+    <div>
+      <table border="1">
+        <tbody>{renderTimetable()}</tbody>
+      </table>
+      {renderNullLectures()}
+    </div>
   );
 };
 
