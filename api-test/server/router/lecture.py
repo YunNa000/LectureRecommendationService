@@ -19,8 +19,21 @@ router = APIRouter()
 
 @router.post("/lectures", response_model=List[dict])
 async def read_lectures(request: LectureRequest):
+    user_id = request.userId
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
     conn = db_connect()
     cursor = conn.cursor()
+
+    # 유저가 수강한 강의 가져오기
+    user_taken_query = """
+    SELECT takenLecName
+    FROM userTakenLecture
+    WHERE user_id = ?
+    """
+    cursor.execute(user_taken_query, (user_id,))
+    user_taken_courses = [row['takenLecName'] for row in cursor.fetchall()]
 
     classification = request.lecClassification
     user_grade = request.userGrade
@@ -46,66 +59,58 @@ async def read_lectures(request: LectureRequest):
         bunban_condition=bunban_condition, user_grade=user_grade)
 
     parameters = [f"%{request.userBunban}%", classification]
-    # print("request.lecStars: ", request.lecStars)
-    # print("subname: ", request.lecSubName)
+    conditions = []
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
-    if request.userTakenCourse:
-        placeholders = ', '.join(['?'] * len(request.userTakenCourse))
-        query += f" AND lecClassName NOT IN ({placeholders})"
-        parameters.extend(request.userTakenCourse)
+    if user_taken_courses:
+        placeholders = ', '.join(['?'] * len(user_taken_courses))
+        conditions.append(f"lecClassName NOT IN ({placeholders})")
+        parameters.extend(user_taken_courses)
     if request.lecSubName:
-        query += " AND lecSubName = ?"
+        conditions.append("lecSubName = ?")
         parameters.append(request.lecSubName)
     if request.isUserForeign is not None:
-        query += " AND lecForeignPeopleCanTake = 1"
+        conditions.append("lecForeignPeopleCanTake = 1")
     if request.isUserMultiple is not None:
-        query += " AND lecCanTakeMultipleMajor = 1"
+        conditions.append("lecCanTakeMultipleMajor = 1")
     if request.lecStars:
-        # print(request.lecStars)
-        query += " AND lecStars >= ?"
+        conditions.append("lecStars >= ?")
         parameters.append(str(request.lecStars))
     if request.lecAssignment is not None:
-        # print("add queary: AND lecAssignment >= 65")
-        query += " AND lecAssignment >= 65"
+        conditions.append("lecAssignment >= 65")
     if request.lecTeamplay is not None:
-        query += " AND lecTeamplay >= 65"
+        conditions.append("lecTeamplay >= 65")
     if request.lecGrade is not None:
-        query += " AND lecGrade >= 65"
+        conditions.append("lecGrade >= 65")
     if request.lecIsPNP is not None:
-        query += " AND lecIsPNP = 1"
+        conditions.append("lecIsPNP = 1")
     if request.lecCredit is not None:
-        query += " AND lecCredit = ?"
+        conditions.append("lecCredit = ?")
         parameters.append(str(request.lecCredit))
     if request.lecIsTBL is not None:
-        query += " AND lecIsTBL = 1"
+        conditions.append("lecIsTBL = 1")
     if request.lecIsPBL is not None:
-        query += " AND lecIsPBL = 1"
+        conditions.append("lecIsPBL = 1")
     if request.lecIsSeminar is not None:
-        query += " AND lecIsSeminar = 1"
+        conditions.append("lecIsSeminar = 1")
     if request.lecIsSmall is not None:
-        query += " AND lecIsSmall = 1"
+        conditions.append("lecIsSmall = 1")
     if request.lecIsConvergence is not None:
-        query += " AND lecIsConvergence = 1"
+        conditions.append("lecIsConvergence = 1")
     if request.lecIsNoneFace is not None:
-        query += " AND (lecIseLearning = 1 OR lecIsDistance100 = 1)"
+        conditions.append("(lecIseLearning = 1 OR lecIsDistance100 = 1)")
     if request.lecIsArt is not None:
-        query += " AND lecIsArt = 1"
-
-    print("=======\n")
+        conditions.append("lecIsArt = 1")
+    if conditions:
+        query += " AND " + " AND ".join(conditions)
 
     cursor.execute(query, parameters)
     lectures = cursor.fetchall()
 
     conn.close()
 
-    print(lectures)
-
     if not lectures:
         raise HTTPException(status_code=404, detail="해당 조건에 맞는 강의가 없어요..😢")
-
-    # 우선 class name, lecture number만 반환되도록 함.
-    # 실제 페이지별로 필요한? 반환값들 확실히 해서 정리하는 것이 필요
 
     return_data = []
     for lecture in lectures:

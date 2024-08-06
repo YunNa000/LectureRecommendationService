@@ -1,6 +1,6 @@
 import React from "react";
 
-const LectureCallGyoPill = ({
+const LectureCallJunGong = ({
   userGrade,
   setUserGrade,
   userBunban,
@@ -101,4 +101,4 @@ const LectureCallGyoPill = ({
   );
 };
 
-export default LectureCallGyoPill;
+export default LectureCallJunGong;
