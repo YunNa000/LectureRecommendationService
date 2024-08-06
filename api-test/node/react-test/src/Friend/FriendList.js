@@ -32,7 +32,6 @@ const FriendList = () => {
               }
               const data = await response.json();
               setUsers(data);
-              console.log(myUserId+"니키니콜");
             } catch (e) {
                 setError(e.message);
             } finally {
