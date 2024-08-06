@@ -58,18 +58,20 @@ async def get_user_data(request: Request):
 
         user_info = PersonalInformation(
             user_id=user_dict['user_id'],
-            userHakbun=user_dict['userHakbun'],
-            userIsForeign=user_dict['userIsForeign'],
-            userBunban=user_dict['userBunban'],
-            userYear=user_dict['userYear'],
-            userMajor=user_dict['userMajor'],
-            userIsMultipleMajor=user_dict['userIsMultipleMajor'],
-            userWhatMultipleMajor=user_dict['userWhatMultipleMajor'],
-            userTakenLecture=user_dict['userTakenLecture'],
+            userHakbun=user_dict['userHakbun'] if user_dict['userHakbun'] else 0,
+            userIsForeign=user_dict['userIsForeign'] if user_dict['userIsForeign'] else False,
+            userBunban=user_dict['userBunban'] if user_dict['userBunban'] else "",
+            userYear=user_dict['userYear'] if user_dict['userYear'] else "",
+            userMajor=user_dict['userMajor'] if user_dict['userMajor'] else "_",
+            userIsMultipleMajor=user_dict['userIsMultipleMajor'] if user_dict['userIsMultipleMajor'] is not None else False,
+            userWhatMultipleMajor=user_dict['userWhatMultipleMajor'] if user_dict['userWhatMultipleMajor'] else None,
+            userTakenLecture=user_dict['userTakenLecture'] if user_dict['userTakenLecture'] else None,
             userName=user_dict['userName'],
-            selectedLecNumbers=user_dict['selectedLecNumbers'],
-            userTakenLectures=user_dict['userTakenLectures'],
-            userCredit=user_dict['userCredit']
+            selectedLecNumbers=user_dict['selectedLecNumbers'] if user_dict['selectedLecNumbers'] else [
+            ],
+            userTakenLectures=user_dict['userTakenLectures'] if user_dict['userTakenLectures'] else [
+            ],
+            userCredit=user_dict['userCredit'] if user_dict['userCredit'] else None
         )
 
         users.append(user_info)
