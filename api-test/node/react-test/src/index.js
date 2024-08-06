@@ -6,7 +6,6 @@ import reportWebVitals from "./reportWebVitals";
 import UpdateUserInfo from "./User/updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
 import Chat from "./chatbot";
-import GetListedLectureData from "./GetListedLectureData";
 import UserList from "./Friend/UserList";
 import FriendList from "./Friend/FriendList";
 import GetListedLectureData from "./ListedLecture/GetListedLectureData";

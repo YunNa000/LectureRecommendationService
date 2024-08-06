@@ -5,6 +5,7 @@ from typing import List, Union, Dict, Optional
 class LectureRequest(BaseModel):
     userGrade: int  # 유저 학년
     userBunban: str  # 유저 분반
+    lecClassName: str
     lecClassification: str  # 전필/전전/교선/교필 ...
     userTakenCourse: Optional[List[str]] = None  # 유저 수강 내역
     isUserForeign: Optional[int] = None  # 유저 외국인 여부  # lecForeignPeopleCanTake

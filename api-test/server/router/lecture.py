@@ -66,6 +66,11 @@ async def read_lectures(request: LectureRequest):
         placeholders = ', '.join(['?'] * len(user_taken_courses))
         conditions.append(f"lecClassName NOT IN ({placeholders})")
         parameters.extend(user_taken_courses)
+    if request.lecClassName:
+        lecClassName = request.lecClassName.replace(" ", "")
+        print(lecClassName)
+        conditions.append("lecClassName LIKE ?")
+        parameters.append(f"%{lecClassName}%")
     if request.lecSubName:
         conditions.append("lecSubName = ?")
         parameters.append(request.lecSubName)

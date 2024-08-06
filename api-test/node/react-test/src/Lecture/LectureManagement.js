@@ -21,6 +21,7 @@ const LectureManagement = () => {
   const [lecTeamplay, setlecTeamplay] = useState();
   const [lecGrade, setlecGrade] = useState();
   const [lecSubName, setlecSubName] = useState();
+  const [lecClassName, setLecClassName] = useState("");
 
   useEffect(() => {
     const fetchUserId = () => {
@@ -74,6 +75,7 @@ const LectureManagement = () => {
           lecTeamplay: lecTeamplay,
           lecGrade: lecGrade,
           lecSubName: lecSubName,
+          lecClassName: lecClassName,
           userId: userId,
         },
         { withCredentials: true }
@@ -102,6 +104,7 @@ const LectureManagement = () => {
           lecTeamplay: lecTeamplay,
           lecGrade: lecGrade,
           lecSubName: lecSubName,
+          lecClassName: lecClassName,
           userId: userId,
         },
         { withCredentials: true }
@@ -162,6 +165,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             setlecSubName={setlecSubName}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "교선":
@@ -180,6 +185,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             setlecSubName={setlecSubName}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "전공":
@@ -196,6 +203,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             handleSubmit={handleSubmit}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "전체":
@@ -211,6 +220,8 @@ const LectureManagement = () => {
             setlecAssignment={setlecAssignment}
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       default:

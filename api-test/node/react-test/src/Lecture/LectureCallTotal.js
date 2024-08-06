@@ -14,6 +14,8 @@ const LectureCallTotal = ({
   lecGrade,
   setlecGrade,
   handleSubmit,
+  lecClassName,
+  setLecClassName,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -70,6 +72,13 @@ const LectureCallTotal = ({
         <option value="1">너그러움</option>
         <option>상관없음</option>
       </select>
+      <label>lecClassName</label>
+      <input
+        id="lecClassName"
+        name="lecClassName"
+        value={lecClassName}
+        onChange={(e) => setLecClassName(e.target.value)}
+      />
       <button type="submit">강의 리스트 불러오기</button>
     </form>
   );

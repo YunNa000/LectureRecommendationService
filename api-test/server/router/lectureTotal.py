@@ -43,6 +43,10 @@ async def read_lectures_all(request: LectureRequest):
         parameters.append(request.lecSubName)
     if request.isUserForeign is not None:
         conditions.append("lecForeignPeopleCanTake = 1")
+    if request.lecClassName:
+        lecClassName = request.lecClassName.replace(" ", "")
+        conditions.append("lecClassName LIKE ?")
+        parameters.append(f"%{lecClassName}%")
     if request.isUserMultiple is not None:
         conditions.append("lecCanTakeMultipleMajor = 1")
     if request.lecStars:
