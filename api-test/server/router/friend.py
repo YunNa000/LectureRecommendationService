@@ -26,13 +26,18 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+
 @router.get("/users", response_model=list[User])
-async def get_all_users():
+async def get_users(userName: Optional[str] = Query(None, description="Filter users by userName")):
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        cursor.execute("SELECT user_id, userName FROM user")
+        if userName:
+            cursor.execute("SELECT user_id, userName FROM user WHERE userName LIKE ?", (f"%{userName}%",))
+        else:
+            cursor.execute("SELECT user_id, userName FROM user")
+        
         users = cursor.fetchall()
         
         if not users:
