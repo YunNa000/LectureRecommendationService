@@ -13,6 +13,11 @@ const LectureList = ({ lectures, selectedLectures, handleLectureSelect }) => {
                 checked={selectedLectures.includes(lecture.lecNumber)}
                 onChange={() => handleLectureSelect(lecture.lecNumber)}
               />
+              {lecture.userCanNotTake === "userCanNotTake"
+                ? "(x) "
+                : lecture.userCanNotTake === "userAlreadyTaken"
+                ? "(이미수강한 강의) "
+                : ""}
               {lecture.lecClassName} ({lecture.lecNumber}){lecture.lecProfessor}{" "}
               | 학점: {lecture.lecCredit} | 시간: {lecture.lecTime} | 테마명:
               {lecture.lecSubName} | 과제 양(높을수록 적음):
