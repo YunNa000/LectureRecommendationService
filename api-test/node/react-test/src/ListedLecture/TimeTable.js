@@ -11,7 +11,6 @@ const Timetable = ({ checkedLectures }) => {
       times.forEach((time) => {
         const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
 
-        // 배열의 크기를 동적으로 조정
         while (timetable.length < row) {
           timetable.push(Array(timetable[0].length).fill(null));
         }

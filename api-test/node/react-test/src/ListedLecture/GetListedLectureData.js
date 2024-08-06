@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LectureList from "./LectureList";
 import Timetable from "./TimeTable";
+import SumCredit from "./SumCredit";
 
 const GetListedLectureData = () => {
   const [listedLectures, setListedLectures] = useState([]);
@@ -55,6 +56,10 @@ const GetListedLectureData = () => {
         handleCheck={handleCheck}
       />
       <Timetable checkedLectures={checkedLectures} />
+      <SumCredit
+        listedLectures={listedLectures}
+        checkedLectures={checkedLectures}
+      />
     </div>
   );
 };
