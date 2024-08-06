@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import LectureList from "./LectureList";
+import Timetable from "./TimeTable";
 
 const GetListedLectureData = () => {
   const [listedLectures, setListedLectures] = useState([]);
+  const [checkedLectures, setCheckedLectures] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,9 +19,9 @@ const GetListedLectureData = () => {
       );
       setListedLectures(response.data);
       setLoading(false);
-      console.log("user listed lectrues's data", response.data);
+      console.log("user listed lectures's data", response.data);
     } catch (error) {
-      console.error("errrr fetching user data", error);
+      console.error("error fetching user data", error);
       setError(error);
       setLoading(false);
     }
@@ -28,30 +31,30 @@ const GetListedLectureData = () => {
     fetchUserData();
   }, []);
 
+  const handleCheck = (lecture) => {
+    setCheckedLectures((prev) =>
+      prev.includes(lecture)
+        ? prev.filter((item) => item !== lecture)
+        : [...prev, lecture]
+    );
+  };
+
   if (loading) {
     return <div>loading...</div>;
   }
 
   if (error) {
-    return <div>errr fetching data</div>;
+    return <div>error fetching data</div>;
   }
 
   return (
     <div>
-      {listedLectures.length === 0 ? (
-        <div>선택한 강의가 없어요.</div>
-      ) : (
-        <div>
-          {listedLectures.map((lecture, index) => (
-            <div key={index}>
-              <p>
-                {lecture.lecClassName} | <small>{lecture.lecProfessor}</small>
-              </p>
-              {/* console.log로 받아온 값들 확인해고, 추가해야할 값들 잘 추가해야돼요. */}
-            </div>
-          ))}
-        </div>
-      )}
+      <LectureList
+        lectures={listedLectures}
+        checkedLectures={checkedLectures}
+        handleCheck={handleCheck}
+      />
+      <Timetable checkedLectures={checkedLectures} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import UpdateUserInfo from "./updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
 import Chat from "./chatbot";
-import GetListedLectureData from "./GetListedLectureData";
+import GetListedLectureData from "./MS_getListedLecture/GetListedLectureData";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
