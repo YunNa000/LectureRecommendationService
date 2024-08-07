@@ -104,6 +104,7 @@ const LectureCallGyoPill = ({
         <option value="수리와자연">수리와자연</option>
         <option value="서울권역e-러닝">서울권역e-러닝</option>
         <option value="K-MOOC">K-MOOC</option>
+        <option value="매치업집중이수제">매치업집중이수제</option>
       </select>
       <label>lecClassName</label>
       <input
