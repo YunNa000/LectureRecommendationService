@@ -58,12 +58,12 @@ const SumCredit = ({ listedLectures, checkedLectures, year, semester }) => {
       <p>총 학점: {totalCredits}</p>
       <p>체크한 강의 총 학점: {checkedCredits}</p>
       <p>
-        전공 학점:{" "}
+        전공 학점:
         {checkedCreditDetails.majorRequired +
           checkedCreditDetails.majorElective}
       </p>
       <p>
-        교양 학점:{" "}
+        교양 학점:
         {checkedCreditDetails.generalRequired +
           checkedCreditDetails.generalElective}
       </p>

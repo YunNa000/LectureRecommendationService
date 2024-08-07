@@ -109,3 +109,9 @@ class LectureCheckUpdateRequest(BaseModel):
     is_checked: bool
     year: int
     semester: str
+
+
+class LectureCheckDeleteRequest(BaseModel):
+    lec_number: str
+    year: int
+    semester: str

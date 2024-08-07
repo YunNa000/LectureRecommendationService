@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest
 from typing import List
 from db import db_connect
 import sqlite3
@@ -278,4 +278,28 @@ async def update_lecture_check_status(request: Request, update_request: LectureC
     ))
     conn.commit()
 
-    return {"detail": "Lecture check status updated successfully"}
+    return {"detail": "lec check status updated"}
+
+
+@router.post("/user/data/delete_lecture")
+async def delete_lecture(request: Request, delete_request: LectureCheckDeleteRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    DELETE FROM userListedLecture
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(query, (
+        user_id,
+        delete_request.lec_number,
+        delete_request.year,
+        delete_request.semester
+    ))
+    conn.commit()
+
+    return {"detail": "lecture deleted"}

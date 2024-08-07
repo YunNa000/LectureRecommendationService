@@ -69,6 +69,25 @@ const GetListedLectureData = () => {
     }
   };
 
+  const handleDelete = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/delete_lecture",
+        {
+          lec_number: lecture.lecNumber,
+          year: lecture.year,
+          semester: lecture.semester,
+        },
+        { withCredentials: true }
+      );
+
+      setListedLectures((prev) => prev.filter((item) => item !== lecture));
+      setCheckedLectures((prev) => prev.filter((item) => item !== lecture));
+    } catch (error) {
+      console.error("error deleting lecture", error);
+    }
+  };
+
   useEffect(() => {
     fetchLatestYearSemester();
     fetchUserData();
@@ -125,6 +144,7 @@ const GetListedLectureData = () => {
         lectures={filteredLectures}
         checkedLectures={checkedLectures}
         handleCheck={handleCheck}
+        handleDelete={handleDelete}
       />
       <Timetable
         checkedLectures={checkedLectures}
