@@ -36,7 +36,6 @@ const UserList = () => {
       };
   
       fetchUsers();
-      //setMyUserId('104216379361715837223');
     }, []);
   
     const handleFriendRequest = async (friendId) => {
@@ -51,11 +50,6 @@ const UserList = () => {
             user_id2: friendId.toString(), // 문자열로 변환
           }),
         });
-        // input 필드에서 user_id 값을 가져와 setMyUserId에 설정(수정 필수)
-        const userIdInput = document.querySelector('input[name="user_id"]');
-        if (userIdInput) {
-          setMyUserId(userIdInput.value);
-        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

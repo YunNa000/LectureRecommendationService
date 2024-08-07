@@ -179,7 +179,7 @@ async def delete_friend(request: FriendRequest):
                 cursor.execute("""
                     DELETE FROM friend 
                     WHERE user_id1 = ? AND user_id2 = ?
-                """, (request.user_id1, request.user_id2))
+                    """, (request.user_id1, request.user_id2))
 
                 conn.commit()
                 return {"message": "Friend request removed"}
