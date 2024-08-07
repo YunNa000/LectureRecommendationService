@@ -102,6 +102,8 @@ const LectureCallGyoPill = ({
         <option value="글로벌문화와제2외국어">글로벌문화와제2외국어</option>
         <option value="예술과체육">예술과체육</option>
         <option value="수리와자연">수리와자연</option>
+        <option value="서울권역e-러닝">서울권역e-러닝</option>
+        <option value="K-MOOC">K-MOOC</option>
       </select>
       <label>lecClassName</label>
       <input
