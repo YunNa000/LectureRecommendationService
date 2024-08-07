@@ -49,6 +49,9 @@ class LectureListed(BaseModel):
     lecIsNoneFace: Optional[int] = None  # 100% 비대면 여부
     lecIsArt: Optional[int] = None  # 실습 강의 여부
     lecSubName: Optional[str] = None  # 테마
+    year: int
+    semester: str
+    isChecked: bool
 
 
 class LoggedInResponse(BaseModel):
