@@ -58,7 +58,7 @@ const LectureCallTotal = ({
         id="semester"
         name="semester"
         value={semester}
-        onChange={(e) => setSemester(parseInt(e.target.value))}
+        onChange={(e) => setSemester(e.target.value)}
       >
         <option value="1학기">1학기</option>
         <option value="여름학기">여름학기</option>
