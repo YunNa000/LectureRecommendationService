@@ -14,9 +14,9 @@ const LectureList = ({ lectures, selectedLectures, handleLectureSelect }) => {
                 onChange={() => handleLectureSelect(lecture.lecNumber)}
               />
               {lecture.userCanNotTake === "userCanNotTake"
-                ? "(x) "
+                ? "(분반이 다른 걸요. 아니면 학년 제한에 걸렸을 수도 있어요.) "
                 : lecture.userCanNotTake === "userAlreadyTaken"
-                ? "(이미수강한 강의) "
+                ? "(이미수강한 강의인걸요) "
                 : ""}
               {lecture.MajorRecog != null
                 ? "| " + lecture.MajorRecog + " |"
