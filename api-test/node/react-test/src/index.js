@@ -9,6 +9,8 @@ import Chat from "./chatbot";
 import UserList from "./Friend/UserList";
 import FriendList from "./Friend/FriendList";
 import GetListedLectureData from "./ListedLecture/GetListedLectureData";
+import CreditList from "./MyPage/creditList";
+import UserInfo from "./MyPage/userInfo";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,7 +21,9 @@ root.render(
     <Chat />
     <GetListedLectureData />
     <UserList />
-    <FriendList />
+    <FriendList /> 
+    <CreditList />
+    <UserInfo />
   </React.StrictMode>
 );
 
