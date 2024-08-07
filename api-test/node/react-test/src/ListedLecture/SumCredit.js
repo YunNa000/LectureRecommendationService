@@ -1,20 +1,29 @@
 import React from "react";
 
-const SumCredit = ({ listedLectures, checkedLectures }) => {
-  // 전체 학점 계산
-  const totalCredits = listedLectures.reduce(
+const SumCredit = ({ listedLectures, checkedLectures, year, semester }) => {
+  const filteredLectures = listedLectures.filter(
+    (lecture) =>
+      (!year || lecture.year === parseInt(year)) &&
+      (!semester || lecture.semester === semester)
+  );
+
+  const filteredCheckedLectures = checkedLectures.filter(
+    (lecture) =>
+      (!year || lecture.year === parseInt(year)) &&
+      (!semester || lecture.semester === semester)
+  );
+
+  const totalCredits = filteredLectures.reduce(
     (sum, lecture) => sum + lecture.lecCredit,
     0
   );
 
-  // 체크한 강의의 학점 계산
-  const checkedCredits = checkedLectures.reduce(
+  const checkedCredits = filteredCheckedLectures.reduce(
     (sum, lecture) => sum + lecture.lecCredit,
     0
   );
 
-  // 체크한 강의의 학점을 분류하여 계산
-  const checkedCreditDetails = checkedLectures.reduce(
+  const checkedCreditDetails = filteredCheckedLectures.reduce(
     (acc, lecture) => {
       switch (lecture.lecClassification) {
         case "전필":
