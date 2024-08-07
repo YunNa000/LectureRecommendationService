@@ -18,6 +18,10 @@ const LectureList = ({ lectures, selectedLectures, handleLectureSelect }) => {
                 : lecture.userCanNotTake === "userAlreadyTaken"
                 ? "(이미수강한 강의) "
                 : ""}
+              {lecture.MajorRecog != null
+                ? "| " + lecture.MajorRecog + " |"
+                : ""}
+              {console.log(lecture.MajorRecog)}
               {lecture.lecClassName} ({lecture.lecNumber}){lecture.lecProfessor}{" "}
               | 학점: {lecture.lecCredit} | 시간: {lecture.lecTime} | 테마명:
               {lecture.lecSubName} | 과제 양(높을수록 적음):

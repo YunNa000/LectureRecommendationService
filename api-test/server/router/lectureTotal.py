@@ -108,6 +108,7 @@ async def read_lectures_all(request: LectureRequest):
         lecSummaryReview = lecture["lecSummaryReview"] if lecture["lecSummaryReview"] else "값이 비었어요"
         lecStars = lecture["lecStars"] if lecture["lecStars"] else "값이 비었어요"
         lecClassification = lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요"
+        lecMajorRecogBunban = lecture["lecMajorRecogBunban"] if lecture["lecMajorRecogBunban"] else None
 
         user_grade = request.userGrade
 
@@ -123,7 +124,7 @@ async def read_lectures_all(request: LectureRequest):
             "lecGrade": lecGrade,
             "lecSummaryReview": lecSummaryReview,
             "lecStars": lecStars,
-            "lecClassification": lecClassification
+            "lecClassification": lecClassification,
         }
 
         if lecSubName in user_taken_courses:
@@ -132,6 +133,50 @@ async def read_lectures_all(request: LectureRequest):
             lecture_data["userCanNotTake"] = "userCanNotTake"
         elif not (lecture[f"lecTakeOnly{user_grade}Year"] == 1 or all(lecture[f"lecTakeOnly{grade}Year"] is None for grade in range(1, 6))):
             lecture_data["userCanNotTake"] = "userCanNotTake"
+
+        lecMajorRecogBunban = lecture["lecMajorRecogBunban"]
+        major_mapping = {
+            "E1": "전자공학과",
+            "E5": "전자통신공학과",
+            "E7": "전자융합공학",
+            "J1": "전기공학과",
+            "J3": "전자재료공학과",
+            "T1": "반도체시스템공학부",
+            "C1": "컴퓨터정보공학부",
+            "C4": "소프트웨어학부",
+            "C7": "🔥최 강 정 융🔥",
+            "J5": "로봇학부",
+            "A2": "건축공학과",
+            "K1": "화학공학과",
+            "K3": "환경공학과",
+            "A1": "건축학과",
+            "N1": "수학과",
+            "N2": "전자바이오물리학과",
+            "N4": "화학과",
+            "P1": "스포츠융합학과",
+            "test2": "정보콘텐츠학과(사이버정보보안학과)",
+            "R1": "국어국문학과",
+            "R2": "영어산업학과",
+            "M1": "미디어커뮤니케이션학부",
+            "R3": "산업심리학과",
+            "R4": "동북아문화산업학부",
+            "S1": "행정학과",
+            "L1": "법학부",
+            "S3": "국제학부",
+            "test1": "자산관리학과(부동산법무학과)",
+            "B1": "경영학부",
+            "B5": "국제통상학부",
+            "V1": "금융부동산법무학과",
+            "V2": "게임콘텐츠학과",
+            "V3": "스마트전기전자학과",
+            "V4": "스포츠상담재활학과",
+        }
+
+        if lecMajorRecogBunban:
+            for key, value in major_mapping.items():
+                if key in lecMajorRecogBunban:
+                    lecture_data["MajorRecog"] = value
+                    break
 
         return_data.append(lecture_data)
 
