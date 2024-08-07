@@ -24,7 +24,7 @@ async def read_lectures_all(request: LectureRequest):
     user_taken_query = """
     SELECT takenLecName
     FROM userTakenLecture
-    WHERE user_id = ?
+    WHERE user_id = ? AND userCredit is not 'F'
     """
     cursor.execute(user_taken_query, (user_id,))
     user_taken_courses = [row['takenLecName'] for row in cursor.fetchall()]
