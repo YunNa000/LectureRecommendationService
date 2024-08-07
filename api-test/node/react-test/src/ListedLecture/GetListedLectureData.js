@@ -11,6 +11,7 @@ const GetListedLectureData = () => {
   const [error, setError] = useState(null);
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
+  const [priority, setPriority] = useState("1순위");
 
   const fetchUserData = async () => {
     try {
@@ -22,7 +23,7 @@ const GetListedLectureData = () => {
       );
       setListedLectures(response.data);
       const initialCheckedLectures = response.data.filter(
-        (lecture) => lecture.isChecked
+        (lecture) => lecture.isChecked && lecture.priority === priority
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
@@ -57,6 +58,7 @@ const GetListedLectureData = () => {
           year: lecture.year,
           semester: lecture.semester,
           is_checked: isChecked,
+          priority: priority,
         },
         { withCredentials: true }
       );
@@ -92,6 +94,13 @@ const GetListedLectureData = () => {
     fetchLatestYearSemester();
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    const updatedCheckedLectures = listedLectures.filter(
+      (lecture) => lecture.isChecked && lecture.priority === priority
+    );
+    setCheckedLectures(updatedCheckedLectures);
+  }, [listedLectures, priority]);
 
   const filteredLectures = listedLectures.filter(
     (lecture) =>
@@ -137,6 +146,17 @@ const GetListedLectureData = () => {
                 {semester}
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          Priority:
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option value="1순위">1순위</option>
+            <option value="2순위">2순위</option>
+            <option value="3순위">3순위</option>
           </select>
         </label>
       </div>

@@ -266,11 +266,12 @@ async def update_lecture_check_status(request: Request, update_request: LectureC
 
     query = """
     UPDATE userListedLecture
-    SET isChecked = ?
+    SET isChecked = ?, priority = ?
     WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
     """
     cursor.execute(query, (
         update_request.is_checked,
+        update_request.priority,
         user_id,
         update_request.lec_number,
         update_request.year,

@@ -109,6 +109,7 @@ class LectureCheckUpdateRequest(BaseModel):
     is_checked: bool
     year: int
     semester: str
+    priority: str
 
 
 class LectureCheckDeleteRequest(BaseModel):
