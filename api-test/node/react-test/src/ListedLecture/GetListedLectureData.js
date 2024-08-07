@@ -23,7 +23,7 @@ const GetListedLectureData = () => {
       );
       setListedLectures(response.data);
       const initialCheckedLectures = response.data.filter(
-        (lecture) => lecture.isChecked && lecture.priority === priority
+        (lecture) => lecture.priority === priority
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
@@ -52,13 +52,12 @@ const GetListedLectureData = () => {
 
     try {
       await axios.post(
-        "http://localhost:8000/user/data/update_lecture_check_status",
+        "http://localhost:8000/user/data/update_lecture_priority",
         {
           lec_number: lecture.lecNumber,
           year: lecture.year,
           semester: lecture.semester,
-          is_checked: isChecked,
-          priority: priority,
+          priority: isChecked ? priority : "0순위", // 체크 해제 시 "0순위"로 설정
         },
         { withCredentials: true }
       );
@@ -67,7 +66,7 @@ const GetListedLectureData = () => {
         isChecked ? [...prev, lecture] : prev.filter((item) => item !== lecture)
       );
     } catch (error) {
-      console.error("error updating lecture check status", error);
+      console.error("error updating lecture priority", error);
     }
   };
 
@@ -97,7 +96,7 @@ const GetListedLectureData = () => {
 
   useEffect(() => {
     const updatedCheckedLectures = listedLectures.filter(
-      (lecture) => lecture.isChecked && lecture.priority === priority
+      (lecture) => lecture.priority === priority
     );
     setCheckedLectures(updatedCheckedLectures);
   }, [listedLectures, priority]);
