@@ -5,6 +5,7 @@ from typing import List, Union, Dict, Optional
 class LectureRequest(BaseModel):
     userGrade: int  # 유저 학년
     userBunban: str  # 유저 분반
+    lecClassName: str
     lecClassification: str  # 전필/전전/교선/교필 ...
     userTakenCourse: Optional[List[str]] = None  # 유저 수강 내역
     isUserForeign: Optional[int] = None  # 유저 외국인 여부  # lecForeignPeopleCanTake
@@ -24,6 +25,8 @@ class LectureRequest(BaseModel):
     lecIsArt: Optional[int] = None  # 실습 강의 여부
     lecSubName: Optional[str] = None  # 테마
     userId: str
+    year: Optional[int] = 24
+    semester: Optional[str] = "1학기"
 
 
 class LectureListed(BaseModel):
@@ -46,6 +49,9 @@ class LectureListed(BaseModel):
     lecIsNoneFace: Optional[int] = None  # 100% 비대면 여부
     lecIsArt: Optional[int] = None  # 실습 강의 여부
     lecSubName: Optional[str] = None  # 테마
+    year: int
+    semester: str
+    isChecked: bool
 
 
 class LoggedInResponse(BaseModel):
@@ -107,3 +113,14 @@ class FriendRequest(BaseModel):
     user_id1: str
     user_id2: str
     friendRequest: Optional[bool] = None  
+class LectureCheckUpdateRequest(BaseModel):
+    lec_number: str
+    is_checked: bool
+    year: int
+    semester: str
+
+
+class LectureCheckDeleteRequest(BaseModel):
+    lec_number: str
+    year: int
+    semester: str

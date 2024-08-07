@@ -1,27 +1,35 @@
 import React from "react";
 
-const Timetable = ({ checkedLectures }) => {
+const Timetable = ({ checkedLectures, year, semester }) => {
+  const filteredCheckedLectures = checkedLectures.filter(
+    (lecture) =>
+      (!year || lecture.year === parseInt(year)) &&
+      (!semester || lecture.semester === semester)
+  );
+
   const renderTimetable = () => {
     let timetable = Array(5)
       .fill(null)
       .map(() => Array(7).fill(null));
 
-    checkedLectures.forEach((lecture) => {
+    filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
-      times.forEach((time) => {
-        const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
+      if (times) {
+        times.forEach((time) => {
+          const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
 
-        while (timetable.length < row) {
-          timetable.push(Array(timetable[0].length).fill(null));
-        }
-        while (timetable[0].length < col) {
-          timetable = timetable.map((row) => [...row, null]);
-        }
+          while (timetable.length < row) {
+            timetable.push(Array(timetable[0].length).fill(null));
+          }
+          while (timetable[0].length < col) {
+            timetable = timetable.map((row) => [...row, null]);
+          }
 
-        timetable[row - 1][
-          col - 1
-        ] = `${lecture.lecClassName} (${lecture.lecProfessor})`;
-      });
+          timetable[row - 1][
+            col - 1
+          ] = `${lecture.lecClassName} (${lecture.lecProfessor})`;
+        });
+      }
     });
 
     return timetable.map((row, rowIndex) => (
@@ -33,10 +41,23 @@ const Timetable = ({ checkedLectures }) => {
     ));
   };
 
+  const renderNullLectures = () => {
+    return filteredCheckedLectures
+      .filter((lecture) => !lecture.lecTime.match(/\((\d+):(\d+)\)/g))
+      .map((lecture, index) => (
+        <p key={index}>
+          {lecture.lecClassName} ({lecture.lecProfessor})
+        </p>
+      ));
+  };
+
   return (
-    <table border="1">
-      <tbody>{renderTimetable()}</tbody>
-    </table>
+    <div>
+      <table border="1">
+        <tbody>{renderTimetable()}</tbody>
+      </table>
+      {renderNullLectures()}
+    </div>
   );
 };
 

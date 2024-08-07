@@ -14,6 +14,12 @@ const LectureCallTotal = ({
   lecGrade,
   setlecGrade,
   handleSubmit,
+  lecClassName,
+  setLecClassName,
+  semester,
+  setSemester,
+  year,
+  setYear,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -40,6 +46,25 @@ const LectureCallTotal = ({
         value={lecStars}
         onChange={(e) => setLecStars(e.target.value)}
       />
+      <label>year</label>
+      <input
+        id="year"
+        name="year"
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+      />
+      <label>semester</label>
+      <select
+        id="semester"
+        name="semester"
+        value={semester}
+        onChange={(e) => setSemester(e.target.value)}
+      >
+        <option value="1학기">1학기</option>
+        <option value="여름학기">여름학기</option>
+        <option value="2학기">2학기</option>
+        <option value="겨울학기">겨울학기</option>
+      </select>
       <label>assignment</label>
       <select
         id="lecAssignment"
@@ -70,6 +95,13 @@ const LectureCallTotal = ({
         <option value="1">너그러움</option>
         <option>상관없음</option>
       </select>
+      <label>lecClassName</label>
+      <input
+        id="lecClassName"
+        name="lecClassName"
+        value={lecClassName}
+        onChange={(e) => setLecClassName(e.target.value)}
+      />
       <button type="submit">강의 리스트 불러오기</button>
     </form>
   );

@@ -18,6 +18,8 @@ const LectureCallGyoPill = ({
   lecSubName,
   setlecSubName,
   handleSubmit,
+  lecClassName,
+  setLecClassName,
 }) => {
   React.useEffect(() => {
     setLecClassification("교필");
@@ -99,6 +101,13 @@ const LectureCallGyoPill = ({
         <option value="정보">정보</option>
         <option value="융합적사고와글쓰기">융합적사고와글쓰기</option>
       </select>
+      <label>lecClassName</label>
+      <input
+        id="lecClassName"
+        name="lecClassName"
+        value={lecClassName}
+        onChange={(e) => setLecClassName(e.target.value)}
+      />
       <button type="submit">강의 리스트 불러오기</button>
     </form>
   );

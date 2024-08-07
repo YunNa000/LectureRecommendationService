@@ -21,6 +21,9 @@ const LectureManagement = () => {
   const [lecTeamplay, setlecTeamplay] = useState();
   const [lecGrade, setlecGrade] = useState();
   const [lecSubName, setlecSubName] = useState();
+  const [lecClassName, setLecClassName] = useState("");
+  const [year, setYear] = useState("");
+  const [semester, setSemester] = useState("");
 
   useEffect(() => {
     const fetchUserId = () => {
@@ -59,6 +62,24 @@ const LectureManagement = () => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    const fetchLatestYearSemester = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/other/now_year_n_semester"
+        );
+        const { latest_year, latest_semester } = response.data;
+        setYear(latest_year);
+        setSemester(latest_semester);
+      } catch (error) {
+        console.error("fetch latest year and semester error:", error);
+        alert(error.response?.data?.detail || "errr fetching year & semester");
+      }
+    };
+
+    fetchLatestYearSemester();
+  }, []);
+
   const handleSubmitTotalLec = (event) => {
     event.preventDefault();
 
@@ -74,16 +95,31 @@ const LectureManagement = () => {
           lecTeamplay: lecTeamplay,
           lecGrade: lecGrade,
           lecSubName: lecSubName,
+          lecClassName: lecClassName,
+          year: year,
+          semester: semester,
           userId: userId,
         },
         { withCredentials: true }
       )
       .then((response) => {
-        setLectures(response.data);
+        if (response.data.length === 0) {
+          setLectures([
+            {
+              lecNumber: "noLecture",
+            },
+          ]);
+        } else {
+          setLectures(response.data);
+        }
       })
       .catch((error) => {
-        console.error("fetch lec list errrr:", error);
-        setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
+        console.log("조건에 맞는 강의가 없어요.");
+        setLectures([
+          {
+            lecNumber: "noLecture",
+          },
+        ]);
       });
   };
 
@@ -102,16 +138,29 @@ const LectureManagement = () => {
           lecTeamplay: lecTeamplay,
           lecGrade: lecGrade,
           lecSubName: lecSubName,
+          lecClassName: lecClassName,
           userId: userId,
         },
         { withCredentials: true }
       )
       .then((response) => {
-        setLectures(response.data);
+        if (response.data.length === 0) {
+          setLectures([
+            {
+              lecNumber: "noLecture",
+            },
+          ]);
+        } else {
+          setLectures(response.data);
+        }
       })
       .catch((error) => {
-        console.error("fetch lec list errrr:", error);
-        setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
+        console.log("조건에 맞는 강의가 없어요.");
+        setLectures([
+          {
+            lecNumber: "noLecture",
+          },
+        ]);
       });
   };
 
@@ -162,6 +211,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             setlecSubName={setlecSubName}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "교선":
@@ -180,6 +231,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             setlecSubName={setlecSubName}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "전공":
@@ -196,6 +249,8 @@ const LectureManagement = () => {
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
             handleSubmit={handleSubmit}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
           />
         );
       case "전체":
@@ -211,6 +266,12 @@ const LectureManagement = () => {
             setlecAssignment={setlecAssignment}
             setlecTeamplay={setlecTeamplay}
             setlecGrade={setlecGrade}
+            lecClassName={lecClassName}
+            setLecClassName={setLecClassName}
+            year={year}
+            semester={semester}
+            setYear={setYear}
+            setSemester={setSemester}
           />
         );
       default:

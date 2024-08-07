@@ -75,6 +75,9 @@ function SocialFeatures() {
   );
 }
 
+import CreditList from "./MyPage/creditList";
+import UserInfo from "./MyPage/userInfo";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

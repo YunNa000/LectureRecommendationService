@@ -15,8 +15,8 @@ const LectureCallJunGong = ({
   setlecTeamplay,
   lecGrade,
   setlecGrade,
-  lecSubName,
-  setlecSubName,
+  lecClassName,
+  setLecClassName,
   handleSubmit,
 }) => {
   React.useEffect(() => {
@@ -96,6 +96,13 @@ const LectureCallJunGong = ({
         <option value="전선">전선</option>
         <option value="전필">전필</option>
       </select>
+      <label>lecClassName</label>
+      <input
+        id="lecClassName"
+        name="lecClassName"
+        value={lecClassName}
+        onChange={(e) => setLecClassName(e.target.value)}
+      />
       <button type="submit">강의 리스트 불러오기</button>
     </form>
   );

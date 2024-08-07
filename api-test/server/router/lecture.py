@@ -26,14 +26,27 @@ async def read_lectures(request: LectureRequest):
     conn = db_connect()
     cursor = conn.cursor()
 
-    # 유저가 수강한 강의 가져오기
     user_taken_query = """
     SELECT takenLecName
     FROM userTakenLecture
-    WHERE user_id = ?
+    WHERE user_id = ? AND userCredit is not 'F'
     """
     cursor.execute(user_taken_query, (user_id,))
     user_taken_courses = [row['takenLecName'] for row in cursor.fetchall()]
+    print(user_taken_courses)
+
+    latest_year_semester_query = """
+    SELECT year, semester
+    FROM LectureTable
+    ORDER BY year DESC, semester DESC
+    LIMIT 1
+    """
+    cursor.execute(latest_year_semester_query)
+    latest_year_semester = cursor.fetchone()
+    if not latest_year_semester:
+        raise HTTPException(status_code=404, detail="강의 데이터가 없습니다.")
+
+    latest_year, latest_semester = latest_year_semester['year'], latest_year_semester['semester']
 
     classification = request.lecClassification
     user_grade = request.userGrade
@@ -44,6 +57,8 @@ async def read_lectures(request: LectureRequest):
     FROM LectureTable
     WHERE {bunban_condition}
     AND lecClassification = ?
+    AND year = ?
+    AND semester = ?
     AND (
         lecTakeOnly{user_grade}Year = 1 OR 
         (lecTakeOnly1Year is NULL AND lecTakeOnly2Year is NULL AND lecTakeOnly3Year is NULL AND lecTakeOnly4Year is NULL)
@@ -58,7 +73,8 @@ async def read_lectures(request: LectureRequest):
     query = query_template.format(
         bunban_condition=bunban_condition, user_grade=user_grade)
 
-    parameters = [f"%{request.userBunban}%", classification]
+    parameters = [f"%{request.userBunban}%",
+                  classification, latest_year, latest_semester]
     conditions = []
 
     # 아래 조건들에 따라서 쿼리문이 추가됨
@@ -66,9 +82,14 @@ async def read_lectures(request: LectureRequest):
         placeholders = ', '.join(['?'] * len(user_taken_courses))
         conditions.append(f"lecClassName NOT IN ({placeholders})")
         parameters.extend(user_taken_courses)
+    if request.lecClassName:
+        lecClassName = request.lecClassName.replace(" ", "")
+        print(lecClassName)
+        conditions.append("lecClassName LIKE ?")
+        parameters.append(f"%{lecClassName}%")
     if request.lecSubName:
-        conditions.append("lecSubName = ?")
-        parameters.append(request.lecSubName)
+        conditions.append("lecSubName LIKE ?")
+        parameters.append(f"%{request.lecSubName}%")
     if request.isUserForeign is not None:
         conditions.append("lecForeignPeopleCanTake = 1")
     if request.isUserMultiple is not None:

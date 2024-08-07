@@ -60,18 +60,6 @@ async def auth_callback(code: str):
             headers={"Authorization": f"Bearer {token_json['access_token']}"}
         )
         user_info = user_info_response.json()
-        """
-        return 값들:
-            id: int
-            email: str
-            verified_email: boolen
-            name: str
-            given_name: str
-            family_name: str
-            picture: str // 링크 형식, 구글 프로필 이미지같음
-
-        여기서 실제로 의미있는 값은 id와 name정도
-        """
 
         user_id = user_info['sub']  # google 사용자 고유 ID는 sub 필드에 저장됨
         user_name = user_info['name']
@@ -87,7 +75,7 @@ async def auth_callback(code: str):
         conn.close()
 
         response = RedirectResponse(url="http://localhost:3000/")
-        max_age = 300000  # 30000 초
+        max_age = 300000
         response.set_cookie(key="user_id", value=user_id, max_age=max_age)
 
         return response  # 쿠키 return
