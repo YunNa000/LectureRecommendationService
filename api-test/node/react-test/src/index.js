@@ -1,38 +1,9 @@
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import "./index.css";
-// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import Login from "./Login";
-// import reportWebVitals from "./reportWebVitals";
-// import UpdateUserInfo from "./User/updateUserInfo";
-// import LectureManagement from "./Lecture/LectureManagement";
-// import Chat from "./chatbot";
-// import GetListedLectureData from "./ListedLecture/GetListedLectureData";
-// import UserList from "./Friend/UserList";
-// import FriendList from "./Friend/FriendList";
-
-// const root = ReactDOM.createRoot(document.getElementById("root"));
-// root.render(
-//   <React.StrictMode>
-//     <Login />
-//     <UpdateUserInfo />
-//     <LectureManagement />
-//     <Chat />
-//     <GetListedLectureData />
-//     <UserList />
-//     <FriendList />
-//   </React.StrictMode>
-// );
-
-// reportWebVitals();
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
-// 기존 컴포넌트들을 import
 import Login from "./Login";
 import UpdateUserInfo from "./User/updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
@@ -41,11 +12,26 @@ import GetListedLectureData from "./ListedLecture/GetListedLectureData";
 import UserList from "./Friend/UserList";
 import FriendList from "./Friend/FriendList";
 
+import CreditList from "./MyPage/creditList";
+import UserInfo from "./MyPage/userInfo";
+
 // UserManagement 컴포넌트
 function UserManagement() {
   return (
     <div>
       <h1>사용자 관리</h1>
+      <CreditList />
+      <UserInfo />
+      <UpdateUserInfo />
+    </div>
+  );
+}
+
+// chatbot 컴포넌트
+function Chatbot() {
+  return (
+    <div>
+      <h1>챗봇</h1>
       <Chat />
     </div>
   );
@@ -57,7 +43,6 @@ function BasicView() {
     <div>
       <h1>강의 관리 및 조회</h1>
       <Login />
-      <UpdateUserInfo />
       <LectureManagement />
       <GetListedLectureData />
     </div>
@@ -75,9 +60,6 @@ function SocialFeatures() {
   );
 }
 
-import CreditList from "./MyPage/creditList";
-import UserInfo from "./MyPage/userInfo";
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -86,6 +68,7 @@ root.render(
         <Route path="/" element={<BasicView />} />
         <Route path="/mypage" element={<UserManagement />} />
         <Route path="/social" element={<SocialFeatures />} />
+        <Route path="/chat" element={<Chatbot />} />
       </Routes>
     </Router>
   </React.StrictMode>
