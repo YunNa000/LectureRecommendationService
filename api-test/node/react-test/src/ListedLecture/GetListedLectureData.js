@@ -19,6 +19,10 @@ const GetListedLectureData = () => {
         }
       );
       setListedLectures(response.data);
+      const initialCheckedLectures = response.data.filter(
+        (lecture) => lecture.isChecked
+      );
+      setCheckedLectures(initialCheckedLectures);
       setLoading(false);
       console.log("user listed lectures's data", response.data);
     } catch (error) {
@@ -28,17 +32,32 @@ const GetListedLectureData = () => {
     }
   };
 
+  const handleCheck = async (lecture) => {
+    const isChecked = !checkedLectures.includes(lecture);
+
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/update_lecture_check_status",
+        {
+          lec_number: lecture.lecNumber,
+          year: lecture.year,
+          semester: lecture.semester,
+          is_checked: isChecked,
+        },
+        { withCredentials: true }
+      );
+
+      setCheckedLectures((prev) =>
+        isChecked ? [...prev, lecture] : prev.filter((item) => item !== lecture)
+      );
+    } catch (error) {
+      console.error("error updating lecture check status", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
-
-  const handleCheck = (lecture) => {
-    setCheckedLectures((prev) =>
-      prev.includes(lecture)
-        ? prev.filter((item) => item !== lecture)
-        : [...prev, lecture]
-    );
-  };
 
   if (loading) {
     return <div>loading...</div>;

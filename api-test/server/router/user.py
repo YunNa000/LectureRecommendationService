@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest
 from typing import List
 from db import db_connect
 import sqlite3
@@ -215,7 +215,7 @@ async def listed_lectures_data(request: Request):
     query = """
     SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
-           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester. ull.isChecked
+           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked
     FROM userListedLecture ull
     JOIN LectureTable lt ON ull.lecNumber = lt.lecNumber
     WHERE ull.user_id = ?
@@ -253,3 +253,29 @@ async def listed_lectures_data(request: Request):
         })
 
     return user_listed_lectures
+
+
+@router.post("/user/data/update_lecture_check_status")
+async def update_lecture_check_status(request: Request, update_request: LectureCheckUpdateRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    UPDATE userListedLecture
+    SET isChecked = ?
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(query, (
+        update_request.is_checked,
+        user_id,
+        update_request.lec_number,
+        update_request.year,
+        update_request.semester
+    ))
+    conn.commit()
+
+    return {"detail": "Lecture check status updated successfully"}
