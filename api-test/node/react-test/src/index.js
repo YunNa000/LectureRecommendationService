@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import UpdateUserInfo from "./User/updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
 import Chat from "./chatbot";
+import UserList from "./Friend/UserList";
+import FriendList from "./Friend/FriendList";
 import GetListedLectureData from "./ListedLecture/GetListedLectureData";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -16,6 +18,8 @@ root.render(
     <LectureManagement />
     <Chat />
     <GetListedLectureData />
+    <UserList />
+    <FriendList />
   </React.StrictMode>
 );
 

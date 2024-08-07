@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest
 from typing import List
 from db import db_connect
 import sqlite3
@@ -180,9 +180,15 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
-            INSERT INTO userListedLecture (user_id, lecNumber) 
-            VALUES (?, ?)
-            ''', (user_id, lecNumber))
+            SELECT year, semester FROM LectureTable WHERE lecNumber = ?
+            ''', (lecNumber,))
+            lecture_info = cursor.fetchone()
+            if lecture_info:
+                year, semester = lecture_info
+                cursor.execute('''
+                INSERT INTO userListedLecture (user_id, lecNumber, year, semester) 
+                VALUES (?, ?, ?, ?)
+                ''', (user_id, lecNumber, year, semester))
         except sqlite3.IntegrityError:
             continue
 
@@ -209,7 +215,7 @@ async def listed_lectures_data(request: Request):
     query = """
     SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
-           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName
+           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked
     FROM userListedLecture ull
     JOIN LectureTable lt ON ull.lecNumber = lt.lecNumber
     WHERE ull.user_id = ?
@@ -241,6 +247,59 @@ async def listed_lectures_data(request: Request):
             "lecIsConvergence": int(lecture["lecIsConvergence"]) if lecture["lecIsConvergence"] is not None else None,
             "lecIsArt": int(lecture["lecIsArt"]) if lecture["lecIsArt"] is not None else None,
             "lecSubName": lecture["lecSubName"] if lecture["lecSubName"] else "값이 비었어요",
+            "year": lecture["year"] if lecture["year"] else 0,
+            "semester": lecture["semester"] if lecture["semester"] else "값이 비었어요",
+            "isChecked": lecture["isChecked"] if lecture["isChecked"] else False,
         })
 
     return user_listed_lectures
+
+
+@router.post("/user/data/update_lecture_check_status")
+async def update_lecture_check_status(request: Request, update_request: LectureCheckUpdateRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    UPDATE userListedLecture
+    SET isChecked = ?
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(query, (
+        update_request.is_checked,
+        user_id,
+        update_request.lec_number,
+        update_request.year,
+        update_request.semester
+    ))
+    conn.commit()
+
+    return {"detail": "lec check status updated"}
+
+
+@router.post("/user/data/delete_lecture")
+async def delete_lecture(request: Request, delete_request: LectureCheckDeleteRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="not exist")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    DELETE FROM userListedLecture
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(query, (
+        user_id,
+        delete_request.lec_number,
+        delete_request.year,
+        delete_request.semester
+    ))
+    conn.commit()
+
+    return {"detail": "lecture deleted"}
