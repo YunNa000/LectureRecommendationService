@@ -11,6 +11,7 @@ const GetListedLectureData = () => {
   const [error, setError] = useState(null);
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
+  const [priority, setPriority] = useState("1순위");
 
   const fetchUserData = async () => {
     try {
@@ -21,8 +22,8 @@ const GetListedLectureData = () => {
         }
       );
       setListedLectures(response.data);
-      const initialCheckedLectures = response.data.filter(
-        (lecture) => lecture.isChecked
+      const initialCheckedLectures = response.data.filter((lecture) =>
+        lecture.priority.split(", ").includes(priority)
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
@@ -48,15 +49,24 @@ const GetListedLectureData = () => {
 
   const handleCheck = async (lecture) => {
     const isChecked = !checkedLectures.includes(lecture);
+    const updatedPriority = isChecked
+      ? `${lecture.priority}, ${priority}`
+          .split(", ")
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .join(", ") // 중복 제거
+      : lecture.priority
+          .split(", ")
+          .filter((p) => p !== priority)
+          .join(", ") || "0순위"; // 체크 해제 시 우선순위 제거
 
     try {
       await axios.post(
-        "http://localhost:8000/user/data/update_lecture_check_status",
+        "http://localhost:8000/user/data/update_lecture_priority",
         {
           lec_number: lecture.lecNumber,
           year: lecture.year,
           semester: lecture.semester,
-          is_checked: isChecked,
+          priority: updatedPriority,
         },
         { withCredentials: true }
       );
@@ -64,8 +74,17 @@ const GetListedLectureData = () => {
       setCheckedLectures((prev) =>
         isChecked ? [...prev, lecture] : prev.filter((item) => item !== lecture)
       );
+      setListedLectures((prev) =>
+        prev.map((item) =>
+          item.lecNumber === lecture.lecNumber &&
+          item.year === lecture.year &&
+          item.semester === lecture.semester
+            ? { ...item, priority: updatedPriority }
+            : item
+        )
+      );
     } catch (error) {
-      console.error("error updating lecture check status", error);
+      console.error("error updating lecture priority", error);
     }
   };
 
@@ -92,6 +111,13 @@ const GetListedLectureData = () => {
     fetchLatestYearSemester();
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    const updatedCheckedLectures = listedLectures.filter((lecture) =>
+      lecture.priority.split(", ").includes(priority)
+    );
+    setCheckedLectures(updatedCheckedLectures);
+  }, [listedLectures, priority]);
 
   const filteredLectures = listedLectures.filter(
     (lecture) =>
@@ -137,6 +163,17 @@ const GetListedLectureData = () => {
                 {semester}
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          Priority:
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option value="1순위">1순위</option>
+            <option value="2순위">2순위</option>
+            <option value="3순위">3순위</option>
           </select>
         </label>
       </div>

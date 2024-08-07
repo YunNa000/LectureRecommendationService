@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest
 from typing import List
 from db import db_connect
 import sqlite3
@@ -215,7 +215,7 @@ async def listed_lectures_data(request: Request):
     query = """
     SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
-           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked
+           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked, ull.priority
     FROM userListedLecture ull
     JOIN LectureTable lt ON ull.lecNumber = lt.lecNumber
     WHERE ull.user_id = ?
@@ -250,6 +250,7 @@ async def listed_lectures_data(request: Request):
             "year": lecture["year"] if lecture["year"] else 0,
             "semester": lecture["semester"] if lecture["semester"] else "값이 비었어요",
             "isChecked": lecture["isChecked"] if lecture["isChecked"] else False,
+            "priority": lecture["priority"] if lecture["priority"] else "",
         })
 
     return user_listed_lectures
@@ -266,11 +267,12 @@ async def update_lecture_check_status(request: Request, update_request: LectureC
 
     query = """
     UPDATE userListedLecture
-    SET isChecked = ?
+    SET isChecked = ?, priority = ?
     WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
     """
     cursor.execute(query, (
         update_request.is_checked,
+        update_request.priority,
         user_id,
         update_request.lec_number,
         update_request.year,
@@ -279,6 +281,49 @@ async def update_lecture_check_status(request: Request, update_request: LectureC
     conn.commit()
 
     return {"detail": "lec check status updated"}
+
+
+@router.post("/user/data/update_lecture_priority")
+async def update_lecture_priority(request: Request, update_request: LecturePriorityUpdateRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    select_query = """
+    SELECT priority FROM userListedLecture
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(select_query, (
+        user_id,
+        update_request.lec_number,
+        update_request.year,
+        update_request.semester
+    ))
+    result = cursor.fetchone()
+
+    if result is not None:
+        new_priority = update_request.priority
+
+        update_query = """
+        UPDATE userListedLecture
+        SET priority = ?
+        WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+        """
+        cursor.execute(update_query, (
+            new_priority,
+            user_id,
+            update_request.lec_number,
+            update_request.year,
+            update_request.semester
+        ))
+        conn.commit()
+
+        return {"detail": "lecture priority updated"}
+    else:
+        raise HTTPException(status_code=404, detail="Lecture not found")
 
 
 @router.post("/user/data/delete_lecture")
