@@ -292,21 +292,38 @@ async def update_lecture_priority(request: Request, update_request: LecturePrior
     conn = db_connect()
     cursor = conn.cursor()
 
-    query = """
-    UPDATE userListedLecture
-    SET priority = ?
+    select_query = """
+    SELECT priority FROM userListedLecture
     WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
     """
-    cursor.execute(query, (
-        update_request.priority,
+    cursor.execute(select_query, (
         user_id,
         update_request.lec_number,
         update_request.year,
         update_request.semester
     ))
-    conn.commit()
+    result = cursor.fetchone()
 
-    return {"detail": "lecture priority updated"}
+    if result is not None:
+        new_priority = update_request.priority
+
+        update_query = """
+        UPDATE userListedLecture
+        SET priority = ?
+        WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+        """
+        cursor.execute(update_query, (
+            new_priority,
+            user_id,
+            update_request.lec_number,
+            update_request.year,
+            update_request.semester
+        ))
+        conn.commit()
+
+        return {"detail": "lecture priority updated"}
+    else:
+        raise HTTPException(status_code=404, detail="Lecture not found")
 
 
 @router.post("/user/data/delete_lecture")

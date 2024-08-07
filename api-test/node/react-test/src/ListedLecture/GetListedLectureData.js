@@ -22,8 +22,8 @@ const GetListedLectureData = () => {
         }
       );
       setListedLectures(response.data);
-      const initialCheckedLectures = response.data.filter(
-        (lecture) => lecture.priority === priority
+      const initialCheckedLectures = response.data.filter((lecture) =>
+        lecture.priority.split(", ").includes(priority)
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
@@ -49,6 +49,15 @@ const GetListedLectureData = () => {
 
   const handleCheck = async (lecture) => {
     const isChecked = !checkedLectures.includes(lecture);
+    const updatedPriority = isChecked
+      ? `${lecture.priority}, ${priority}`
+          .split(", ")
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .join(", ") // 중복 제거
+      : lecture.priority
+          .split(", ")
+          .filter((p) => p !== priority)
+          .join(", ") || "0순위"; // 체크 해제 시 우선순위 제거
 
     try {
       await axios.post(
@@ -57,13 +66,22 @@ const GetListedLectureData = () => {
           lec_number: lecture.lecNumber,
           year: lecture.year,
           semester: lecture.semester,
-          priority: isChecked ? priority : "0순위", // 체크 해제 시 "0순위"로 설정
+          priority: updatedPriority,
         },
         { withCredentials: true }
       );
 
       setCheckedLectures((prev) =>
         isChecked ? [...prev, lecture] : prev.filter((item) => item !== lecture)
+      );
+      setListedLectures((prev) =>
+        prev.map((item) =>
+          item.lecNumber === lecture.lecNumber &&
+          item.year === lecture.year &&
+          item.semester === lecture.semester
+            ? { ...item, priority: updatedPriority }
+            : item
+        )
       );
     } catch (error) {
       console.error("error updating lecture priority", error);
@@ -95,8 +113,8 @@ const GetListedLectureData = () => {
   }, []);
 
   useEffect(() => {
-    const updatedCheckedLectures = listedLectures.filter(
-      (lecture) => lecture.priority === priority
+    const updatedCheckedLectures = listedLectures.filter((lecture) =>
+      lecture.priority.split(", ").includes(priority)
     );
     setCheckedLectures(updatedCheckedLectures);
   }, [listedLectures, priority]);
