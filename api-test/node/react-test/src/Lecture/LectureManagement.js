@@ -103,11 +103,23 @@ const LectureManagement = () => {
         { withCredentials: true }
       )
       .then((response) => {
-        setLectures(response.data);
+        if (response.data.length === 0) {
+          setLectures([
+            {
+              lecNumber: "noLecture",
+            },
+          ]);
+        } else {
+          setLectures(response.data);
+        }
       })
       .catch((error) => {
-        console.error("fetch lec list errrr:", error);
-        setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
+        console.log("조건에 맞는 강의가 없어요.");
+        setLectures([
+          {
+            lecNumber: "noLecture",
+          },
+        ]);
       });
   };
 
@@ -132,11 +144,23 @@ const LectureManagement = () => {
         { withCredentials: true }
       )
       .then((response) => {
-        setLectures(response.data);
+        if (response.data.length === 0) {
+          setLectures([
+            {
+              lecNumber: "noLecture",
+            },
+          ]);
+        } else {
+          setLectures(response.data);
+        }
       })
       .catch((error) => {
-        console.error("fetch lec list errrr:", error);
-        setLectures([{ lecClassName: "errrrr", lecNumber: error.message }]);
+        console.log("조건에 맞는 강의가 없어요.");
+        setLectures([
+          {
+            lecNumber: "noLecture",
+          },
+        ]);
       });
   };
 
