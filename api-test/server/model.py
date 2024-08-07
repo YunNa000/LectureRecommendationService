@@ -52,6 +52,7 @@ class LectureListed(BaseModel):
     year: int
     semester: str
     isChecked: bool
+    priority: str
 
 
 class LoggedInResponse(BaseModel):
@@ -109,9 +110,17 @@ class LectureCheckUpdateRequest(BaseModel):
     is_checked: bool
     year: int
     semester: str
+    priority: str
 
 
 class LectureCheckDeleteRequest(BaseModel):
     lec_number: str
     year: int
     semester: str
+
+
+class LecturePriorityUpdateRequest(BaseModel):
+    lec_number: str
+    year: int
+    semester: str
+    priority: str
