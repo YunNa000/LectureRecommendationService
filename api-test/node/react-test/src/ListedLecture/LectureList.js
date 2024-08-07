@@ -16,7 +16,8 @@ const LectureList = ({ lectures, checkedLectures, handleCheck }) => {
             <p>
               {lecture.lecClassName}
               <small>
-                {lecture.lecProfessor} | {lecture.lecTime}
+                {lecture.lecProfessor} | {lecture.lecTime} | {lecture.year} |
+                {lecture.semester}
               </small>
             </p>
           </div>

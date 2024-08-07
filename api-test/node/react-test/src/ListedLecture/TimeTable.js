@@ -1,12 +1,18 @@
 import React from "react";
 
-const Timetable = ({ checkedLectures }) => {
+const Timetable = ({ checkedLectures, year, semester }) => {
+  const filteredCheckedLectures = checkedLectures.filter(
+    (lecture) =>
+      (!year || lecture.year === parseInt(year)) &&
+      (!semester || lecture.semester === semester)
+  );
+
   const renderTimetable = () => {
     let timetable = Array(5)
       .fill(null)
       .map(() => Array(7).fill(null));
 
-    checkedLectures.forEach((lecture) => {
+    filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
         times.forEach((time) => {
@@ -36,7 +42,7 @@ const Timetable = ({ checkedLectures }) => {
   };
 
   const renderNullLectures = () => {
-    return checkedLectures
+    return filteredCheckedLectures
       .filter((lecture) => !lecture.lecTime.match(/\((\d+):(\d+)\)/g))
       .map((lecture, index) => (
         <p key={index}>
