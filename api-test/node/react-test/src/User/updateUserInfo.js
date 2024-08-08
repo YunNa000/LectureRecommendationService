@@ -22,6 +22,7 @@ const UpdateUserForm = () => {
     { lectureName: "", lecCredit: "", lecClassification: "" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -39,16 +40,24 @@ const UpdateUserForm = () => {
         URL.createObjectURL(image),
         "kor",
         {
-          logger: (m) => console.log(m), // 여기 progress 있는데, 이거 바탕으로 로딩바 만들면 좋을 거 같음
+          logger: (m) => {
+            console.log(m);
+            if (m.status === "recognizing text") {
+              setProgress(m.progress);
+            }
+          },
         }
       );
       results.push(result.data.text);
+      console.log(result.data.text);
     }
 
     setOcrResults(results);
 
-    const allLecClassNames = new Set();
     const newLectureInputs = [];
+    const existingLectureNames = new Set(
+      lectureInputs.map((lecture) => lecture.lectureName)
+    );
 
     for (const result of results) {
       const response = await fetch("http://127.0.0.1:8000/user/update/ocr", {
@@ -60,12 +69,17 @@ const UpdateUserForm = () => {
       });
 
       const data = await response.json();
+
+      console.log(data);
       data.userTakenLectures.forEach((lecture) => {
-        newLectureInputs.push({
-          lectureName: lecture.lectureName,
-          lecCredit: lecture.lecCredit,
-          lecClassification: lecture.lecClassification,
-        });
+        if (!existingLectureNames.has(lecture.lectureName)) {
+          newLectureInputs.push({
+            lectureName: lecture.lectureName,
+            lecCredit: lecture.lecCredit,
+            lecClassification: lecture.lecClassification,
+          });
+          existingLectureNames.add(lecture.lectureName);
+        }
       });
     }
 
@@ -86,6 +100,7 @@ const UpdateUserForm = () => {
         userCredit: userData.userCredit,
       }));
       setLectureInputs(userData.userTakenLectures);
+      console.log("userData:", userData.userTakenLectures);
     } catch (error) {
       console.error("errr fetching user data", error);
       alert(error.response?.data?.detail || "errr fetching user data");
@@ -277,8 +292,13 @@ const UpdateUserForm = () => {
               onChange={(e) => handleLectureChange(index, e)}
             >
               <option value="">받은 학점</option>
+              <option value="A+">A+</option>
               <option value="A">A</option>
+              <option value="B+">B+</option>
               <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
               <option value="F">F</option>
             </select>
             <button type="button" onClick={() => removeLectureInput(index)}>
@@ -290,7 +310,7 @@ const UpdateUserForm = () => {
           수강한 강의 추가
         </button>
       </div>
-      {isLoading && <div>로딩 중...</div>}
+      {isLoading && <div>로딩 중... {Math.round(progress * 100)}%</div>}
       <button type="submit">업데이트</button>
     </form>
   );

@@ -78,6 +78,8 @@ class PersonalInformation(BaseModel):
     selectedLecNumbers: List[str]
     userTakenLectures: List[dict]  # 유저가 수강한 강의(db에서가져온)
     userCredit: Optional[str] = None  # 유저가 받은 학점
+    userTotalGPA: Optional[float] = 0
+    userJunGPA: Optional[float] = 0
 
 
 class userSelectedLecture(BaseModel):
@@ -105,15 +107,18 @@ class UserListedLectureTotalCredit(BaseModel):
     total_credits: int
 
 
-#손원택 작성 친구 관련
+# 손원택 작성 친구 관련
 class User(BaseModel):
     user_id: str
-    userName: Optional[str] = None  
+    userName: Optional[str] = None
+
 
 class FriendRequest(BaseModel):
     user_id1: str
     user_id2: str
-    friendRequest: Optional[bool] = None  
+    friendRequest: Optional[bool] = None
+
+
 class LectureCheckUpdateRequest(BaseModel):
     lec_number: str
     is_checked: bool
@@ -133,3 +138,12 @@ class LecturePriorityUpdateRequest(BaseModel):
     year: int
     semester: str
     priority: str
+
+
+class GradesCreditResponse(BaseModel):
+    total: int
+    major: int
+    general: int
+    other: int
+    totalGPA: Optional[float] = 0
+    junGPA: Optional[float] = 0
