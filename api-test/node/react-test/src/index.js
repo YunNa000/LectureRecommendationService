@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useParams  } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
@@ -68,10 +68,11 @@ function SocialFeatures() {
 
 
 function Sebu() {
+  const { lectureNumber } = useParams();
   return (
     <div>
       <TopBarBack title="강의세부사항" />
-      <LectureDetails />
+      <LectureDetails lectureNumber={lectureNumber} />
     </div>
   );
 }
@@ -86,7 +87,8 @@ root.render(
         <Route path="/mypage" element={<UserManagement />} />
         <Route path="/social" element={<SocialFeatures />} />
         <Route path="/chat" element={<Chatbot />} />
-        <Route path="/sebu" element={<Sebu />} />
+        <Route path="/Lecture" element={<Sebu/>} />
+        <Route path="/lecture/:lectureNumber" element={<Sebu />} />
       </Routes>
     </Router>
   </React.StrictMode>
