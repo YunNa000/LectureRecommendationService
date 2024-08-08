@@ -14,12 +14,28 @@ import FriendList from "./Friend/FriendList";
 
 import CreditList from "./MyPage/creditList";
 import UserInfo from "./MyPage/userInfo";
+import TopBar from "./CommonPart/TopBar";
+import TopBarBack from "./CommonPart/TopBarBack";
+
+
+
+// LectureView 컴포넌트
+function BasicView() {
+  return (
+    <div>
+      <TopBar title="강의 관리 및 조회" />
+      <Login />
+      <LectureManagement />
+      <GetListedLectureData />
+    </div>
+  );
+}
 
 // UserManagement 컴포넌트
 function UserManagement() {
   return (
     <div>
-      <h1>사용자 관리</h1>
+      <TopBar title="My Page" />
       <CreditList />
       <UserInfo />
       <UpdateUserInfo />
@@ -31,34 +47,34 @@ function UserManagement() {
 function Chatbot() {
   return (
     <div>
-      <h1>챗봇</h1>
+      <TopBarBack title="챗봇" />
       <Chat />
     </div>
   );
 }
 
-// LectureView 컴포넌트
-function BasicView() {
-  return (
-    <div>
-      <h1>강의 관리 및 조회</h1>
-      <Login />
-      <LectureManagement />
-      <GetListedLectureData />
-    </div>
-  );
-}
 
 // SocialFeatures 컴포넌트
 function SocialFeatures() {
   return (
     <div>
-      <h1>소셜 기능</h1>
+      <TopBarBack title="친구" />
       <UserList />
       <FriendList />
     </div>
   );
 }
+
+
+function Sebu() {
+  return (
+    <div>
+      <TopBarBack title="강의세부사항" />
+      <Sebu />
+    </div>
+  );
+}
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -69,6 +85,7 @@ root.render(
         <Route path="/mypage" element={<UserManagement />} />
         <Route path="/social" element={<SocialFeatures />} />
         <Route path="/chat" element={<Chatbot />} />
+        <Route path="/sebu" element={<Sebu />} />
       </Routes>
     </Router>
   </React.StrictMode>
