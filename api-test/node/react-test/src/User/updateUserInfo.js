@@ -22,6 +22,7 @@ const UpdateUserForm = () => {
     { lectureName: "", lecCredit: "", lecClassification: "" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -39,7 +40,12 @@ const UpdateUserForm = () => {
         URL.createObjectURL(image),
         "kor",
         {
-          logger: (m) => console.log(m), // 여기 progress 있는데, 이거 바탕으로 로딩바 만들면 좋을 거 같음
+          logger: (m) => {
+            console.log(m);
+            if (m.status === "recognizing text") {
+              setProgress(m.progress);
+            }
+          },
         }
       );
       results.push(result.data.text);
@@ -290,7 +296,7 @@ const UpdateUserForm = () => {
           수강한 강의 추가
         </button>
       </div>
-      {isLoading && <div>로딩 중...</div>}
+      {isLoading && <div>로딩 중... {Math.round(progress * 100)}%</div>}
       <button type="submit">업데이트</button>
     </form>
   );
