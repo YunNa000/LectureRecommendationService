@@ -78,7 +78,7 @@ const Timetable = ({
             timetable = timetable.map((row) => [...row, null]);
           }
 
-          timetable[row - 1][col - 1] = (
+          const cellContent = (
             <>
               <p>{lecture.lecClassName}</p>
               <small>
@@ -106,6 +106,18 @@ const Timetable = ({
               )}
             </>
           );
+
+          if (timetable[row - 1][col - 1]) {
+            timetable[row - 1][col - 1] = (
+              <>
+                {timetable[row - 1][col - 1]}
+                <hr />
+                {cellContent}
+              </>
+            );
+          } else {
+            timetable[row - 1][col - 1] = cellContent;
+          }
         });
       }
     });
