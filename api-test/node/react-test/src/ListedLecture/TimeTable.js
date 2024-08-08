@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
+const Timetable = ({
+  checkedLectures,
+  year,
+  semester,
+  handleCheck,
+  setListedLectures,
+}) => {
   const [editLecture, setEditLecture] = useState(null);
   const [classroom, setClassroom] = useState("");
   const [memo, setMemo] = useState("");
@@ -33,9 +39,22 @@ const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
           withCredentials: true,
         }
       );
-      console.log(response.data);
+
+      setListedLectures((prev) =>
+        prev.map((lecture) =>
+          lecture.lecNumber === editLecture.lecNumber &&
+          lecture.year === editLecture.year &&
+          lecture.semester === editLecture.semester
+            ? {
+                ...lecture,
+                userListedLecClassRoom: classroom,
+                userListedLecMemo: memo,
+              }
+            : lecture
+        )
+      );
+
       setEditLecture(null);
-      // 업데이트 후 데이터를 새로고침하거나 상태를 업데이트하세요.
     } catch (error) {
       console.error("Error updating lecture info", error);
     }
@@ -61,7 +80,10 @@ const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
 
           timetable[row - 1][col - 1] = (
             <>
-              {`${lecture.lecClassName} (${lecture.lecProfessor})`}
+              <p>{lecture.lecClassName}</p>
+              <small>
+                {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
+              </small>
               <button onClick={() => handleCheck(lecture)}>uncheck</button>
               <button onClick={() => handleEditClick(lecture)}>수정</button>
               {editLecture && editLecture.lecNumber === lecture.lecNumber && (

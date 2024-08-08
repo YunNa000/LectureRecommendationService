@@ -49,11 +49,8 @@ const GetListedLectureData = () => {
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
-      console.log("user listed lectures's data", response.data);
     } catch (error) {
-      console.error("error fetching user data", error);
-      setError(error);
-      setLoading(false);
+      console.error("Error fetching user data:", error);
     }
   };
 
@@ -248,13 +245,22 @@ const GetListedLectureData = () => {
         lectures={filteredLectures}
         checkedLectures={checkedLectures}
         handleCheck={handleCheck}
-        handleDelete={handleDelete}
+        handleDelete={(lecture) => {
+          setListedLectures((prev) =>
+            prev.filter((l) => l.lecNumber !== lecture.lecNumber)
+          );
+        }}
+        setListedLectures={(updatedLectures) => {
+          setListedLectures(updatedLectures);
+          fetchUserData();
+        }}
       />
       <Timetable
         checkedLectures={checkedLectures}
         year={year}
         semester={semester}
         handleCheck={handleCheck}
+        setListedLectures={setListedLectures}
       />
     </div>
   );

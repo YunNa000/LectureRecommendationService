@@ -6,6 +6,7 @@ const LectureList = ({
   checkedLectures,
   handleCheck,
   handleDelete,
+  setListedLectures, // prop으로 전달된 setListedLectures
 }) => {
   const [editLecture, setEditLecture] = useState(null);
   const [classroom, setClassroom] = useState("");
@@ -32,10 +33,24 @@ const LectureList = ({
           withCredentials: true,
         }
       );
-      console.log(response.data);
+
+      setListedLectures((prev) =>
+        prev.map((lecture) =>
+          lecture.lecNumber === editLecture.lecNumber &&
+          lecture.year === editLecture.year &&
+          lecture.semester === editLecture.semester
+            ? {
+                ...lecture,
+                userListedLecClassRoom: classroom,
+                userListedLecMemo: memo,
+              }
+            : lecture
+        )
+      );
+
       setEditLecture(null);
     } catch (error) {
-      console.error("Error updating lecture info", error);
+      console.error("Error updating lecture info:", error);
     }
   };
 
@@ -46,38 +61,42 @@ const LectureList = ({
       ) : (
         lectures.map((lecture, index) => (
           <div key={index}>
-            <input
-              type="checkbox"
-              onChange={() => handleCheck(lecture)}
-              checked={checkedLectures.includes(lecture)}
-            />
-            <p>
-              {lecture.lecClassName}
+            <hr />
+            <div>
+              <input
+                type="checkbox"
+                onChange={() => handleCheck(lecture)}
+                checked={checkedLectures.includes(lecture)}
+              />
+              <p>{lecture.lecClassName}</p>{" "}
               <small>
-                {lecture.lecProfessor} | {lecture.lecTime} |{" "}
+                {lecture.lecProfessor} | {lecture.lecTime} | {lecture.year} |
+                {lecture.semester}
+                <br />
+                <br />
                 {lecture.userListedLecClassRoom} | {lecture.userListedLecMemo}
               </small>
               <button onClick={() => handleDelete(lecture)}>삭제</button>
               <button onClick={() => handleEditClick(lecture)}>수정</button>
-            </p>
-            {editLecture && editLecture.lecNumber === lecture.lecNumber && (
-              <div>
-                <input
-                  type="text"
-                  value={classroom}
-                  onChange={(e) => setClassroom(e.target.value)}
-                  placeholder="강의실"
-                />
-                <input
-                  type="text"
-                  value={memo}
-                  onChange={(e) => setMemo(e.target.value)}
-                  placeholder="메모"
-                />
-                <button onClick={handleSaveClick}>저장</button>
-                <button onClick={() => setEditLecture(null)}>취소</button>
-              </div>
-            )}
+              {editLecture && editLecture.lecNumber === lecture.lecNumber && (
+                <div>
+                  <input
+                    type="text"
+                    value={classroom}
+                    onChange={(e) => setClassroom(e.target.value)}
+                    placeholder="강의실"
+                  />
+                  <input
+                    type="text"
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="메모"
+                  />
+                  <button onClick={handleSaveClick}>저장</button>
+                  <button onClick={() => setEditLecture(null)}>취소</button>
+                </div>
+              )}
+            </div>
           </div>
         ))
       )}
