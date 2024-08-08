@@ -7,6 +7,8 @@ const CreditList = () => {
     major: 0, // 전공학점
     general: 0, // 교양학점
     other: 0, // 기타학점
+    totalGPA: 0, // 전체 GPA
+    junGPA: 0, // 전공 GPA
   });
 
   const fetchUserData = async () => {
@@ -24,9 +26,11 @@ const CreditList = () => {
         major: userData.major,
         general: userData.general,
         other: userData.other,
+        totalGPA: userData.totalGPA,
+        junGPA: userData.junGPA,
       });
     } catch (error) {
-      console.error("errr fetching user data", error);
+      console.error("Error fetching user data", error);
     }
   };
 
@@ -42,6 +46,8 @@ const CreditList = () => {
         <p>전공학점: {grades.major}</p>
         <p>교양학점: {grades.general}</p>
         <p>기타학점: {grades.other}</p>
+        <p>전체 GPA: {grades.totalGPA}</p>
+        <p>전공 GPA: {grades.junGPA}</p>
       </header>
     </div>
   );

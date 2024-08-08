@@ -10,7 +10,6 @@ router = APIRouter()
 @router.get("/user/data", response_model=List[PersonalInformation])
 async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
-    # print(f"|-- /user/data | user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
 
@@ -27,6 +26,7 @@ async def get_user_data(request: Request):
     users = []
     for row in rows:
         user_dict = dict(row)
+        print(user_dict)
 
         cursor.execute(
             "SELECT lecNumber FROM userListedLecture WHERE user_id = ?", (user_dict['user_id'],))
@@ -35,47 +35,39 @@ async def get_user_data(request: Request):
                                            for lecNumber in lecNumbers]
 
         cursor.execute(
-            # userCredit을 함께 가져오기 위한 쿼리 수정
             "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?",
             (user_dict['user_id'],)
         )
         takenLectures = cursor.fetchall()
         user_dict['userTakenLectures'] = [
-            # userCredit을 포함하도록 수정
             {
                 "lectureName": lecture[0],
                 "lecClassification": lecture[1],
                 "lecCredit": lecture[2],
-                "userCredit": lecture[3]  # userCredit 추가
+                "userCredit": lecture[3]
             }
             for lecture in takenLectures
         ]
 
-        user_dict['userCredit'] = user_dict.get('userCredit')
-
-        # print("|-- /user/data | user_dict:",
-        #       user_dict['selectedLecNumbers'], user_dict['userTakenLectures'])
-
         user_info = PersonalInformation(
             user_id=user_dict['user_id'],
-            userHakbun=user_dict['userHakbun'] if user_dict['userHakbun'] else 0,
-            userIsForeign=user_dict['userIsForeign'] if user_dict['userIsForeign'] else False,
-            userBunban=user_dict['userBunban'] if user_dict['userBunban'] else "",
-            userYear=user_dict['userYear'] if user_dict['userYear'] else "",
-            userMajor=user_dict['userMajor'] if user_dict['userMajor'] else "_",
-            userIsMultipleMajor=user_dict['userIsMultipleMajor'] if user_dict['userIsMultipleMajor'] is not None else False,
-            userWhatMultipleMajor=user_dict['userWhatMultipleMajor'] if user_dict['userWhatMultipleMajor'] else None,
-            userTakenLecture=user_dict['userTakenLecture'] if user_dict['userTakenLecture'] else None,
+            userHakbun=user_dict.get('userHakbun', 0),
+            userIsForeign=user_dict.get('userIsForeign', False),
+            userBunban=user_dict.get('userBunban', ""),
+            userYear=user_dict.get('userYear', ""),
+            userMajor=user_dict.get('userMajor', "_"),
+            userIsMultipleMajor=user_dict.get('userIsMultipleMajor', False),
+            userWhatMultipleMajor=user_dict.get('userWhatMultipleMajor'),
+            userTakenLecture=user_dict.get('userTakenLecture'),
             userName=user_dict['userName'],
-            selectedLecNumbers=user_dict['selectedLecNumbers'] if user_dict['selectedLecNumbers'] else [
-            ],
-            userTakenLectures=user_dict['userTakenLectures'] if user_dict['userTakenLectures'] else [
-            ],
-            userCredit=user_dict['userCredit'] if user_dict['userCredit'] else None
+            selectedLecNumbers=user_dict.get('selectedLecNumbers', []),
+            userTakenLectures=user_dict.get('userTakenLectures', []),
+            userCredit=user_dict.get('userCredit'),
+            userTotalGPA=user_dict.get('userTotalGPA', 0),
+            userJunGPA=user_dict.get('userJunGPA', 0)
         )
 
         users.append(user_info)
-        # print("|-- /user/data | users:", users)
 
     conn.close()
 
@@ -142,6 +134,47 @@ async def update_user_hakbun(request: PersonalInformation):
                 lecture.get('lecCredit'),
                 lecture.get('userCredit')
             ))
+
+    # 여기 D+?이랑 D의 경우, np와 p, F의 경우 등 고려해보는 것이 필요해요.
+    grade_to_points = {
+        "A+": 4.5,
+        "A": 4.0,
+        "B+": 3.5,
+        "B": 3.0,
+        "C+": 2.5,
+        "C": 2.0
+    }
+
+    cursor.execute(
+        "SELECT takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
+    lectures = cursor.fetchall()
+
+    total_points = 0
+    total_credits = 0
+    major_points = 0
+    major_credits = 0
+
+    for lec in lectures:
+        classification, credit, grade = lec
+        if grade in grade_to_points:
+            points = grade_to_points[grade]
+            total_points += points * credit
+            total_credits += credit
+            if classification in ["전필", "전선"]:
+                major_points += points * credit
+                major_credits += credit
+
+    total_gpa = total_points / total_credits if total_credits > 0 else 0
+    major_gpa = major_points / major_credits if major_credits > 0 else 0
+
+    total_gpa = round(total_gpa, 2)
+    major_gpa = round(major_gpa, 2)
+
+    cursor.execute("""
+    UPDATE user
+    SET totalGPA = ?, junGPA = ?
+    WHERE user_id = ?
+    """, (total_gpa, major_gpa, request.user_id))
 
     conn.commit()
     conn.close()

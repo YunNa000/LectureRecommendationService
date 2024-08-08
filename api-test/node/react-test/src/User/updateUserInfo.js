@@ -292,8 +292,13 @@ const UpdateUserForm = () => {
               onChange={(e) => handleLectureChange(index, e)}
             >
               <option value="">받은 학점</option>
+              <option value="A+">A+</option>
               <option value="A">A</option>
+              <option value="B+">B+</option>
               <option value="B">B</option>
+              <option value="C+">C+</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
               <option value="F">F</option>
             </select>
             <button type="button" onClick={() => removeLectureInput(index)}>
