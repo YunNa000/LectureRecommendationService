@@ -381,3 +381,27 @@ async def delete_lecture(request: Request, delete_request: LectureCheckDeleteReq
     conn.commit()
 
     return {"detail": "lecture deleted"}
+
+
+@router.get("/user/data/total_gpa")
+def read_total_gpa(request: Request):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="no exist user id")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT totalGPA FROM user WHERE user_id = ?", (user_id,))
+    gpa_row = cursor.fetchone()
+    print(f"GPA Query result: {gpa_row}")
+
+    if gpa_row:
+        result = {"totalGPA": gpa_row[0] or 0}
+    else:
+        result = {"totalGPA": 0}
+
+    conn.close()
+
+    return result

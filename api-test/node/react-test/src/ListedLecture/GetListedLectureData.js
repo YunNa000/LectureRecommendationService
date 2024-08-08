@@ -12,6 +12,28 @@ const GetListedLectureData = () => {
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
   const [priority, setPriority] = useState("1순위");
+  const [creditWarning, setCreditWarning] = useState("");
+  const [grades, setGrades] = useState({
+    totalGPA: 0,
+  });
+
+  const fetchGPA = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/user/data/total_gpa",
+        {
+          withCredentials: true,
+        }
+      );
+      const userData = response.data;
+
+      setGrades({
+        totalGPA: userData.totalGPA,
+      });
+    } catch (error) {
+      console.error("errr fetching user gpa", error);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -53,11 +75,11 @@ const GetListedLectureData = () => {
       ? `${lecture.priority}, ${priority}`
           .split(", ")
           .filter((v, i, a) => a.indexOf(v) === i)
-          .join(", ") // 중복 제거
+          .join(", ")
       : lecture.priority
           .split(", ")
           .filter((p) => p !== priority)
-          .join(", ") || "0순위"; // 체크 해제 시 우선순위 제거
+          .join(", ") || "0순위";
 
     try {
       await axios.post(
@@ -110,6 +132,7 @@ const GetListedLectureData = () => {
   useEffect(() => {
     fetchLatestYearSemester();
     fetchUserData();
+    fetchGPA();
   }, []);
 
   useEffect(() => {
@@ -124,6 +147,33 @@ const GetListedLectureData = () => {
       (!year || lecture.year === parseInt(year)) &&
       (!semester || lecture.semester === semester)
   );
+  const filteredCheckedLectures = checkedLectures.filter(
+    (lecture) =>
+      (!year || lecture.year === parseInt(year)) &&
+      (!semester || lecture.semester === semester)
+  );
+
+  const checkedCredits = filteredCheckedLectures.reduce(
+    (sum, lecture) => sum + lecture.lecCredit,
+    0
+  );
+  useEffect(() => {
+    if (grades.totalGPA < 3.5) {
+      if (checkedCredits > 19) {
+        setCreditWarning("최대 19학점까지 들을 수 있어요.");
+      } else {
+        setCreditWarning("");
+      }
+    } else if (grades.totalGPA >= 3.5) {
+      if (checkedCredits > 22) {
+        setCreditWarning("최대 22학점까지 들을 수 있어요.");
+      } else {
+        setCreditWarning("");
+      }
+    } else {
+      setCreditWarning("");
+    }
+  }, [checkedCredits, grades.totalGPA]);
 
   if (loading) {
     return <div>loading...</div>;
@@ -135,6 +185,14 @@ const GetListedLectureData = () => {
 
   return (
     <div>
+      <SumCredit
+        listedLectures={filteredLectures}
+        checkedLectures={checkedLectures}
+        year={year}
+        semester={semester}
+      />
+      {creditWarning && <div>{creditWarning}</div>}
+
       <div>
         <label>
           Year:
@@ -184,12 +242,6 @@ const GetListedLectureData = () => {
         handleDelete={handleDelete}
       />
       <Timetable
-        checkedLectures={checkedLectures}
-        year={year}
-        semester={semester}
-      />
-      <SumCredit
-        listedLectures={filteredLectures}
         checkedLectures={checkedLectures}
         year={year}
         semester={semester}
