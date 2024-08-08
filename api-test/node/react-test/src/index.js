@@ -16,6 +16,7 @@ import CreditList from "./MyPage/creditList";
 import UserInfo from "./MyPage/userInfo";
 import TopBar from "./CommonPart/TopBar";
 import TopBarBack from "./CommonPart/TopBarBack";
+import LectureDetails from "./CommonPart/LectureDetail";
 
 
 
@@ -70,7 +71,7 @@ function Sebu() {
   return (
     <div>
       <TopBarBack title="강의세부사항" />
-      <Sebu />
+      <LectureDetails />
     </div>
   );
 }

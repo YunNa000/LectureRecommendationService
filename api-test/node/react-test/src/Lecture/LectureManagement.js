@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import { Link } from 'react-router-dom';
 import LectureCallGyoPill from "./LectureCallGyoPill";
 import LectureCallGyoSun from "./LectureCallGyoSun";
 import LectureCallJunGong from "./LectureCallJunGong";
@@ -282,6 +282,9 @@ const LectureManagement = () => {
   return (
     <div>
       <div>
+        <Link to="/mypage" style={{ textDecoration: 'none' }}>
+          <button>MyPage</button>
+        </Link>
         <button onClick={() => setSelectedButton("교필")}>교필</button>
         <button onClick={() => setSelectedButton("교선")}>교선</button>
         <button onClick={() => setSelectedButton("전공")}>전공</button>

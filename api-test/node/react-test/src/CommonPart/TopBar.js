@@ -40,15 +40,7 @@ const TopBar = ({ title = "강의 시간표" }) => {
     }
   };
 
-  const handleUserClick = () => {
-    console.log('User icon clicked');
-    // Add your logic here, e.g., navigate to user profile page
-  };
 
-  const handleMessageClick = () => {
-    console.log('Message icon clicked');
-    // Add your logic here, e.g., open message modal
-  };
 
   return (
     <div style={styles.container}>
