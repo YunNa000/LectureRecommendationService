@@ -88,6 +88,7 @@ const UserList = () => {
             ))}
           </tbody>
         </table>
+        <input type="text" id="searchInput" placeholder="검색어를 입력하세요"></input><button onclick="search()">검색</button>
       </div>
     );
   };
