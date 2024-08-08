@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest, LectureInfoUpdateRequest
 from typing import List
 from db import db_connect
 import sqlite3
@@ -248,7 +248,7 @@ async def listed_lectures_data(request: Request):
     query = """
     SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
-           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked, ull.priority
+           lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked, ull.priority, ull.userListedLecClassRoom, ull.userListedLecMemo
     FROM userListedLecture ull
     JOIN LectureTable lt ON ull.lecNumber = lt.lecNumber
     WHERE ull.user_id = ?
@@ -284,6 +284,8 @@ async def listed_lectures_data(request: Request):
             "semester": lecture["semester"] if lecture["semester"] else "값이 비었어요",
             "isChecked": lecture["isChecked"] if lecture["isChecked"] else False,
             "priority": lecture["priority"] if lecture["priority"] else "",
+            "userListedLecClassRoom": lecture["userListedLecClassRoom"] if lecture["userListedLecClassRoom"] else "",
+            "userListedLecMemo": lecture["userListedLecMemo"] if lecture["userListedLecMemo"] else "",
         })
 
     return user_listed_lectures
@@ -408,3 +410,45 @@ def read_total_gpa(request: Request):
     conn.close()
 
     return result
+
+
+@router.post("/user/data/update_lecture_info")
+async def update_lecture_info(request: Request, update_request: LectureInfoUpdateRequest):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    select_query = """
+    SELECT * FROM userListedLecture
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(select_query, (
+        user_id,
+        update_request.lec_number,
+        update_request.year,
+        update_request.semester
+    ))
+    result = cursor.fetchone()
+
+    if result is not None:
+        update_query = """
+        UPDATE userListedLecture
+        SET userListedLecClassRoom = ?, userListedLecMemo = ?
+        WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+        """
+        cursor.execute(update_query, (
+            update_request.classroom,
+            update_request.memo,
+            user_id,
+            update_request.lec_number,
+            update_request.year,
+            update_request.semester
+        ))
+        conn.commit()
+
+        return {"detail": "Lecture information updated"}
+    else:
+        raise HTTPException(status_code=404, detail="Lecture not found")

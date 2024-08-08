@@ -73,8 +73,17 @@ async def auth_callback(code: str):
 
         if not user:
             cursor.execute(
-                'INSERT INTO user (user_id, userName) VALUES (?, ?)',
-                (user_id, user_name)
+                '''
+                INSERT INTO user (
+                    user_id, userHakbun, userIsForeign, userBunban, userYear, 
+                    userMajor, userIsMultipleMajor, userWhatMultipleMajor, 
+                    userName, userMultipleMajorDepartment, totalGPA, junGPA
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''',
+                (
+                    user_id, '', False, '', '', '', False, '',
+                    user_name, '', 0.0, 0.0
+                )
             )
             conn.commit()
 
