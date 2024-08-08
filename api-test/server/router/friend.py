@@ -13,6 +13,9 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta
 from typing import Union
+from db import db_connect
+
+
 
 router = APIRouter()
 
@@ -26,14 +29,14 @@ class FriendRequest(BaseModel):
     user_id2: str
     friendRequest: Optional[bool] = None  
 
-def get_db_connection():
-    conn = sqlite3.connect('./kwu-lecture-database-v6.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+# def get_db_connection():
+#     conn = sqlite3.connect('./kwu-lecture-database-v6.db')
+#     conn.row_factory = sqlite3.Row
+#     return conn
 
 @router.get("/users", response_model=list[User])
 async def get_users(userName: Optional[str] = Query(None, description="Filter users by userName")):
-    conn = get_db_connection()
+    conn = db_connect()
     cursor = conn.cursor()
     #친구검색 허용 토글 추가
     try:
@@ -61,7 +64,7 @@ async def get_friends(
     userId: str = Query(..., description="User ID to get friends for"),
     userName: Optional[str] = Query(None, description="Filter friends by userName")
 ):
-    conn = get_db_connection()
+    conn = db_connect()
     cursor = conn.cursor()
     
     try:
@@ -96,7 +99,7 @@ async def get_friends(
 
 @router.post("/add_friend")
 async def add_friend(request: FriendRequest):
-    conn = get_db_connection()
+    conn = db_connect()
     cursor = conn.cursor()
     
     try:
@@ -146,7 +149,7 @@ async def add_friend(request: FriendRequest):
 
 @router.post("/delete_friend")
 async def delete_friend(request: FriendRequest):
-    conn = get_db_connection()
+    conn = db_connect()
     cursor = conn.cursor()
     
     try:
