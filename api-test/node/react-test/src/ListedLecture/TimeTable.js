@@ -1,11 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
 const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
+  const [editLecture, setEditLecture] = useState(null);
+  const [classroom, setClassroom] = useState("");
+  const [memo, setMemo] = useState("");
+
   const filteredCheckedLectures = checkedLectures.filter(
     (lecture) =>
       (!year || lecture.year === parseInt(year)) &&
       (!semester || lecture.semester === semester)
   );
+
+  const handleEditClick = (lecture) => {
+    setEditLecture(lecture);
+    setClassroom(lecture.userListedLecClassRoom);
+    setMemo(lecture.userListedLecMemo);
+  };
+
+  const handleSaveClick = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/data/update_lecture_info",
+        {
+          lec_number: editLecture.lecNumber,
+          year: editLecture.year,
+          semester: editLecture.semester,
+          classroom: classroom,
+          memo: memo,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      setEditLecture(null);
+      // 업데이트 후 데이터를 새로고침하거나 상태를 업데이트하세요.
+    } catch (error) {
+      console.error("Error updating lecture info", error);
+    }
+  };
 
   const renderTimetable = () => {
     let timetable = Array(5)
@@ -29,6 +63,25 @@ const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
             <>
               {`${lecture.lecClassName} (${lecture.lecProfessor})`}
               <button onClick={() => handleCheck(lecture)}>uncheck</button>
+              <button onClick={() => handleEditClick(lecture)}>수정</button>
+              {editLecture && editLecture.lecNumber === lecture.lecNumber && (
+                <div>
+                  <input
+                    type="text"
+                    value={classroom}
+                    onChange={(e) => setClassroom(e.target.value)}
+                    placeholder="강의실"
+                  />
+                  <input
+                    type="text"
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="메모"
+                  />
+                  <button onClick={handleSaveClick}>저장</button>
+                  <button onClick={() => setEditLecture(null)}>취소</button>
+                </div>
+              )}
             </>
           );
         });
@@ -51,6 +104,25 @@ const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
         <p key={index}>
           {lecture.lecClassName} ({lecture.lecProfessor})
           <button onClick={() => handleCheck(lecture)}>uncheck</button>
+          <button onClick={() => handleEditClick(lecture)}>수정</button>
+          {editLecture && editLecture.lecNumber === lecture.lecNumber && (
+            <div>
+              <input
+                type="text"
+                value={classroom}
+                onChange={(e) => setClassroom(e.target.value)}
+                placeholder="강의실"
+              />
+              <input
+                type="text"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="메모"
+              />
+              <button onClick={handleSaveClick}>저장</button>
+              <button onClick={() => setEditLecture(null)}>취소</button>
+            </div>
+          )}
         </p>
       ));
   };

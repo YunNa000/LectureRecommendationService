@@ -52,7 +52,9 @@ class LectureListed(BaseModel):
     year: int
     semester: str
     isChecked: bool
-    priority: str
+    priority: Optional[str]
+    userListedLecClassRoom: Optional[str]
+    userListedLecMemo: Optional[str]
 
 
 class LoggedInResponse(BaseModel):
@@ -147,3 +149,11 @@ class GradesCreditResponse(BaseModel):
     other: int
     totalGPA: Optional[float] = 0
     junGPA: Optional[float] = 0
+
+
+class LectureInfoUpdateRequest(BaseModel):
+    lec_number: str
+    year: int
+    semester: str
+    classroom: str
+    memo: str
