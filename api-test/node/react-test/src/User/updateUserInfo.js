@@ -49,12 +49,15 @@ const UpdateUserForm = () => {
         }
       );
       results.push(result.data.text);
+      console.log(result.data.text);
     }
 
     setOcrResults(results);
 
-    const allLecClassNames = new Set();
     const newLectureInputs = [];
+    const existingLectureNames = new Set(
+      lectureInputs.map((lecture) => lecture.lectureName)
+    );
 
     for (const result of results) {
       const response = await fetch("http://127.0.0.1:8000/user/update/ocr", {
@@ -66,12 +69,17 @@ const UpdateUserForm = () => {
       });
 
       const data = await response.json();
+
+      console.log(data);
       data.userTakenLectures.forEach((lecture) => {
-        newLectureInputs.push({
-          lectureName: lecture.lectureName,
-          lecCredit: lecture.lecCredit,
-          lecClassification: lecture.lecClassification,
-        });
+        if (!existingLectureNames.has(lecture.lectureName)) {
+          newLectureInputs.push({
+            lectureName: lecture.lectureName,
+            lecCredit: lecture.lecCredit,
+            lecClassification: lecture.lecClassification,
+          });
+          existingLectureNames.add(lecture.lectureName);
+        }
       });
     }
 
@@ -92,6 +100,7 @@ const UpdateUserForm = () => {
         userCredit: userData.userCredit,
       }));
       setLectureInputs(userData.userTakenLectures);
+      console.log("userData:", userData.userTakenLectures);
     } catch (error) {
       console.error("errr fetching user data", error);
       alert(error.response?.data?.detail || "errr fetching user data");
