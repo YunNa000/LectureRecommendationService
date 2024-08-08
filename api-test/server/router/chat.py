@@ -12,6 +12,8 @@ from langchain.memory import ConversationSummaryBufferMemory
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from model import ChatRequest
 from langchain.chains import LLMChain
+# pip install fastapi uvicorn pydantic langchain langchain-community langchain-openai openai faiss-cpu pypdf python-multipart python-dotenv && pip install --upgrade langchain langchain-community langchain-openai
+
 
 router = APIRouter()
 
