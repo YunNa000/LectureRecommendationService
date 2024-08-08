@@ -51,13 +51,61 @@ const App = () => {
     window.location.href = "http://localhost:8000/login";
   };
 
+  /**
+   * 로그아웃 버튼 클릭 시 /logout으로 요청보내고 메인 페이지로 리다이렉트
+   * @function handleLogout
+   */
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setUserName(null);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("err while logging out:", error);
+    }
+  };
+
+  /**
+   * 회원 탈퇴 버튼 클릭 시 /delete_account으로 요청보내고 메인 페이지로 리다이렉트
+   * @function handleDeleteAccount
+   */
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/delete_account",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setUserName(null);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("err while deleting account:", error);
+    }
+  };
+
   return (
     <div>
       {userName ? (
-        <p>hello, {userName}!</p>
+        <div>
+          <p>hello, {userName}!</p>
+          <button onClick={handleLogout}>로그아웃</button>
+          {/* <button onClick={handleDeleteAccount}>탈퇴</button> */}
+        </div>
       ) : (
         <div>
-          <button onClick={handleLogin}>Login</button>
+          <button onClick={handleLogin}>로그인</button>
         </div>
       )}
     </div>

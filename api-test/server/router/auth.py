@@ -1,22 +1,23 @@
-from fastapi import APIRouter, Cookie, FastAPI, Depends, HTTPException, Cookie
+from fastapi import APIRouter, Cookie, HTTPException, Response
 from model import LoggedInResponse, NotLoggedInResponse
 from typing import Union
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 import os
 from dotenv import load_dotenv
 from db import db_connect
 import httpx
 
+
 router = APIRouter()
 
 load_dotenv()
 
-# 노션 - 기타 - api key 참고
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
-
 user_sessions = {}
+
+REDIRECTRESPONSE = "http://localhost:3000/"
 
 
 @router.get("/", response_model=Union[LoggedInResponse, NotLoggedInResponse])
@@ -61,21 +62,54 @@ async def auth_callback(code: str):
         )
         user_info = user_info_response.json()
 
-        user_id = user_info['sub']  # google 사용자 고유 ID는 sub 필드에 저장됨
-        user_name = user_info['name']
+        user_id = user_info['sub']
+        user_name = user_info.get('name', 'Unknown')
+
+        conn = db_connect()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT * FROM user WHERE user_id = ?', (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            cursor.execute(
+                'INSERT INTO user (user_id, userName) VALUES (?, ?)',
+                (user_id, user_name)
+            )
+            conn.commit()
+
+        conn.close()
 
         user_sessions[user_id] = user_info
 
-        conn = db_connect()
-        conn.execute(
-            'INSERT OR IGNORE INTO user (user_id, userName) VALUES (?, ?)',
-            (user_id, user_name)
-        )
-        conn.commit()
-        conn.close()
-
-        response = RedirectResponse(url="http://localhost:3000/")
+        response = RedirectResponse(url=REDIRECTRESPONSE)
         max_age = 300000
         response.set_cookie(key="user_id", value=user_id, max_age=max_age)
 
-        return response  # 쿠키 return
+        return response
+
+
+@router.post("/logout")
+async def logout(user_id: str = Cookie(None)):
+    print(user_id)
+    if user_id:
+        response = JSONResponse(
+            content={"message": "log out!"}, status_code=200)
+        response.delete_cookie(key="user_id")
+        return response
+    raise HTTPException(status_code=400, detail="User not logged in")
+
+
+@router.post("/delete_account")
+async def delete_account(user_id: str = Cookie(None)):
+    if user_id:
+        conn = db_connect()
+        conn.execute('DELETE FROM user WHERE user_id = ?', (user_id,))
+        conn.commit()
+        conn.close()
+
+        response = JSONResponse(
+            content={"message": "deleted!"}, status_code=200)
+        response.delete_cookie(key="user_id")
+        return response
+    raise HTTPException(status_code=400, detail="User not logged in")
