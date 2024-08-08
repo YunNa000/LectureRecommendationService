@@ -157,23 +157,32 @@ const GetListedLectureData = () => {
     (sum, lecture) => sum + lecture.lecCredit,
     0
   );
+
+  const hasBeKwangWoonYin = checkedLectures.some(
+    (lecture) => lecture.lecClassName === "광운인되기"
+  );
+
   useEffect(() => {
     if (grades.totalGPA < 3.5) {
-      if (checkedCredits > 19) {
-        setCreditWarning("최대 19학점까지 들을 수 있어요.");
+      if (checkedCredits > (hasBeKwangWoonYin ? 20 : 19)) {
+        setCreditWarning(
+          `최대 ${hasBeKwangWoonYin ? 20 : 19}학점까지 들을 수 있어요.`
+        );
       } else {
         setCreditWarning("");
       }
     } else if (grades.totalGPA >= 3.5) {
-      if (checkedCredits > 22) {
-        setCreditWarning("최대 22학점까지 들을 수 있어요.");
+      if (checkedCredits > (hasBeKwangWoonYin ? 23 : 22)) {
+        setCreditWarning(
+          `최대 ${hasBeKwangWoonYin ? 23 : 22}학점까지 들을 수 있어요.`
+        );
       } else {
         setCreditWarning("");
       }
     } else {
       setCreditWarning("");
     }
-  }, [checkedCredits, grades.totalGPA]);
+  }, [checkedCredits, grades.totalGPA, hasBeKwangWoonYin]);
 
   if (loading) {
     return <div>loading...</div>;
