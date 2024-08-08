@@ -1,6 +1,6 @@
 import React from "react";
 
-const Timetable = ({ checkedLectures, year, semester }) => {
+const Timetable = ({ checkedLectures, year, semester, handleCheck }) => {
   const filteredCheckedLectures = checkedLectures.filter(
     (lecture) =>
       (!year || lecture.year === parseInt(year)) &&
@@ -25,9 +25,12 @@ const Timetable = ({ checkedLectures, year, semester }) => {
             timetable = timetable.map((row) => [...row, null]);
           }
 
-          timetable[row - 1][
-            col - 1
-          ] = `${lecture.lecClassName} (${lecture.lecProfessor})`;
+          timetable[row - 1][col - 1] = (
+            <>
+              {`${lecture.lecClassName} (${lecture.lecProfessor})`}
+              <button onClick={() => handleCheck(lecture)}>uncheck</button>
+            </>
+          );
         });
       }
     });
@@ -47,6 +50,7 @@ const Timetable = ({ checkedLectures, year, semester }) => {
       .map((lecture, index) => (
         <p key={index}>
           {lecture.lecClassName} ({lecture.lecProfessor})
+          <button onClick={() => handleCheck(lecture)}>uncheck</button>
         </p>
       ));
   };

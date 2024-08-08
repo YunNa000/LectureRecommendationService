@@ -254,6 +254,7 @@ const GetListedLectureData = () => {
         checkedLectures={checkedLectures}
         year={year}
         semester={semester}
+        handleCheck={handleCheck}
       />
     </div>
   );

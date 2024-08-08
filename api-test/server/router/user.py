@@ -213,15 +213,15 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
-            SELECT year, semester FROM LectureTable WHERE lecNumber = ?
+            SELECT year, semester, lecClassRoom FROM LectureTable WHERE lecNumber = ?
             ''', (lecNumber,))
             lecture_info = cursor.fetchone()
             if lecture_info:
-                year, semester = lecture_info
+                year, semester, lecClassRoom = lecture_info
                 cursor.execute('''
-                INSERT INTO userListedLecture (user_id, lecNumber, year, semester) 
-                VALUES (?, ?, ?, ?)
-                ''', (user_id, lecNumber, year, semester))
+                INSERT INTO userListedLecture (user_id, lecNumber, year, semester, userListedLecClassRoom) 
+                VALUES (?, ?, ?, ?, ?)
+                ''', (user_id, lecNumber, year, semester, lecClassRoom))
         except sqlite3.IntegrityError:
             continue
 
@@ -233,7 +233,7 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     conn.commit()
     conn.close()
 
-    return {"message": "updated"}
+    return {"message": "updated  update_select_lectures"}
 
 
 @router.get("/user/data/listed_lectures_data", response_model=List[LectureListed])
@@ -362,11 +362,14 @@ async def update_lecture_priority(request: Request, update_request: LecturePrior
 @router.post("/user/data/delete_lecture")
 async def delete_lecture(request: Request, delete_request: LectureCheckDeleteRequest):
     user_id = request.cookies.get("user_id")
+    print("req delete_lecture")
     if not user_id:
         raise HTTPException(status_code=400, detail="not exist")
 
     conn = db_connect()
     cursor = conn.cursor()
+
+    print(delete_request.lec_number, delete_request.year, delete_request.semester)
 
     query = """
     DELETE FROM userListedLecture
