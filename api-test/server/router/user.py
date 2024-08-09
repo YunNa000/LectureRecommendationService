@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest, LectureInfoUpdateRequest
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest, LectureInfoUpdateRequest, LectureUserDone, LectureUserDoneLists
 from typing import List
 from db import db_connect
 import sqlite3
@@ -452,3 +452,99 @@ async def update_lecture_info(request: Request, update_request: LectureInfoUpdat
         return {"detail": "Lecture information updated"}
     else:
         raise HTTPException(status_code=404, detail="Lecture not found")
+
+
+@router.post("/user/data/complete_lecture")
+async def complete_lecture(request: Request, lecture_user_done: LectureUserDone):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    check_query = """
+    SELECT COUNT(*) FROM userTakenLecture
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ?
+    """
+
+    cursor.execute(check_query, (user_id, lecture_user_done.takenLecName,
+                   lecture_user_done.takenLecClassification))
+    result = cursor.fetchone()
+
+    if result[0] > 0:
+        raise HTTPException(
+            status_code=400, detail="lecture already completed")
+
+    insert_query = """
+    INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit)
+    VALUES (?, ?, ?, ?, ?)
+    """
+    user_credit = ""
+
+    try:
+        cursor.execute(insert_query, (
+            user_id,
+            lecture_user_done.takenLecName,
+            lecture_user_done.takenLecClassification,
+            lecture_user_done.takenLecCredit,
+            user_credit
+        ))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(
+            status_code=500, detail="Database error: " + str(e))
+    finally:
+        conn.close()
+
+    return {"message": "lecture completing updated"}
+
+
+@router.post("/user/data/user_taken_lectures")
+async def user_taken_lectures(request: Request):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT takenLecName, takenLecClassification, takenLecCredit 
+    FROM userTakenLecture 
+    WHERE user_id = ? AND userCredit NOT IN ('F', 'NP')
+    """
+    cursor.execute(query, (user_id,))
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return {"lectures": [{"takenLecName": row[0], "takenLecClassification": row[1], "takenLecCredit": row[2]} for row in results]}
+
+
+@router.post("/user/data/uncomplete_lecture")
+async def uncomplete_lecture(request: Request):
+    data = await request.json()
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    takenLecName = data.get("takenLecName")
+    takenLecClassification = data.get("takenLecClassification")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    DELETE FROM userTakenLecture 
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ?
+    """
+    cursor.execute(query, (user_id, takenLecName, takenLecClassification))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return {"message": "Lecture uncompleted successfully"}

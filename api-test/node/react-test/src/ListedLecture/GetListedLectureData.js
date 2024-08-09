@@ -13,6 +13,7 @@ const GetListedLectureData = () => {
   const [semester, setSemester] = useState("");
   const [priority, setPriority] = useState("1순위");
   const [creditWarning, setCreditWarning] = useState("");
+  const [completedLectures, setCompletedLectures] = useState([]);
   const [grades, setGrades] = useState({
     totalGPA: 0,
   });
@@ -107,6 +108,25 @@ const GetListedLectureData = () => {
     }
   };
 
+  const fetchCompletedLectures = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/data/user_taken_lectures",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setCompletedLectures(response.data.lectures);
+    } catch (error) {
+      console.error("Error fetching completed lectures:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompletedLectures();
+  }, []);
+
   const handleDelete = async (lecture) => {
     try {
       await axios.post(
@@ -137,6 +157,7 @@ const GetListedLectureData = () => {
       lecture.priority.split(", ").includes(priority)
     );
     setCheckedLectures(updatedCheckedLectures);
+    console.log(updatedCheckedLectures);
   }, [listedLectures, priority]);
 
   const filteredLectures = listedLectures.filter(
@@ -254,6 +275,8 @@ const GetListedLectureData = () => {
           setListedLectures(updatedLectures);
           fetchUserData();
         }}
+        completedLectures={completedLectures}
+        setCompletedLectures={setCompletedLectures}
       />
       <Timetable
         checkedLectures={checkedLectures}
@@ -261,6 +284,8 @@ const GetListedLectureData = () => {
         semester={semester}
         handleCheck={handleCheck}
         setListedLectures={setListedLectures}
+        completedLectures={completedLectures}
+        setCompletedLectures={setCompletedLectures}
       />
     </div>
   );

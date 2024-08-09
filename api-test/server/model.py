@@ -157,3 +157,16 @@ class LectureInfoUpdateRequest(BaseModel):
     semester: str
     classroom: str
     memo: str
+
+
+class LectureUserDone(BaseModel):
+    takenLecName: str
+    takenLecClassification: str
+    takenLecCredit: Optional[int] = None
+
+
+class LectureUserDoneLists(BaseModel):
+    takenLecName: str
+    takenLecClassification: str
+    takenLecCredit: Optional[int] = None
+    userTakenCredit: Optional[str] = None

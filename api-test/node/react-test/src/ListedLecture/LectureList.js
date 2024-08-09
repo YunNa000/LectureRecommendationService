@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const LectureList = ({
@@ -6,7 +6,9 @@ const LectureList = ({
   checkedLectures,
   handleCheck,
   handleDelete,
-  setListedLectures, // prop으로 전달된 setListedLectures
+  setListedLectures,
+  completedLectures,
+  setCompletedLectures,
 }) => {
   const [editLecture, setEditLecture] = useState(null);
   const [classroom, setClassroom] = useState("");
@@ -20,7 +22,7 @@ const LectureList = ({
 
   const handleSaveClick = async () => {
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/data/update_lecture_info",
         {
           lec_number: editLecture.lecNumber,
@@ -52,6 +54,69 @@ const LectureList = ({
     } catch (error) {
       console.error("Error updating lecture info:", error);
     }
+  };
+
+  const handleCompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/complete_lecture",
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) => [
+        ...prev,
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error completing lecture:", error);
+    }
+  };
+
+  const handleUncompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/uncomplete_lecture",
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) =>
+        prev.filter(
+          (completedLecture) =>
+            !(
+              completedLecture.takenLecName === lecture.lecClassName &&
+              completedLecture.takenLecClassification ===
+                lecture.lecClassification
+            )
+        )
+      );
+    } catch (error) {
+      console.error("Error uncompleting lecture:", error);
+    }
+  };
+
+  const isLectureCompleted = (lecture) => {
+    return completedLectures.some(
+      (completedLecture) =>
+        completedLecture.takenLecName === lecture.lecClassName &&
+        completedLecture.takenLecClassification === lecture.lecClassification
+    );
   };
 
   return (
@@ -96,6 +161,15 @@ const LectureList = ({
                   <button onClick={() => setEditLecture(null)}>취소</button>
                 </div>
               )}
+              <button
+                onClick={() => {
+                  isLectureCompleted(lecture)
+                    ? handleUncompleteClick(lecture)
+                    : handleCompleteClick(lecture);
+                }}
+              >
+                {isLectureCompleted(lecture) ? "수강 완료 취소" : "수강 완료"}
+              </button>
             </div>
           </div>
         ))

@@ -7,6 +7,8 @@ const Timetable = ({
   semester,
   handleCheck,
   setListedLectures,
+  completedLectures,
+  setCompletedLectures,
 }) => {
   const [editLecture, setEditLecture] = useState(null);
   const [classroom, setClassroom] = useState("");
@@ -61,6 +63,69 @@ const Timetable = ({
     } catch (error) {
       console.error("Error updating lecture info", error);
     }
+  };
+
+  const handleCompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/complete_lecture",
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) => [
+        ...prev,
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error completing lecture:", error);
+    }
+  };
+
+  const handleUncompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/uncomplete_lecture",
+        {
+          takenLecName: lecture.lecClassName,
+          takenLecClassification: lecture.lecClassification,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) =>
+        prev.filter(
+          (completedLecture) =>
+            !(
+              completedLecture.takenLecName === lecture.lecClassName &&
+              completedLecture.takenLecClassification ===
+                lecture.lecClassification
+            )
+        )
+      );
+    } catch (error) {
+      console.error("Error uncompleting lecture:", error);
+    }
+  };
+
+  const isLectureCompleted = (lecture) => {
+    return completedLectures.some(
+      (completedLecture) =>
+        completedLecture.takenLecName === lecture.lecClassName &&
+        completedLecture.takenLecClassification === lecture.lecClassification
+    );
   };
 
   useEffect(() => {
@@ -158,6 +223,19 @@ const Timetable = ({
                   />
                   <button onClick={handleSaveClick}>저장</button>
                   <button onClick={() => setEditLecture(null)}>취소</button>
+                  <div>
+                    <button
+                      onClick={() => {
+                        isLectureCompleted(lecture)
+                          ? handleUncompleteClick(lecture)
+                          : handleCompleteClick(lecture);
+                      }}
+                    >
+                      {isLectureCompleted(lecture)
+                        ? "수강 완료 취소"
+                        : "수강 완료"}
+                    </button>
+                  </div>
                 </div>
               )}
             </>
@@ -211,6 +289,17 @@ const Timetable = ({
               />
               <button onClick={handleSaveClick}>저장</button>
               <button onClick={() => setEditLecture(null)}>취소</button>
+              <div>
+                <button
+                  onClick={() => {
+                    isLectureCompleted(lecture)
+                      ? handleUncompleteClick(lecture)
+                      : handleCompleteClick(lecture);
+                  }}
+                >
+                  {isLectureCompleted(lecture) ? "수강 완료 취소" : "수강 완료"}
+                </button>
+              </div>
             </div>
           )}
         </p>
