@@ -3,6 +3,7 @@ import axios from "axios";
 import LectureList from "./LectureList";
 import Timetable from "./TimeTable";
 import SumCredit from "./SumCredit";
+import Cookies from "js-cookie";
 
 const GetListedLectureData = () => {
   const [listedLectures, setListedLectures] = useState([]);
@@ -14,9 +15,30 @@ const GetListedLectureData = () => {
   const [priority, setPriority] = useState("1순위");
   const [creditWarning, setCreditWarning] = useState("");
   const [completedLectures, setCompletedLectures] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [grades, setGrades] = useState({
     totalGPA: 0,
   });
+
+  const [manualLecture, setManualLecture] = useState({
+    lecClassName: "",
+    lecClassRoom: "",
+    lecTime: "",
+    year: "",
+    semester: "",
+  });
+  const [showManualLectureForm, setShowManualLectureForm] = useState(false);
+
+  useEffect(() => {
+    const fetchUserId = () => {
+      const cookieUserId = Cookies.get("user_id");
+      if (cookieUserId) {
+        setUserId(cookieUserId);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   const fetchGPA = async () => {
     try {
@@ -52,7 +74,12 @@ const GetListedLectureData = () => {
       setLoading(false);
       console.log("initialCheckedLectures", initialCheckedLectures);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      if (error.response && error.response.status === 454) {
+        console.log("유저가 아무런 강의도 담지 않았어요");
+      } else {
+        console.error("Error fetching user data:", error);
+      }
+      setLoading(false);
     }
   };
 

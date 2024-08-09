@@ -137,7 +137,7 @@ async def update_user_hakbun(request: PersonalInformation):
                 lecture.get('userCredit')
             ))
 
-    # 여기 D+?이랑 D의 경우, np와 p, F의 경우 등 고려해보는 것이 필요해요.
+    # 여기 D+?이랑 D의 경우, NP와 P, F의 경우 등 고려해보는 것이 필요해요.
     grade_to_points = {
         "A+": 4.5,
         "A": 4.0,
@@ -247,6 +247,14 @@ async def listed_lectures_data(request: Request):
     conn = db_connect()
     cursor = conn.cursor()
 
+    count_query = "SELECT COUNT(*) FROM userListedLecture WHERE user_id = ?"
+    cursor.execute(count_query, (user_id,))
+    count_result = cursor.fetchone()
+    count = count_result[0] if count_result else 0
+
+    if count == 0:
+        raise HTTPException(status_code=454, detail="선택한 강의가 없어요.")
+
     query = """
     SELECT ull.userListedLecName, lt.lecNumber, lt.lecProfessor, ull.userListedLecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
@@ -257,9 +265,6 @@ async def listed_lectures_data(request: Request):
     """
     cursor.execute(query, (user_id,))
     lectures = cursor.fetchall()
-
-    if not lectures:
-        raise HTTPException(status_code=404, detail="선택한 강의가 없어요.")
 
     user_listed_lectures = []
     for lecture in lectures:
