@@ -19,6 +19,9 @@ const GetListedLectureData = () => {
   const [grades, setGrades] = useState({
     totalGPA: 0,
   });
+  const [lectureDay, setLectureDay] = useState("");
+  const [startPeriod, setStartPeriod] = useState("");
+  const [endPeriod, setEndPeriod] = useState("");
 
   const [manualLecture, setManualLecture] = useState({
     lecClassName: "",
@@ -67,6 +70,7 @@ const GetListedLectureData = () => {
         }
       );
       setListedLectures(response.data);
+      console.log("resp data", response.data);
       const initialCheckedLectures = response.data.filter((lecture) =>
         lecture.priority.split(", ").includes(priority)
       );
@@ -90,6 +94,12 @@ const GetListedLectureData = () => {
       );
       setYear(response.data.latest_year);
       setSemester(response.data.latest_semester);
+
+      setManualLecture((prev) => ({
+        ...prev,
+        year: response.data.latest_year,
+        semester: response.data.latest_semester,
+      }));
     } catch (error) {
       console.error("error fetching latest year and semester", error);
     }
@@ -111,7 +121,7 @@ const GetListedLectureData = () => {
       await axios.post(
         "http://localhost:8000/user/data/update_lecture_priority",
         {
-          lec_number: lecture.lecNumber,
+          userListedLecNumber: lecture.userListedLecNumber,
           year: lecture.year,
           semester: lecture.semester,
           priority: updatedPriority,
@@ -124,7 +134,7 @@ const GetListedLectureData = () => {
       );
       setListedLectures((prev) =>
         prev.map((item) =>
-          item.lecNumber === lecture.lecNumber &&
+          item.userListedLecNumber === lecture.userListedLecNumber &&
           item.year === lecture.year &&
           item.semester === lecture.semester
             ? { ...item, priority: updatedPriority }
@@ -151,6 +161,67 @@ const GetListedLectureData = () => {
     }
   };
 
+  const handleManualLectureChange = (e) => {
+    const { name, value } = e.target;
+    setManualLecture((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddManualLecture = async () => {
+    const dayMap = {
+      월요일: 1,
+      화요일: 2,
+      수요일: 3,
+      목요일: 4,
+      금요일: 5,
+      토요일: 6,
+      일요일: 7,
+    };
+
+    const dayNumber = dayMap[lectureDay];
+    let lecTimeString = "";
+
+    for (let i = parseInt(startPeriod); i <= parseInt(endPeriod); i++) {
+      if (lecTimeString) lecTimeString += ",";
+      lecTimeString += `(${dayNumber}:${i})`;
+    }
+
+    setManualLecture((prev) => {
+      const updatedLecture = {
+        ...prev,
+        lecTime: lecTimeString,
+      };
+
+      console.log(updatedLecture);
+      return updatedLecture;
+    });
+
+    try {
+      await axios.post(
+        "http://localhost:8000/user/update_manually_add_lecture",
+        {
+          userId: userId,
+          lecNumbers: [],
+          manualLectures: [
+            {
+              lecClassName: manualLecture.lecClassName,
+              lecClassRoom: manualLecture.lecClassRoom,
+              lecTime: lecTimeString,
+              year: manualLecture.year,
+              semester: manualLecture.semester,
+            },
+          ],
+        },
+        { withCredentials: true }
+      );
+      fetchCompletedLectures();
+    } catch (error) {
+      console.error("error adding manual lecture", error);
+    }
+  };
+
   useEffect(() => {
     fetchCompletedLectures();
   }, []);
@@ -160,7 +231,7 @@ const GetListedLectureData = () => {
       await axios.post(
         "http://localhost:8000/user/data/delete_lecture",
         {
-          lec_number: lecture.lecNumber,
+          userListedLecNumber: lecture.userListedLecNumber,
           year: lecture.year,
           semester: lecture.semester,
         },
@@ -289,6 +360,90 @@ const GetListedLectureData = () => {
             <option value="3순위">3순위</option>
           </select>
         </label>
+      </div>
+      <div>
+        <button onClick={() => setShowManualLectureForm((prev) => !prev)}>
+          수동 추가
+        </button>
+        {showManualLectureForm && (
+          <div>
+            <input
+              type="text"
+              name="lecClassName"
+              placeholder="강의명"
+              value={manualLecture.lecClassName}
+              onChange={handleManualLectureChange}
+            />
+            <input
+              type="text"
+              name="lecClassRoom"
+              placeholder="강의실"
+              value={manualLecture.lecClassRoom}
+              onChange={handleManualLectureChange}
+            />
+
+            <select
+              name="lectureDay"
+              value={lectureDay}
+              onChange={(e) => setLectureDay(e.target.value)}
+            >
+              <option value="">요일 선택</option>
+              <option value="월요일">월요일</option>
+              <option value="화요일">화요일</option>
+              <option value="수요일">수요일</option>
+              <option value="목요일">목요일</option>
+              <option value="금요일">금요일</option>
+              <option value="토요일">토요일</option>
+              <option value="일요일">일요일</option>
+            </select>
+
+            <select
+              name="startPeriod"
+              value={startPeriod}
+              onChange={(e) => setStartPeriod(e.target.value)}
+            >
+              <option value="">시작 교시</option>
+              {[...Array(10).keys()].map((period) => (
+                <option key={period} value={period}>
+                  {period}교시
+                </option>
+              ))}
+            </select>
+
+            <select
+              name="endPeriod"
+              value={endPeriod}
+              onChange={(e) => setEndPeriod(e.target.value)}
+            >
+              <option value="">끝 교시</option>
+              {[...Array(10).keys()].map((period) => (
+                <option key={period} value={period}>
+                  {period}교시
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              name="year"
+              placeholder="년도"
+              value={manualLecture.year}
+              onChange={handleManualLectureChange}
+            />
+            <select
+              name="semester"
+              value={manualLecture.semester}
+              onChange={handleManualLectureChange}
+            >
+              <option value="1학기">1학기</option>
+              <option value="여름학기">여름학기</option>
+              <option value="2학기">2학기</option>
+              <option value="겨울학기">겨울학기</option>
+            </select>
+
+            <button onClick={handleAddManualLecture}>추가</button>
+          </div>
+        )}
       </div>
       <LectureList
         lectures={filteredLectures}

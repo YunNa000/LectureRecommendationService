@@ -34,7 +34,7 @@ const Timetable = ({
       const response = await axios.post(
         "http://localhost:8000/user/data/update_lecture_info",
         {
-          lec_number: editLecture.lecNumber,
+          userListedLecNumber: editLecture.userListedLecNumber,
           year: editLecture.year,
           semester: editLecture.semester,
           classroom: classroom,
@@ -47,7 +47,7 @@ const Timetable = ({
 
       setListedLectures((prev) =>
         prev.map((lecture) =>
-          lecture.lecNumber === editLecture.lecNumber &&
+          lecture.userListedLecNumber === editLecture.userListedLecNumber &&
           lecture.year === editLecture.year &&
           lecture.semester === editLecture.semester
             ? {
@@ -70,7 +70,7 @@ const Timetable = ({
       await axios.post(
         "http://localhost:8000/user/data/complete_lecture",
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
           takenLecCredit: lecture.lecCredit,
         },
@@ -82,7 +82,7 @@ const Timetable = ({
       setCompletedLectures((prev) => [
         ...prev,
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
           takenLecCredit: lecture.lecCredit,
         },
@@ -97,7 +97,7 @@ const Timetable = ({
       await axios.post(
         "http://localhost:8000/user/data/uncomplete_lecture",
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
         },
         {
@@ -109,7 +109,7 @@ const Timetable = ({
         prev.filter(
           (completedLecture) =>
             !(
-              completedLecture.takenLecName === lecture.lecClassName &&
+              completedLecture.takenLecName === lecture.userListedLecName &&
               completedLecture.takenLecClassification ===
                 lecture.lecClassification
             )
@@ -123,7 +123,7 @@ const Timetable = ({
   const isLectureCompleted = (lecture) => {
     return completedLectures.some(
       (completedLecture) =>
-        completedLecture.takenLecName === lecture.lecClassName &&
+        completedLecture.takenLecName === lecture.userListedLecName &&
         completedLecture.takenLecClassification === lecture.lecClassification
     );
   };
@@ -245,37 +245,39 @@ const Timetable = ({
               </small>
               <button onClick={() => handleCheck(lecture)}>uncheck</button>
               <button onClick={() => handleEditClick(lecture)}>수정</button>
-              {editLecture && editLecture.lecNumber === lecture.lecNumber && (
-                <div>
-                  <input
-                    type="text"
-                    value={classroom}
-                    onChange={(e) => setClassroom(e.target.value)}
-                    placeholder="강의실"
-                  />
-                  <input
-                    type="text"
-                    value={memo}
-                    onChange={(e) => setMemo(e.target.value)}
-                    placeholder="메모"
-                  />
-                  <button onClick={handleSaveClick}>저장</button>
-                  <button onClick={() => setEditLecture(null)}>취소</button>
+              {editLecture &&
+                editLecture.userListedLecNumber ===
+                  lecture.userListedLecNumber && (
                   <div>
-                    <button
-                      onClick={() => {
-                        isLectureCompleted(lecture)
-                          ? handleUncompleteClick(lecture)
-                          : handleCompleteClick(lecture);
-                      }}
-                    >
-                      {isLectureCompleted(lecture)
-                        ? "수강 완료 취소"
-                        : "수강 완료"}
-                    </button>
+                    <input
+                      type="text"
+                      value={classroom}
+                      onChange={(e) => setClassroom(e.target.value)}
+                      placeholder="강의실"
+                    />
+                    <input
+                      type="text"
+                      value={memo}
+                      onChange={(e) => setMemo(e.target.value)}
+                      placeholder="메모"
+                    />
+                    <button onClick={handleSaveClick}>저장</button>
+                    <button onClick={() => setEditLecture(null)}>취소</button>
+                    <div>
+                      <button
+                        onClick={() => {
+                          isLectureCompleted(lecture)
+                            ? handleUncompleteClick(lecture)
+                            : handleCompleteClick(lecture);
+                        }}
+                      >
+                        {isLectureCompleted(lecture)
+                          ? "수강 완료 취소"
+                          : "수강 완료"}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </>
           );
 
@@ -325,38 +327,41 @@ const Timetable = ({
       .filter((lecture) => !lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g))
       .map((lecture, index) => (
         <p key={index}>
-          {lecture.lecClassName} ({lecture.lecProfessor})
+          {lecture.userListedLecName} ({lecture.lecProfessor})
           <button onClick={() => handleCheck(lecture)}>uncheck</button>
           <button onClick={() => handleEditClick(lecture)}>수정</button>
-          {editLecture && editLecture.lecNumber === lecture.lecNumber && (
-            <div>
-              <input
-                type="text"
-                value={classroom}
-                onChange={(e) => setClassroom(e.target.value)}
-                placeholder="강의실"
-              />
-              <input
-                type="text"
-                value={memo}
-                onChange={(e) => setMemo(e.target.value)}
-                placeholder="메모"
-              />
-              <button onClick={handleSaveClick}>저장</button>
-              <button onClick={() => setEditLecture(null)}>취소</button>
+          {editLecture &&
+            editLecture.userListedLecNumber === lecture.userListedLecNumber && (
               <div>
-                <button
-                  onClick={() => {
-                    isLectureCompleted(lecture)
-                      ? handleUncompleteClick(lecture)
-                      : handleCompleteClick(lecture);
-                  }}
-                >
-                  {isLectureCompleted(lecture) ? "수강 완료 취소" : "수강 완료"}
-                </button>
+                <input
+                  type="text"
+                  value={classroom}
+                  onChange={(e) => setClassroom(e.target.value)}
+                  placeholder="강의실"
+                />
+                <input
+                  type="text"
+                  value={memo}
+                  onChange={(e) => setMemo(e.target.value)}
+                  placeholder="메모"
+                />
+                <button onClick={handleSaveClick}>저장</button>
+                <button onClick={() => setEditLecture(null)}>취소</button>
+                <div>
+                  <button
+                    onClick={() => {
+                      isLectureCompleted(lecture)
+                        ? handleUncompleteClick(lecture)
+                        : handleCompleteClick(lecture);
+                    }}
+                  >
+                    {isLectureCompleted(lecture)
+                      ? "수강 완료 취소"
+                      : "수강 완료"}
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </p>
       ));
   };
