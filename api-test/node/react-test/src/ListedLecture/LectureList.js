@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const LectureList = ({
@@ -6,6 +6,9 @@ const LectureList = ({
   checkedLectures,
   handleCheck,
   handleDelete,
+  setListedLectures,
+  completedLectures,
+  setCompletedLectures,
 }) => {
   const [editLecture, setEditLecture] = useState(null);
   const [classroom, setClassroom] = useState("");
@@ -19,7 +22,7 @@ const LectureList = ({
 
   const handleSaveClick = async () => {
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/data/update_lecture_info",
         {
           lec_number: editLecture.lecNumber,
@@ -32,11 +35,92 @@ const LectureList = ({
           withCredentials: true,
         }
       );
-      console.log(response.data);
+
+      setListedLectures((prev) =>
+        prev.map((lecture) =>
+          lecture.lecNumber === editLecture.lecNumber &&
+          lecture.year === editLecture.year &&
+          lecture.semester === editLecture.semester
+            ? {
+                ...lecture,
+                userListedLecClassRoom: classroom,
+                userListedLecMemo: memo,
+              }
+            : lecture
+        )
+      );
+
       setEditLecture(null);
     } catch (error) {
-      console.error("Error updating lecture info", error);
+      console.error("Error updating lecture info:", error);
     }
+  };
+
+  const handleCompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/complete_lecture",
+        {
+          takenLecName: lecture.userListedLecName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+          year: lecture.year,
+          semester: lecture.semester,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) => [
+        ...prev,
+        {
+          takenLecName: lecture.userListedLecName,
+          takenLecClassification: lecture.lecClassification,
+          takenLecCredit: lecture.lecCredit,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error completing lecture:", error);
+    }
+  };
+
+  const handleUncompleteClick = async (lecture) => {
+    try {
+      await axios.post(
+        "http://localhost:8000/user/data/uncomplete_lecture",
+        {
+          takenLecName: lecture.userListedLecName,
+          takenLecClassification: lecture.lecClassification,
+          year: lecture.year,
+          semester: lecture.semester,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      setCompletedLectures((prev) =>
+        prev.filter(
+          (completedLecture) =>
+            !(
+              completedLecture.takenLecName === lecture.userListedLecName &&
+              completedLecture.takenLecClassification ===
+                lecture.lecClassification
+            )
+        )
+      );
+    } catch (error) {
+      console.error("Error uncompleting lecture:", error);
+    }
+  };
+
+  const isLectureCompleted = (lecture) => {
+    return completedLectures.some(
+      (completedLecture) =>
+        completedLecture.takenLecName === lecture.userListedLecName &&
+        completedLecture.takenLecClassification === lecture.lecClassification
+    );
   };
 
   return (
@@ -46,38 +130,61 @@ const LectureList = ({
       ) : (
         lectures.map((lecture, index) => (
           <div key={index}>
-            <input
-              type="checkbox"
-              onChange={() => handleCheck(lecture)}
-              checked={checkedLectures.includes(lecture)}
-            />
-            <p>
-              {lecture.lecClassName}
+            <hr />
+            <div>
+              <input
+                type="checkbox"
+                onChange={() => handleCheck(lecture)}
+                checked={checkedLectures.includes(lecture)}
+              />
+              <p>{lecture.userListedLecName}</p>
               <small>
-                {lecture.lecProfessor} | {lecture.lecTime} |{" "}
+                {lecture.lecProfessor} | {lecture.userListedLecTime} |
+                {lecture.year} |{lecture.semester}
+                <br />
+                <br />
                 {lecture.userListedLecClassRoom} | {lecture.userListedLecMemo}
               </small>
-              <button onClick={() => handleDelete(lecture)}>삭제</button>
               <button onClick={() => handleEditClick(lecture)}>수정</button>
-            </p>
-            {editLecture && editLecture.lecNumber === lecture.lecNumber && (
-              <div>
-                <input
-                  type="text"
-                  value={classroom}
-                  onChange={(e) => setClassroom(e.target.value)}
-                  placeholder="강의실"
-                />
-                <input
-                  type="text"
-                  value={memo}
-                  onChange={(e) => setMemo(e.target.value)}
-                  placeholder="메모"
-                />
-                <button onClick={handleSaveClick}>저장</button>
-                <button onClick={() => setEditLecture(null)}>취소</button>
-              </div>
-            )}
+              {editLecture && editLecture.lecNumber === lecture.lecNumber && (
+                <div>
+                  <div>
+                    <button onClick={() => handleDelete(lecture)}>
+                      리스트에서 제거
+                    </button>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={classroom}
+                      onChange={(e) => setClassroom(e.target.value)}
+                      placeholder="강의실"
+                    />
+                    <input
+                      type="text"
+                      value={memo}
+                      onChange={(e) => setMemo(e.target.value)}
+                      placeholder="메모"
+                    />
+                    <button onClick={handleSaveClick}>저장</button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        isLectureCompleted(lecture)
+                          ? handleUncompleteClick(lecture)
+                          : handleCompleteClick(lecture);
+                      }}
+                    >
+                      {isLectureCompleted(lecture)
+                        ? "수강 완료 취소"
+                        : "수강 완료"}
+                    </button>
+                  </div>
+                  <button onClick={() => setEditLecture(null)}>취소</button>
+                </div>
+              )}
+            </div>
           </div>
         ))
       )}

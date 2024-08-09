@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
-from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest, LectureInfoUpdateRequest
+from model import PersonalInformation, LecturesUpdateRequest, LectureListed, LectureCheckUpdateRequest, LectureCheckDeleteRequest, LecturePriorityUpdateRequest, LectureInfoUpdateRequest, LectureUserDone, LectureUserDoneLists
 from typing import List
 from db import db_connect
 import sqlite3
@@ -35,7 +35,7 @@ async def get_user_data(request: Request):
                                            for lecNumber in lecNumbers]
 
         cursor.execute(
-            "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?",
+            "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester FROM userTakenLecture WHERE user_id = ?",
             (user_dict['user_id'],)
         )
         takenLectures = cursor.fetchall()
@@ -44,7 +44,9 @@ async def get_user_data(request: Request):
                 "lectureName": lecture[0],
                 "lecClassification": lecture[1],
                 "lecCredit": lecture[2],
-                "userCredit": lecture[3]
+                "userCredit": lecture[3],
+                "year": lecture[4],
+                "semester": lecture[5]
             }
             for lecture in takenLectures
         ]
@@ -213,15 +215,15 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
-            SELECT year, semester, lecClassRoom FROM LectureTable WHERE lecNumber = ?
+            SELECT year, semester, lecClassRoom, lecClassName, lecTime FROM LectureTable WHERE lecNumber = ?
             ''', (lecNumber,))
             lecture_info = cursor.fetchone()
             if lecture_info:
-                year, semester, lecClassRoom = lecture_info
+                year, semester, lecClassRoom, lecClassName, lecTime = lecture_info
                 cursor.execute('''
-                INSERT INTO userListedLecture (user_id, lecNumber, year, semester, userListedLecClassRoom) 
-                VALUES (?, ?, ?, ?, ?)
-                ''', (user_id, lecNumber, year, semester, lecClassRoom))
+                INSERT INTO userListedLecture (user_id, lecNumber, year, semester, userListedLecClassRoom, userListedLecName, userListedLecTime) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (user_id, lecNumber, year, semester, lecClassRoom, lecClassName, lecTime))
         except sqlite3.IntegrityError:
             continue
 
@@ -233,7 +235,7 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     conn.commit()
     conn.close()
 
-    return {"message": "updated  update_select_lectures"}
+    return {"message": "updated update_select_lectures"}
 
 
 @router.get("/user/data/listed_lectures_data", response_model=List[LectureListed])
@@ -246,7 +248,7 @@ async def listed_lectures_data(request: Request):
     cursor = conn.cursor()
 
     query = """
-    SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
+    SELECT ull.userListedLecName, lt.lecNumber, lt.lecProfessor, ull.userListedLecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
            lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked, ull.priority, ull.userListedLecClassRoom, ull.userListedLecMemo
     FROM userListedLecture ull
@@ -262,10 +264,10 @@ async def listed_lectures_data(request: Request):
     user_listed_lectures = []
     for lecture in lectures:
         user_listed_lectures.append({
-            "lecClassName": lecture["lecClassName"] if lecture["lecClassName"] else "값이 비었어요",
+            "userListedLecName": lecture["userListedLecName"] if lecture["userListedLecName"] else "값이 비었어요",
             "lecNumber": lecture["lecNumber"] if lecture["lecNumber"] else "값이 비었어요",
             "lecProfessor": lecture["lecProfessor"] if lecture["lecProfessor"] else "값이 비었어요",
-            "lecTime": lecture["lecTime"] if lecture["lecTime"] else "값이 비었어요",
+            "userListedLecTime": lecture["userListedLecTime"] if lecture["userListedLecTime"] else "값이 비었어요",
             "lecClassification": lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요",
             "lecStars": lecture["lecStars"] if lecture["lecStars"] else None,
             "lecAssignment": int(lecture["lecAssignment"]) if lecture["lecAssignment"] is not None else None,
@@ -452,3 +454,104 @@ async def update_lecture_info(request: Request, update_request: LectureInfoUpdat
         return {"detail": "Lecture information updated"}
     else:
         raise HTTPException(status_code=404, detail="Lecture not found")
+
+
+@router.post("/user/data/complete_lecture")
+async def complete_lecture(request: Request, lecture_user_done: LectureUserDone):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    check_query = """
+    SELECT COUNT(*) FROM userTakenLecture
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
+    """
+
+    cursor.execute(check_query, (user_id, lecture_user_done.takenLecName,
+                   lecture_user_done.takenLecClassification, lecture_user_done.year, lecture_user_done.semester))
+    result = cursor.fetchone()
+
+    if result[0] > 0:
+        raise HTTPException(
+            status_code=400, detail="lecture already completed")
+
+    insert_query = """
+    INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """
+    user_credit = ""
+
+    try:
+        cursor.execute(insert_query, (
+            user_id,
+            lecture_user_done.takenLecName,
+            lecture_user_done.takenLecClassification,
+            lecture_user_done.takenLecCredit,
+            user_credit,
+            lecture_user_done.year,
+            lecture_user_done.semester
+        ))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(
+            status_code=500, detail="Database error: " + str(e))
+    finally:
+        conn.close()
+
+    return {"message": "lecture completing updated"}
+
+
+@router.post("/user/data/user_taken_lectures")
+async def user_taken_lectures(request: Request):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT takenLecName, takenLecClassification, takenLecCredit 
+    FROM userTakenLecture 
+    WHERE user_id = ? AND userCredit NOT IN ('F', 'NP')
+    """
+    cursor.execute(query, (user_id,))
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return {"lectures": [{"takenLecName": row[0], "takenLecClassification": row[1], "takenLecCredit": row[2]} for row in results]}
+
+
+@router.post("/user/data/uncomplete_lecture")
+async def uncomplete_lecture(request: Request):
+    data = await request.json()
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User not authenticated")
+
+    takenLecName = data.get("takenLecName")
+    takenLecClassification = data.get("takenLecClassification")
+    year = data.get("year")
+    semester = data.get("semester")
+
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+    DELETE FROM userTakenLecture 
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
+    """
+    cursor.execute(query, (user_id, takenLecName,
+                   takenLecClassification, year, semester))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return {"message": "Lecture uncompleted successfully"}

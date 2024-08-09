@@ -30,10 +30,10 @@ class LectureRequest(BaseModel):
 
 
 class LectureListed(BaseModel):
-    lecClassName: str
+    userListedLecName: str
     lecNumber: str
     lecProfessor: str
-    lecTime: str
+    userListedLecTime: str
     lecClassification: str
     lecStars: Optional[float] = None  # 별점
     lecAssignment: Optional[int] = None  # 과제
@@ -157,3 +157,18 @@ class LectureInfoUpdateRequest(BaseModel):
     semester: str
     classroom: str
     memo: str
+
+
+class LectureUserDone(BaseModel):
+    takenLecName: str
+    takenLecClassification: str
+    takenLecCredit: Optional[int] = None
+    year: Optional[int] = None
+    semester: Optional[str] = None
+
+
+class LectureUserDoneLists(BaseModel):
+    takenLecName: str
+    takenLecClassification: str
+    takenLecCredit: Optional[int] = None
+    userTakenCredit: Optional[str] = None
