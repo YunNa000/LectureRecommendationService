@@ -178,7 +178,7 @@ const GetListedLectureData = () => {
   );
 
   const hasBeKwangWoonYin = checkedLectures.some(
-    (lecture) => lecture.lecClassName === "광운인되기"
+    (lecture) => lecture.userListedLecName === "광운인되기"
   );
 
   useEffect(() => {
@@ -267,11 +267,7 @@ const GetListedLectureData = () => {
         lectures={filteredLectures}
         checkedLectures={checkedLectures}
         handleCheck={handleCheck}
-        handleDelete={(lecture) => {
-          setListedLectures((prev) =>
-            prev.filter((l) => l.lecNumber !== lecture.lecNumber)
-          );
-        }}
+        handleDelete={handleDelete}
         setListedLectures={(updatedLectures) => {
           setListedLectures(updatedLectures);
           fetchUserData();

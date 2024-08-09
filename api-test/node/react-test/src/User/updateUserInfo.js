@@ -19,7 +19,13 @@ const UpdateUserForm = () => {
     userName: "",
   });
   const [lectureInputs, setLectureInputs] = useState([
-    { lectureName: "", lecCredit: "", lecClassification: "" },
+    {
+      lectureName: "",
+      lecCredit: "",
+      lecClassification: "",
+      year: "",
+      semester: "",
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -70,13 +76,14 @@ const UpdateUserForm = () => {
 
       const data = await response.json();
 
-      console.log(data);
       data.userTakenLectures.forEach((lecture) => {
         if (!existingLectureNames.has(lecture.lectureName)) {
           newLectureInputs.push({
             lectureName: lecture.lectureName,
             lecCredit: lecture.lecCredit,
             lecClassification: lecture.lecClassification,
+            year: lecture.yaer,
+            semester: lecture.semester,
           });
           existingLectureNames.add(lecture.lectureName);
         }
@@ -174,6 +181,20 @@ const UpdateUserForm = () => {
     }
   };
 
+  const groupLecturesByYearAndSemester = (lectures) => {
+    const grouped = lectures.reduce((acc, lecture) => {
+      const key = `${lecture.year || "null"}-${lecture.semester || "null"}`;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(lecture);
+      return acc;
+    }, {});
+    return grouped;
+  };
+
+  const groupedLectures = groupLecturesByYearAndSemester(lectureInputs);
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -263,47 +284,59 @@ const UpdateUserForm = () => {
       </div>
       <div>
         <label>수강한 강의 목록:</label>
-        {lectureInputs.map((lecture, index) => (
-          <div key={index}>
-            <input
-              type="text"
-              name="lectureName"
-              value={lecture.lectureName}
-              onChange={(e) => handleLectureChange(index, e)}
-              placeholder="강의 명"
-            />
-            <input
-              type="text"
-              name="lecCredit"
-              value={lecture.lecCredit}
-              onChange={(e) => handleLectureChange(index, e)}
-              placeholder="학점"
-            />
-            <input
-              type="text"
-              name="lecClassification"
-              value={lecture.lecClassification}
-              onChange={(e) => handleLectureChange(index, e)}
-              placeholder="분류"
-            />
-            <select
-              name="userCredit"
-              value={lecture.userCredit || ""}
-              onChange={(e) => handleLectureChange(index, e)}
-            >
-              <option value="">받은 학점</option>
-              <option value="A+">A+</option>
-              <option value="A">A</option>
-              <option value="B+">B+</option>
-              <option value="B">B</option>
-              <option value="C+">C+</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="F">F</option>
-            </select>
-            <button type="button" onClick={() => removeLectureInput(index)}>
-              삭제
-            </button>
+        {Object.entries(groupedLectures).map(([key, lectures]) => (
+          <div key={key}>
+            <h3>
+              {key === "null-null"
+                ? "직접 추가한 강의"
+                : key
+                    .split("-")
+                    .map((k) => (k === "null" ? "" : k))
+                    .join(" - ")}
+            </h3>
+            {lectures.map((lecture, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  name="lectureName"
+                  value={lecture.lectureName}
+                  onChange={(e) => handleLectureChange(index, e)}
+                  placeholder="강의 명"
+                />
+                <input
+                  type="text"
+                  name="lecCredit"
+                  value={lecture.lecCredit}
+                  onChange={(e) => handleLectureChange(index, e)}
+                  placeholder="학점"
+                />
+                <input
+                  type="text"
+                  name="lecClassification"
+                  value={lecture.lecClassification}
+                  onChange={(e) => handleLectureChange(index, e)}
+                  placeholder="분류"
+                />
+                <select
+                  name="userCredit"
+                  value={lecture.userCredit || ""}
+                  onChange={(e) => handleLectureChange(index, e)}
+                >
+                  <option value="">받은 학점</option>
+                  <option value="A+">A+</option>
+                  <option value="A">A</option>
+                  <option value="B+">B+</option>
+                  <option value="B">B</option>
+                  <option value="C+">C+</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="F">F</option>
+                </select>
+                <button type="button" onClick={() => removeLectureInput(index)}>
+                  삭제
+                </button>
+              </div>
+            ))}
           </div>
         ))}
         <button type="button" onClick={addLectureInput}>

@@ -210,7 +210,7 @@ const Timetable = ({
     let maxCol = 0;
 
     filteredCheckedLectures.forEach((lecture) => {
-      const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
+      const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
         times.forEach((time) => {
           const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
@@ -230,7 +230,7 @@ const Timetable = ({
       .map(() => Array(maxCol).fill(null));
 
     filteredCheckedLectures.forEach((lecture) => {
-      const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
+      const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
         times.forEach((time) => {
           const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
@@ -239,7 +239,7 @@ const Timetable = ({
 
           const cellContent = (
             <>
-              <p>{lecture.lecClassName}</p>
+              <p>{lecture.userListedLecName}</p>
               <small>
                 {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
               </small>
@@ -322,7 +322,7 @@ const Timetable = ({
 
   const renderNullLectures = () => {
     return filteredCheckedLectures
-      .filter((lecture) => !lecture.lecTime.match(/\((\d+):(\d+)\)/g))
+      .filter((lecture) => !lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g))
       .map((lecture, index) => (
         <p key={index}>
           {lecture.lecClassName} ({lecture.lecProfessor})

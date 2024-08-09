@@ -35,7 +35,7 @@ async def get_user_data(request: Request):
                                            for lecNumber in lecNumbers]
 
         cursor.execute(
-            "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?",
+            "SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester FROM userTakenLecture WHERE user_id = ?",
             (user_dict['user_id'],)
         )
         takenLectures = cursor.fetchall()
@@ -44,7 +44,9 @@ async def get_user_data(request: Request):
                 "lectureName": lecture[0],
                 "lecClassification": lecture[1],
                 "lecCredit": lecture[2],
-                "userCredit": lecture[3]
+                "userCredit": lecture[3],
+                "year": lecture[4],
+                "semester": lecture[5]
             }
             for lecture in takenLectures
         ]
@@ -213,15 +215,15 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     for lecNumber in lectures_to_add:
         try:
             cursor.execute('''
-            SELECT year, semester, lecClassRoom FROM LectureTable WHERE lecNumber = ?
+            SELECT year, semester, lecClassRoom, lecClassName, lecTime FROM LectureTable WHERE lecNumber = ?
             ''', (lecNumber,))
             lecture_info = cursor.fetchone()
             if lecture_info:
-                year, semester, lecClassRoom = lecture_info
+                year, semester, lecClassRoom, lecClassName, lecTime = lecture_info
                 cursor.execute('''
-                INSERT INTO userListedLecture (user_id, lecNumber, year, semester, userListedLecClassRoom) 
-                VALUES (?, ?, ?, ?, ?)
-                ''', (user_id, lecNumber, year, semester, lecClassRoom))
+                INSERT INTO userListedLecture (user_id, lecNumber, year, semester, userListedLecClassRoom, userListedLecName, userListedLecTime) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (user_id, lecNumber, year, semester, lecClassRoom, lecClassName, lecTime))
         except sqlite3.IntegrityError:
             continue
 
@@ -233,7 +235,7 @@ async def update_selected_lectures(request: LecturesUpdateRequest):
     conn.commit()
     conn.close()
 
-    return {"message": "updated  update_select_lectures"}
+    return {"message": "updated update_select_lectures"}
 
 
 @router.get("/user/data/listed_lectures_data", response_model=List[LectureListed])
@@ -246,7 +248,7 @@ async def listed_lectures_data(request: Request):
     cursor = conn.cursor()
 
     query = """
-    SELECT lt.lecClassName, lt.lecNumber, lt.lecProfessor, lt.lecTime, lt.lecClassification, lt.lecStars,
+    SELECT ull.userListedLecName, lt.lecNumber, lt.lecProfessor, ull.userListedLecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
            lt.lecIsSeminar, lt.lecIsSmall, lt.lecIsConvergence, lt.lecIsArt, lt.lecSubName, lt.year, lt.semester, ull.isChecked, ull.priority, ull.userListedLecClassRoom, ull.userListedLecMemo
     FROM userListedLecture ull
@@ -262,10 +264,10 @@ async def listed_lectures_data(request: Request):
     user_listed_lectures = []
     for lecture in lectures:
         user_listed_lectures.append({
-            "lecClassName": lecture["lecClassName"] if lecture["lecClassName"] else "값이 비었어요",
+            "userListedLecName": lecture["userListedLecName"] if lecture["userListedLecName"] else "값이 비었어요",
             "lecNumber": lecture["lecNumber"] if lecture["lecNumber"] else "값이 비었어요",
             "lecProfessor": lecture["lecProfessor"] if lecture["lecProfessor"] else "값이 비었어요",
-            "lecTime": lecture["lecTime"] if lecture["lecTime"] else "값이 비었어요",
+            "userListedLecTime": lecture["userListedLecTime"] if lecture["userListedLecTime"] else "값이 비었어요",
             "lecClassification": lecture["lecClassification"] if lecture["lecClassification"] else "값이 비었어요",
             "lecStars": lecture["lecStars"] if lecture["lecStars"] else None,
             "lecAssignment": int(lecture["lecAssignment"]) if lecture["lecAssignment"] is not None else None,
@@ -465,11 +467,11 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
 
     check_query = """
     SELECT COUNT(*) FROM userTakenLecture
-    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ?
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
     """
 
     cursor.execute(check_query, (user_id, lecture_user_done.takenLecName,
-                   lecture_user_done.takenLecClassification))
+                   lecture_user_done.takenLecClassification, lecture_user_done.year, lecture_user_done.semester))
     result = cursor.fetchone()
 
     if result[0] > 0:
@@ -477,8 +479,8 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
             status_code=400, detail="lecture already completed")
 
     insert_query = """
-    INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     """
     user_credit = ""
 
@@ -488,7 +490,9 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
             lecture_user_done.takenLecName,
             lecture_user_done.takenLecClassification,
             lecture_user_done.takenLecCredit,
-            user_credit
+            user_credit,
+            lecture_user_done.year,
+            lecture_user_done.semester
         ))
         conn.commit()
     except Exception as e:
@@ -533,15 +537,18 @@ async def uncomplete_lecture(request: Request):
 
     takenLecName = data.get("takenLecName")
     takenLecClassification = data.get("takenLecClassification")
+    year = data.get("year")
+    semester = data.get("semester")
 
     conn = db_connect()
     cursor = conn.cursor()
 
     query = """
     DELETE FROM userTakenLecture 
-    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ?
+    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
     """
-    cursor.execute(query, (user_id, takenLecName, takenLecClassification))
+    cursor.execute(query, (user_id, takenLecName,
+                   takenLecClassification, year, semester))
     conn.commit()
 
     cursor.close()

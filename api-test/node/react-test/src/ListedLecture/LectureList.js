@@ -61,9 +61,11 @@ const LectureList = ({
       await axios.post(
         "http://localhost:8000/user/data/complete_lecture",
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
           takenLecCredit: lecture.lecCredit,
+          year: lecture.year,
+          semester: lecture.semester,
         },
         {
           withCredentials: true,
@@ -73,7 +75,7 @@ const LectureList = ({
       setCompletedLectures((prev) => [
         ...prev,
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
           takenLecCredit: lecture.lecCredit,
         },
@@ -88,8 +90,10 @@ const LectureList = ({
       await axios.post(
         "http://localhost:8000/user/data/uncomplete_lecture",
         {
-          takenLecName: lecture.lecClassName,
+          takenLecName: lecture.userListedLecName,
           takenLecClassification: lecture.lecClassification,
+          year: lecture.year,
+          semester: lecture.semester,
         },
         {
           withCredentials: true,
@@ -100,7 +104,7 @@ const LectureList = ({
         prev.filter(
           (completedLecture) =>
             !(
-              completedLecture.takenLecName === lecture.lecClassName &&
+              completedLecture.takenLecName === lecture.userListedLecName &&
               completedLecture.takenLecClassification ===
                 lecture.lecClassification
             )
@@ -114,7 +118,7 @@ const LectureList = ({
   const isLectureCompleted = (lecture) => {
     return completedLectures.some(
       (completedLecture) =>
-        completedLecture.takenLecName === lecture.lecClassName &&
+        completedLecture.takenLecName === lecture.userListedLecName &&
         completedLecture.takenLecClassification === lecture.lecClassification
     );
   };
@@ -133,43 +137,53 @@ const LectureList = ({
                 onChange={() => handleCheck(lecture)}
                 checked={checkedLectures.includes(lecture)}
               />
-              <p>{lecture.lecClassName}</p>{" "}
+              <p>{lecture.userListedLecName}</p>
               <small>
-                {lecture.lecProfessor} | {lecture.lecTime} | {lecture.year} |
-                {lecture.semester}
+                {lecture.lecProfessor} | {lecture.userListedLecTime} |
+                {lecture.year} |{lecture.semester}
                 <br />
                 <br />
                 {lecture.userListedLecClassRoom} | {lecture.userListedLecMemo}
               </small>
-              <button onClick={() => handleDelete(lecture)}>삭제</button>
               <button onClick={() => handleEditClick(lecture)}>수정</button>
               {editLecture && editLecture.lecNumber === lecture.lecNumber && (
                 <div>
-                  <input
-                    type="text"
-                    value={classroom}
-                    onChange={(e) => setClassroom(e.target.value)}
-                    placeholder="강의실"
-                  />
-                  <input
-                    type="text"
-                    value={memo}
-                    onChange={(e) => setMemo(e.target.value)}
-                    placeholder="메모"
-                  />
-                  <button onClick={handleSaveClick}>저장</button>
+                  <div>
+                    <button onClick={() => handleDelete(lecture)}>
+                      리스트에서 제거
+                    </button>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={classroom}
+                      onChange={(e) => setClassroom(e.target.value)}
+                      placeholder="강의실"
+                    />
+                    <input
+                      type="text"
+                      value={memo}
+                      onChange={(e) => setMemo(e.target.value)}
+                      placeholder="메모"
+                    />
+                    <button onClick={handleSaveClick}>저장</button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        isLectureCompleted(lecture)
+                          ? handleUncompleteClick(lecture)
+                          : handleCompleteClick(lecture);
+                      }}
+                    >
+                      {isLectureCompleted(lecture)
+                        ? "수강 완료 취소"
+                        : "수강 완료"}
+                    </button>
+                  </div>
                   <button onClick={() => setEditLecture(null)}>취소</button>
                 </div>
               )}
-              <button
-                onClick={() => {
-                  isLectureCompleted(lecture)
-                    ? handleUncompleteClick(lecture)
-                    : handleCompleteClick(lecture);
-                }}
-              >
-                {isLectureCompleted(lecture) ? "수강 완료 취소" : "수강 완료"}
-              </button>
             </div>
           </div>
         ))
