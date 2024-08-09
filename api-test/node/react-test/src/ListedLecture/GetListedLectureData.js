@@ -50,6 +50,7 @@ const GetListedLectureData = () => {
       );
       setCheckedLectures(initialCheckedLectures);
       setLoading(false);
+      console.log("initialCheckedLectures", initialCheckedLectures);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }

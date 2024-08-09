@@ -182,22 +182,60 @@ const Timetable = ({
   }, [checkedLectures]);
 
   const renderTimetable = () => {
-    let timetable = Array(5)
-      .fill(null)
-      .map(() => Array(7).fill(null));
+    const days = [
+      "월요일",
+      "화요일",
+      "수요일",
+      "목요일",
+      "금요일",
+      "토요일",
+      "일요일",
+    ];
+    const periods = [
+      "0교시",
+      "1교시",
+      "2교시",
+      "3교시",
+      "4교시",
+      "5교시",
+      "6교시",
+      "7교시",
+      "8교시",
+      "9교시",
+      "10교시",
+    ];
+
+    let minRow = Infinity;
+    let maxRow = 0;
+    let maxCol = 0;
 
     filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
         times.forEach((time) => {
           const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
+          const rowNum = parseInt(row);
+          const colNum = parseInt(col);
+          if (rowNum > maxRow) maxRow = rowNum;
+          if (rowNum < minRow) minRow = rowNum;
+          if (colNum > maxCol) maxCol = colNum;
+        });
+      }
+    });
 
-          while (timetable.length < row) {
-            timetable.push(Array(timetable[0].length).fill(null));
-          }
-          while (timetable[0].length < col) {
-            timetable = timetable.map((row) => [...row, null]);
-          }
+    minRow = minRow === Infinity ? 1 : minRow;
+
+    let timetable = Array(maxRow - minRow + 1)
+      .fill(null)
+      .map(() => Array(maxCol).fill(null));
+
+    filteredCheckedLectures.forEach((lecture) => {
+      const times = lecture.lecTime.match(/\((\d+):(\d+)\)/g);
+      if (times) {
+        times.forEach((time) => {
+          const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
+          const rowIndex = parseInt(row) - minRow;
+          const colIndex = parseInt(col) - 1;
 
           const cellContent = (
             <>
@@ -241,28 +279,45 @@ const Timetable = ({
             </>
           );
 
-          if (timetable[row - 1][col - 1]) {
-            timetable[row - 1][col - 1] = (
-              <>
-                {timetable[row - 1][col - 1]}
-                <hr />
-                {cellContent}
-              </>
-            );
-          } else {
-            timetable[row - 1][col - 1] = cellContent;
+          if (rowIndex < timetable.length && colIndex < timetable[0].length) {
+            if (timetable[rowIndex][colIndex]) {
+              timetable[rowIndex][colIndex] = (
+                <>
+                  {timetable[rowIndex][colIndex]}
+                  <hr />
+                  {cellContent}
+                </>
+              );
+            } else {
+              timetable[rowIndex][colIndex] = cellContent;
+            }
           }
         });
       }
     });
 
-    return timetable.map((row, rowIndex) => (
-      <tr key={rowIndex}>
-        {row.map((cell, colIndex) => (
-          <td key={colIndex}>{cell}</td>
-        ))}
-      </tr>
-    ));
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {Array.from({ length: maxCol }, (_, index) => (
+              <th key={index}>{days[index % days.length]}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {timetable.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              <td>{periods[rowIndex + minRow]}</td>
+              {row.map((cell, colIndex) => (
+                <td key={colIndex}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   };
 
   const renderNullLectures = () => {
