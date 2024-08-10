@@ -23,6 +23,7 @@ router = APIRouter()
 class User(BaseModel):
     user_id: str
     userName: Optional[str] = None  
+    userMajor: Optional[str] = None
 
 class FriendRequest(BaseModel):
     user_id1: str
@@ -41,16 +42,16 @@ async def get_users(userName: Optional[str] = Query(None, description="Filter us
     #친구검색 허용 토글 추가
     try:
         if userName:
-            cursor.execute("SELECT user_id, userName FROM user WHERE userName LIKE ?", (f"%{userName}%",))
+            cursor.execute("SELECT user_id, userName,userMajor FROM user WHERE userName LIKE ?", (f"%{userName}%",))
         else:
-            cursor.execute("SELECT user_id, userName FROM user")
+            cursor.execute("SELECT user_id, userName, userMajor FROM user")
 
         users = cursor.fetchall()
         
         if not users:
             raise HTTPException(status_code=404, detail="No users found")
         
-        return [User(user_id=user['user_id'], userName=user['userName']) for user in users]
+        return [User(user_id=user['user_id'], userName=user['userName'], userMajor=user['userMajor']) for user in users]
     
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -62,7 +63,7 @@ async def get_users(userName: Optional[str] = Query(None, description="Filter us
 @router.get("/friends", response_model=List[User])
 async def get_friends(
     userId: str = Query(..., description="User ID to get friends for"),
-    userName: Optional[str] = Query(None, description="Filter friends by userName")
+    userName: Optional[str] = Query(None, description="Filter friends by userName"),
 ):
     conn = db_connect()
     cursor = conn.cursor()
@@ -70,24 +71,24 @@ async def get_friends(
     try:
         if userName:
             cursor.execute("""
-                SELECT f.user_id2, u.userName
+                SELECT f.user_id2, u.userName, u.userMajor
                 FROM friend f
                 JOIN user u ON f.user_id2 = u.user_id
-                WHERE f.user_id1 = ? AND u.userName LIKE ?
+                WHERE f.user_id1 = ? AND u.userName LIKE ? AND f.mutality = TRUE
             """, (userId, f"%{userName}%"))
         else:
             cursor.execute("""
-                SELECT f.user_id2, u.userName
+                SELECT f.user_id2, u.userName, u.userMajor
                 FROM friend f
                 JOIN user u ON f.user_id2 = u.user_id
-                WHERE f.user_id1 = ?
+                WHERE f.user_id1 = ?  AND f.mutality = TRUE
             """,(userId,))
         friends = cursor.fetchall()
         
         if not friends:
             raise HTTPException(status_code=404, detail="No friends found")
 
-        return [User(user_id=friend['user_id2'], userName=friend['userName']) for friend in friends]
+        return [User(user_id=friend['user_id2'], userName=friend['userName'],  userMajor=friend['userMajor']) for friend in friends]
     
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -97,22 +98,61 @@ async def get_friends(
         conn.close()
 
 
+@router.get("/friendrequest", response_model=List[User])
+async def get_friends(
+    userId: str = Query(..., description="User ID to get friends for"),
+    userName: Optional[str] = Query(None, description="Filter friends by userName")
+):
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    try:
+        if userName:
+            cursor.execute("""
+                SELECT f.user_id2, u.userName, u.userMajor
+                FROM friend f
+                JOIN user u ON f.user_id2 = u.user_id
+                WHERE f.user_id1 = ? AND u.userName LIKE ? AND f.mutality = FALSE
+            """, (userId, f"%{userName}%"))
+        else:
+            cursor.execute("""
+                SELECT f.user_id1, u.userName, u.userMajor
+                FROM friend f
+                JOIN user u ON f.user_id1 = u.user_id AND f.mutality = FALSE
+                WHERE f.user_id2 = ?
+            """,(userId,))
+        friends = cursor.fetchall()
+        
+        if not friends:
+            raise HTTPException(status_code=404, detail="No friends found")
+
+        return [User(user_id=friend['user_id1'], userName=friend['userName'], userMajor=friend['userMajor']) for friend in friends]
+    
+    except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
 @router.post("/add_friend")
 async def add_friend(request: FriendRequest):
     conn = db_connect()
     cursor = conn.cursor()
     
     try:
-        # 먼저 이미 친구 관계가 있는지 확인
-        cursor.execute("SELECT * FROM friend WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)",
-                       (request.user_id1, request.user_id2, request.user_id2, request.user_id1))
+        # 먼저 이미 팔로우 관계가 있는지 확인
+        cursor.execute("SELECT * FROM friend WHERE (user_id1 = ? AND user_id2 = ?)",
+                       (request.user_id1, request.user_id2))
         existing_friend = cursor.fetchone()
         
         if existing_friend:
             return {"message": "These users are already friends"}
 
-        cursor.execute("SELECT * FROM friend WHERE (user_id2 = ? AND user_id1 = ?) OR (user_id2 = ? AND user_id1 = ?)",
-                       (request.user_id1, request.user_id2, request.user_id2, request.user_id1))
+        cursor.execute("SELECT * FROM friend WHERE (user_id2 = ? AND user_id1 = ?)",
+                       (request.user_id1, request.user_id2))
         mutality = cursor.fetchone()
         
         if mutality:
@@ -120,8 +160,6 @@ async def add_friend(request: FriendRequest):
             cursor.execute("INSERT INTO friend (user_id1, user_id2, mutality ) VALUES (?, ?, ?)",
                         (request.user_id1, request.user_id2, True))
             conn.commit()
-            cursor.execute("INSERT INTO friend (user_id1, user_id2, mutality ) VALUES (?, ?, ?)",
-                        (request.user_id2, request.user_id1, True))
             cursor.execute("""
             UPDATE friend 
             SET mutality = TRUE 
@@ -163,15 +201,14 @@ async def delete_friend(request: FriendRequest):
                 # mutality가 있을 때
                 # 상대방의 친구 관계 mutality를 False로 업데이트
                 cursor.execute("""
-                    UPDATE friend 
-                    SET mutality = FALSE 
-                    WHERE user_id1 = ? AND user_id2 = ?
+                    DELETE FROM friend 
+                    WHERE user_id1 = ? OR user_id2 = ?
                 """, (request.user_id2, request.user_id1))
 
                 # 내 친구 관계 삭제
                 cursor.execute("""
                     DELETE FROM friend 
-                    WHERE user_id1 = ? AND user_id2 = ?
+                    WHERE user_id1 = ? OR user_id2 = ?
                 """, (request.user_id1, request.user_id2))
 
                 conn.commit()
@@ -181,9 +218,14 @@ async def delete_friend(request: FriendRequest):
                 # 그냥 요청 삭제
                 cursor.execute("""
                     DELETE FROM friend 
-                    WHERE user_id1 = ? AND user_id2 = ?
-                    """, (request.user_id1, request.user_id2))
+                    WHERE user_id1 = ? OR user_id2 = ?
+                """, (request.user_id2, request.user_id1))
 
+                # 내 친구 관계 삭제
+                cursor.execute("""
+                    DELETE FROM friend 
+                    WHERE user_id1 = ? OR user_id2 = ?
+                """, (request.user_id1, request.user_id2))
                 conn.commit()
                 return {"message": "Friend request removed"}
         else:

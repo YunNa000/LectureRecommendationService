@@ -17,6 +17,9 @@ import UserInfo from "./MyPage/userInfo";
 import TopBar from "./CommonPart/TopBar";
 import TopBarBack from "./CommonPart/TopBarBack";
 import LectureDetails from "./CommonPart/LectureDetail";
+import FriendRequest from "./Friend/FriendRequest";
+import TopBarBackAddFriend from "./CommonPart/TopBarBackAddFriend";
+
 
 
 
@@ -36,7 +39,7 @@ function BasicView() {
 function UserManagement() {
   return (
     <div>
-      <TopBar title="My Page" />
+      <TopBarBack title="My Page" />
       <CreditList />
       <UserInfo />
       <UpdateUserInfo />
@@ -59,13 +62,23 @@ function Chatbot() {
 function SocialFeatures() {
   return (
     <div>
-      <TopBarBack title="친구" />
-      <UserList />
+      <TopBarBackAddFriend title="친구" />
       <FriendList />
+      <FriendRequest />
     </div>
   );
 }
 
+
+// SocialFeatures 컴포넌트
+function SocialFeatures2() {
+  return (
+    <div>
+      <TopBarBack title="유저 검색" />
+      <UserList />
+    </div>
+  );
+}
 
 function Sebu() {
   const { lectureNumber } = useParams();
@@ -73,6 +86,15 @@ function Sebu() {
     <div>
       <TopBarBack title="강의세부사항" />
       <LectureDetails lectureNumber={lectureNumber} />
+    </div>
+  );
+}
+
+function Test() {
+  const { lectureNumber } = useParams();
+  return (
+    <div>
+      <TopBarBack title="강의세부사항" />
     </div>
   );
 }
@@ -86,9 +108,11 @@ root.render(
         <Route path="/" element={<BasicView />} />
         <Route path="/mypage" element={<UserManagement />} />
         <Route path="/social" element={<SocialFeatures />} />
+        <Route path="/users" element={<SocialFeatures2 />} />
         <Route path="/chat" element={<Chatbot />} />
         <Route path="/Lecture" element={<Sebu/>} />
         <Route path="/lecture/:lectureNumber" element={<Sebu />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   </React.StrictMode>

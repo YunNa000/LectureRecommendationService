@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback  } from 'react';
 import Cookies from "js-cookie"
-
-
+import "./Friend.css"
 
 
 const FriendList = () => {
@@ -75,40 +74,31 @@ const FriendList = () => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return   <div class="center-text">추가된 친구가 없습니다.</div>;
   
     return (
-      <div style={{ padding: '20px' }}>
-        <h1 style={{ marginBottom: '20px' }}>Friend List</h1>
-        <div>My User ID: {myUserId}</div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>User ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Username</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.user_id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => deleteFriendRequest(user.user_id)}>Delete Friend</button>
-                </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button>친구 시간표</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <input type="text" id="searchInput" placeholder="검색어를 입력하세요"></input><button onclick="search()">검색</button>
+      <div className="friend-list-container">
+
+        <div>
+          {users.map((user) => (
+            <div key={user.user_id} className="friend-item">
+              <div className="friend-info">
+                <div className="friend-name">{user.userName}</div>
+                <div className="friend-major">{user.userMajor}</div>
+              </div>
+              <button 
+                onClick={() => deleteFriendRequest(user.user_id)} 
+                className="friend-action-button"
+              >
+                &gt;
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
+  
 
 
 export default FriendList;

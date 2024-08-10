@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback  } from 'react';
 import Cookies from "js-cookie"
-
+import "./Friend.css"
 
 
 
@@ -50,7 +50,7 @@ const FriendRequest = () => {
           if (!myUserId) return; // myUserId가 없으면 함수 종료
           setLoading(true);
           try {
-              const response = await fetch(`http://localhost:8000/friendrequests?userId=${myUserId}`);
+              const response = await fetch(`http://localhost:8000/friendrequest?userId=${myUserId}`);
               if (!response.ok) {
                   throw new Error(`HTTP error! status: ${response.status}`+myUserId);
               }
@@ -99,39 +99,30 @@ const FriendRequest = () => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div></div>;
   
     return (
-      <div style={{ padding: '20px' }}>
-        <h1 style={{ marginBottom: '20px' }}>Friend Request List</h1>
-        <div>My User ID: {myUserId}</div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>User ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Username</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.user_id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => handleFriendRequest(user.user_id)}>Accept Friend</button>
-                </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => deleteFriendRequest(user.user_id)}>요청 삭제</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="friendrequest-list-container">
+      <h2 className="friend-list-title">친구 요청</h2>
+      <div>
+        {users.map((user) => (
+          <div key={user.user_id} className="friend-item">
+            <div className="friend-info">
+              <div className="friend-name">{user.userName}</div>
+              <div className="friend-major">{user.userMajor}</div>
+            </div>
+            <div className="friend-request-buttons">
+            <button onClick={() => handleFriendRequest(user.user_id)} className="friend-request-button">수락</button>
+            <button onClick={() => deleteFriendRequest(user.user_id)} className="friend-request-button"  >
+            거절</button>
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
     );
   };
 
 
 export default FriendRequest;
+

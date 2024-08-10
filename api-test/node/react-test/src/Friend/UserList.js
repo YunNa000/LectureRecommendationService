@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from "js-cookie"
+import "./Friend.css"
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [myUserId, setMyUserId] = useState(''); // 문자열로 저장
+    const [myUserId, setMyUserId] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
       const fetchUserId = () => {
@@ -18,25 +21,30 @@ const UserList = () => {
       fetchUserId();
     }, []);
 
-
     useEffect(() => {
       const fetchUsers = async () => {
+        if (!searchQuery) {
+          setUsers([]);
+          return;
+        }
+        setLoading(true);
+        setError(null);
         try {
-          const response = await fetch('http://localhost:8000/users');
+          const response = await fetch(`http://localhost:8000/users?userName=${searchQuery}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const data = await response.json();
           setUsers(data);
-          setLoading(false);
         } catch (e) {
           setError('유저 데이터 가져오기 오류: ' + e.message);
+        } finally {
           setLoading(false);
         }
       };
   
       fetchUsers();
-    }, []);
+    }, [searchQuery]);
   
     const handleFriendRequest = async (friendId) => {
       try {
@@ -47,7 +55,7 @@ const UserList = () => {
           },
           body: JSON.stringify({
             user_id1: myUserId.toString(),
-            user_id2: friendId.toString(), // 문자열로 변환
+            user_id2: friendId.toString(),
           }),
         });
         if (!response.ok) {
@@ -55,40 +63,60 @@ const UserList = () => {
         }
   
         const result = await response.json();
-        alert(result.message); // 성공 또는 실패 메시지를 표시
+        alert(result.message);
       } catch (e) {
         alert('친구 추가 오류:'  + e.message);
       }
     };
+
+    const handleSearchInputChange = (event) => {
+      setSearchTerm(event.target.value);
+    };
+
+    const handleSearchSubmit = (event) => {
+      event.preventDefault();
+      setSearchQuery(searchTerm);
+    };
   
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-  
+
+
     return (
-      <div style={{ padding: '20px' }}>
-        <h1 style={{ marginBottom: '20px' }}>User List</h1>
-        <div>My User ID: {myUserId}</div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>User ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Username</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.user_id}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.user_id}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.userName}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => handleFriendRequest(user.user_id)}>Add Friend</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <input type="text" id="searchInput" placeholder="검색어를 입력하세요"></input><button onclick="search()">검색</button>
+      <div className="friend-list-container">
+        <form onSubmit={handleSearchSubmit} className="friend-search-form">
+          <input
+            type="text"
+            placeholder="유저 이름 입력..."
+            value={searchTerm}
+            onChange={handleSearchInputChange}
+            className="friend-search-input"
+          />
+          <button type="submit" className="friend-search-button">검색</button>
+        </form>
+        {error && <div class="center-text">해당 유저가 존재하지 않습니다.</div>}
+        {loading ? (
+          <div className="loading-message">검색 중...</div>
+        ) : searchQuery && (
+          <div className="search-results">
+            {users.length > 0 ? (
+              users.map((user) => (
+                <div key={user.user_id} className="friend-item">
+                  <div className="friend-info">
+                    <div className="friend-name">{user.userName}</div>
+                    <div className="friend-major">{user.userMajor}</div>
+                  </div>
+                  <button 
+                    onClick={() => handleFriendRequest(user.user_id)} 
+                    className="friend-request-button" 
+                  >친구 추가
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )}
       </div>
     );
   };

@@ -1,4 +1,5 @@
 import React from "react";
+import UserTimeTable from "./UserTimeTable";
 
 const LectureCallGyoPill = ({
   userGrade,
@@ -20,6 +21,8 @@ const LectureCallGyoPill = ({
   handleSubmit,
   lecClassName,
   setLecClassName,
+  coordinates,
+  setCoordinates
 }) => {
   React.useEffect(() => {
     setLecClassification("교선");
@@ -112,6 +115,10 @@ const LectureCallGyoPill = ({
         name="lecClassName"
         value={lecClassName}
         onChange={(e) => setLecClassName(e.target.value)}
+      />
+            <UserTimeTable 
+        coordinates={coordinates}
+        setCoordinates={setCoordinates}
       />
       <button type="submit">강의 리스트 불러오기</button>
     </form>

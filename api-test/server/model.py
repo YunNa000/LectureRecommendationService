@@ -27,7 +27,7 @@ class LectureRequest(BaseModel):
     userId: str
     year: Optional[int] = 24
     semester: Optional[str] = "1학기"
-
+    lecTimeArray: Optional[List[str]] = None
 
 class LectureListed(BaseModel):
     userListedLecName: str

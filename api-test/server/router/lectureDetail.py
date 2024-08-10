@@ -112,3 +112,4 @@ async def get_lecture(lecture_number: str):
 
     converted_data = convert_row_to_dict(row)
     return Lecture(**converted_data)
+

@@ -1,6 +1,5 @@
 from typing import List, Optional
 from fastapi import HTTPException, APIRouter, Cookie
-from db import db_connect
 from model import LectureRequest
 from fastapi import APIRouter, Request, FastAPI, Depends, HTTPException, Cookie
 from model import PersonalInformation, LecturesUpdateRequest, LectureListed
