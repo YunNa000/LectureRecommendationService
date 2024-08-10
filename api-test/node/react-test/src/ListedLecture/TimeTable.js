@@ -232,17 +232,10 @@ const Timetable = ({
     filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
-        const timePositions = times.map((time) => {
+        times.forEach((time) => {
           const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
-          return { col: parseInt(col), row: parseInt(row) };
-        });
-
-        const firstRow = Math.min(...timePositions.map((pos) => pos.row));
-        const lastRow = Math.max(...timePositions.map((pos) => pos.row));
-
-        timePositions.forEach((pos, index) => {
-          const rowIndex = pos.row - minRow;
-          const colIndex = pos.col - 1;
+          const rowIndex = parseInt(row) - minRow;
+          const colIndex = parseInt(col) - 1;
 
           let isOverlap = false;
           if (rowIndex < timetable.length && colIndex < timetable[0].length) {
@@ -252,8 +245,8 @@ const Timetable = ({
           const cellContent = (
             <>
               <button onClick={() => handleEditClick(lecture)}>
-                {pos.row === firstRow && <p>{lecture.userListedLecName}</p>}
-                {pos.row === lastRow && !isOverlap && (
+                <p>{lecture.userListedLecName}</p>
+                {!isOverlap && (
                   <small>
                     {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
                   </small>
@@ -279,6 +272,7 @@ const Timetable = ({
                         <button onClick={() => handleCheck(lecture)}>
                           uncheck
                         </button>
+
                         <button
                           onClick={() => {
                             isLectureCompleted(lecture)
