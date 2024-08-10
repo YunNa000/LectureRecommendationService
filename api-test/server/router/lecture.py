@@ -122,9 +122,18 @@ async def read_lectures(request: LectureRequest):
         conditions.append("(lecIseLearning = 1 OR lecIsDistance100 = 1)")
     if request.lecIsArt is not None:
         conditions.append("lecIsArt = 1")
+      # 시간 필터링 조건 추가
+    print(f"Received request: {request}")
+    if request.lecTimeArray:
+        time_conditions = []
+        for time in request.lecTimeArray:
+            time_conditions.append(f"lecTime LIKE ?")
+            parameters.append(f"%{time}%")
+        conditions.append(f"({' OR '.join(time_conditions)})")
+
     if conditions:
         query += " AND " + " AND ".join(conditions)
-
+    
     cursor.execute(query, parameters)
     lectures = cursor.fetchall()
 
