@@ -232,52 +232,68 @@ const Timetable = ({
     filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
       if (times) {
-        times.forEach((time) => {
+        const timePositions = times.map((time) => {
           const [_, col, row] = time.match(/\((\d+):(\d+)\)/);
-          const rowIndex = parseInt(row) - minRow;
-          const colIndex = parseInt(col) - 1;
+          return { col: parseInt(col), row: parseInt(row) };
+        });
+
+        const firstRow = Math.min(...timePositions.map((pos) => pos.row));
+        const lastRow = Math.max(...timePositions.map((pos) => pos.row));
+
+        timePositions.forEach((pos, index) => {
+          const rowIndex = pos.row - minRow;
+          const colIndex = pos.col - 1;
+
+          let isOverlap = false;
+          if (rowIndex < timetable.length && colIndex < timetable[0].length) {
+            isOverlap = !!timetable[rowIndex][colIndex];
+          }
 
           const cellContent = (
             <>
-              <p>{lecture.userListedLecName}</p>
-              <small>
-                {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
-              </small>
-              <button onClick={() => handleCheck(lecture)}>uncheck</button>
-              <button onClick={() => handleEditClick(lecture)}>수정</button>
-              {editLecture &&
-                editLecture.userListedLecNumber ===
-                  lecture.userListedLecNumber && (
-                  <div>
-                    <input
-                      type="text"
-                      value={classroom}
-                      onChange={(e) => setClassroom(e.target.value)}
-                      placeholder="강의실"
-                    />
-                    <input
-                      type="text"
-                      value={memo}
-                      onChange={(e) => setMemo(e.target.value)}
-                      placeholder="메모"
-                    />
-                    <button onClick={handleSaveClick}>저장</button>
-                    <button onClick={() => setEditLecture(null)}>취소</button>
-                    <div>
-                      <button
-                        onClick={() => {
-                          isLectureCompleted(lecture)
-                            ? handleUncompleteClick(lecture)
-                            : handleCompleteClick(lecture);
-                        }}
-                      >
-                        {isLectureCompleted(lecture)
-                          ? "수강 완료 취소"
-                          : "수강 완료"}
-                      </button>
-                    </div>
-                  </div>
+              <button onClick={() => handleEditClick(lecture)}>
+                {pos.row === firstRow && <p>{lecture.userListedLecName}</p>}
+                {pos.row === lastRow && !isOverlap && (
+                  <small>
+                    {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
+                  </small>
                 )}
+                {editLecture &&
+                  editLecture.userListedLecNumber ===
+                    lecture.userListedLecNumber && (
+                    <div>
+                      <input
+                        type="text"
+                        value={classroom}
+                        onChange={(e) => setClassroom(e.target.value)}
+                        placeholder="강의실"
+                      />
+                      <input
+                        type="text"
+                        value={memo}
+                        onChange={(e) => setMemo(e.target.value)}
+                        placeholder="메모"
+                      />
+                      <button onClick={handleSaveClick}>저장</button>
+                      <div>
+                        <button onClick={() => handleCheck(lecture)}>
+                          uncheck
+                        </button>
+                        <button
+                          onClick={() => {
+                            isLectureCompleted(lecture)
+                              ? handleUncompleteClick(lecture)
+                              : handleCompleteClick(lecture);
+                          }}
+                        >
+                          {isLectureCompleted(lecture)
+                            ? "수강 완료 취소"
+                            : "수강 완료"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+              </button>
             </>
           );
 
@@ -299,28 +315,80 @@ const Timetable = ({
     });
 
     return (
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            {Array.from({ length: maxCol }, (_, index) => (
-              <th key={index}>{days[index % days.length]}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {timetable.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              <td>{periods[rowIndex + minRow]}</td>
-              {row.map((cell, colIndex) => (
-                <td key={colIndex}>{cell}</td>
+      <div className="timetable-container">
+        <table className="timetable">
+          <thead>
+            <tr>
+              <th>
+                <div></div>
+              </th>
+              {Array.from({ length: maxCol }, (_, index) => (
+                <th key={index}>
+                  <p>{days[index % days.length]}</p>
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {timetable.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                <td>
+                  <p>{periods[rowIndex + minRow]}</p>
+                </td>
+                {row.map((cell, colIndex) => (
+                  <td key={colIndex}>
+                    <div>{cell}</div>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   };
+
+  // CSS
+  const styles = `
+    .timetable-container {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+    }
+  
+    .timetable {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  
+    .timetable th,
+    .timetable td {
+      border: 1px solid #ddd;
+      text-align: left;
+      padding: 8px;
+    }
+  
+    .timetable th {
+      background-color: #f2f2f2;
+    }
+  
+    .timetable thead tr th:first-child {
+      width: 80px;
+      height: 50px;
+      background-color: red;
+    }
+  
+    .timetable tbody tr td:first-child {
+      width: 60px;
+      height: 100px;
+    }
+  
+    .timetable tbody tr td {
+      min-height: 100px;
+    }
+  `;
+
+  document.head.insertAdjacentHTML("beforeend", `<style>${styles}</style>`);
 
   const renderNullLectures = () => {
     return filteredCheckedLectures
@@ -371,7 +439,13 @@ const Timetable = ({
       <table border="1">
         <tbody>{renderTimetable()}</tbody>
       </table>
-      {renderNullLectures()}
+      <div>
+        <div>
+          <p>온라인</p>
+        </div>
+        <div>{renderNullLectures()}</div>
+      </div>
+
       {Object.values(warnings).some((warning) => warning) &&
         (() => {
           const [index, details] =
