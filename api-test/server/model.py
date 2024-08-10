@@ -55,6 +55,7 @@ class LectureListed(BaseModel):
     priority: Optional[str]
     userListedLecClassRoom: Optional[str]
     userListedLecMemo: Optional[str]
+    userListedLecNumber: Optional[str]
 
 
 class LoggedInResponse(BaseModel):
@@ -130,13 +131,13 @@ class LectureCheckUpdateRequest(BaseModel):
 
 
 class LectureCheckDeleteRequest(BaseModel):
-    lec_number: str
+    userListedLecNumber: str
     year: int
     semester: str
 
 
 class LecturePriorityUpdateRequest(BaseModel):
-    lec_number: str
+    userListedLecNumber: str
     year: int
     semester: str
     priority: str
@@ -152,7 +153,7 @@ class GradesCreditResponse(BaseModel):
 
 
 class LectureInfoUpdateRequest(BaseModel):
-    lec_number: str
+    userListedLecNumber: str
     year: int
     semester: str
     classroom: str
@@ -172,3 +173,17 @@ class LectureUserDoneLists(BaseModel):
     takenLecClassification: str
     takenLecCredit: Optional[int] = None
     userTakenCredit: Optional[str] = None
+
+
+class ManualLecture(BaseModel):
+    lecClassName: str
+    lecClassRoom: str
+    lecTime: str
+    year: int
+    semester: str
+
+
+class UpdateLectureManually(BaseModel):
+    userId: str
+    lecNumbers: list
+    manualLectures: list[ManualLecture]
