@@ -205,9 +205,9 @@ const Timetable = ({
       "10교시",
     ];
 
-    let minRow = Infinity;
-    let maxRow = 0;
-    let maxCol = 0;
+    let minRow = 1; // 최소 1교시부터
+    let maxRow = 5; // 최소 5교시까지
+    let maxCol = 5; // 최소 월요일부터 금요일까지
 
     filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
@@ -225,9 +225,9 @@ const Timetable = ({
 
     minRow = minRow === Infinity ? 1 : minRow;
 
-    let timetable = Array(maxRow - minRow + 1)
+    let timetable = Array(Math.max(maxRow - minRow + 1, 5)) // 최소 5교시까지
       .fill(null)
-      .map(() => Array(maxCol).fill(null));
+      .map(() => Array(Math.max(maxCol, 5)).fill(null)); // 최소 월요일부터 금요일까지
 
     filteredCheckedLectures.forEach((lecture) => {
       const times = lecture.userListedLecTime.match(/\((\d+):(\d+)\)/g);
@@ -242,37 +242,59 @@ const Timetable = ({
             isOverlap = !!timetable[rowIndex][colIndex];
           }
 
+          const handleClick = (lecture) => {
+            handleEditClick(lecture);
+            handleSaveClick();
+          };
+
+          const stopPropagation = (e) => {
+            e.stopPropagation();
+          };
+
           const cellContent = (
             <>
-              <button onClick={() => handleEditClick(lecture)}>
-                <p>{lecture.userListedLecName}</p>
-                {!isOverlap && (
-                  <small>
-                    {lecture.lecProfessor} | {lecture.userListedLecClassRoom}
-                  </small>
+              <button onClick={() => handleClick(lecture)}>
+                {!isOverlap && !editLecture && (
+                  <div>
+                    <div>
+                      <p>{lecture.userListedLecName}</p>
+                    </div>
+                    <div>
+                      <p>{lecture.lecProfessor}</p>
+                      <p>{lecture.userListedLecClassRoom}</p>
+                    </div>
+                  </div>
                 )}
                 {editLecture &&
                   editLecture.userListedLecNumber ===
                     lecture.userListedLecNumber && (
                     <div>
-                      <input
-                        type="text"
-                        value={classroom}
-                        onChange={(e) => setClassroom(e.target.value)}
-                        placeholder="강의실"
-                      />
-                      <input
-                        type="text"
-                        value={memo}
-                        onChange={(e) => setMemo(e.target.value)}
-                        placeholder="메모"
-                      />
-                      <button onClick={handleSaveClick}>저장</button>
                       <div>
                         <button onClick={() => handleCheck(lecture)}>
-                          uncheck
+                          시간표에서 제외하기
                         </button>
+                      </div>
+                      <div>
+                        <p>{lecture.userListedLecName}</p>
+                      </div>
 
+                      <div>
+                        <input
+                          type="text"
+                          value={classroom}
+                          onChange={(e) => setClassroom(e.target.value)}
+                          placeholder="강의실"
+                          onClick={stopPropagation}
+                        />
+                        <input
+                          type="text"
+                          value={memo}
+                          onChange={(e) => setMemo(e.target.value)}
+                          placeholder="메모"
+                          onClick={stopPropagation}
+                        />
+                      </div>
+                      <div>
                         <button
                           onClick={() => {
                             isLectureCompleted(lecture)
@@ -282,7 +304,7 @@ const Timetable = ({
                         >
                           {isLectureCompleted(lecture)
                             ? "수강 완료 취소"
-                            : "수강 완료"}
+                            : "수강 완료로 처리하기"}
                         </button>
                       </div>
                     </div>
@@ -316,7 +338,7 @@ const Timetable = ({
               <th>
                 <div></div>
               </th>
-              {Array.from({ length: maxCol }, (_, index) => (
+              {Array.from({ length: Math.max(maxCol, 5) }, (_, index) => (
                 <th key={index}>
                   <p>{days[index % days.length]}</p>
                 </th>
@@ -342,7 +364,6 @@ const Timetable = ({
     );
   };
 
-  // CSS
   const styles = `
     .timetable-container {
       display: block;
@@ -419,7 +440,7 @@ const Timetable = ({
                   >
                     {isLectureCompleted(lecture)
                       ? "수강 완료 취소"
-                      : "수강 완료"}
+                      : "수강 완료로 처리하기"}
                   </button>
                 </div>
               </div>
