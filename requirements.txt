@@ -6,3 +6,6 @@ pandas==2.2.2
 fastapi===0.111.0
 openai
 tiktoken==0.7.0
+unstructured==0.15.1
+# "unstructured[pdf]"
+faiss-cpu==1.8.0
