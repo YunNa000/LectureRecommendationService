@@ -1,79 +1,113 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Chat = () => {
-  const [message, setMessage] = useState([]);
-  const [response, setResponse] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
+function ChatBot() {
+  const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState("");
+  const [question, setQuestion] = useState("");
+  const [chatLog, setChatLog] = useState([]);
 
-  const handleInputChange = (e) => {
-    setInputMessage(e.target.value);
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/files/");
+        setFiles(response.data.files);
+      } catch (error) {
+        console.error("error fetching files");
+      }
+    };
+    fetchFiles();
+  }, []);
+
+  const handleFileChange = async (event) => {
+    const fileName = event.target.value;
+    const filePath =
+      "/home/ga111o/document/VSCode/kwu-lecture-recommendation-service/api-test/server/.cache/files/" +
+      fileName;
+    setSelectedFile(fileName);
+
+    if (filePath) {
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/selectfile/", {
+          file_name: filePath,
+        });
+      } catch (error) {
+        console.error("error selecting file");
+      }
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleQuestionChange = (event) => {
+    setQuestion(event.target.value);
+  };
+
+  const handleAskQuestion = async () => {
+    if (question.trim() === "") return;
+
+    setChatLog((prevLog) => [...prevLog, { type: "question", text: question }]);
+
     try {
-      setMessage([...message, inputMessage]);
-      const res = await axios.post("http://127.0.0.1:8000/chat", {
-        message: inputMessage,
+      const response = await axios.post("http://127.0.0.1:8000/ask/", {
+        question,
       });
-      setResponse([...response, res.data.response]);
+      const formattedAnswer = response.data.answer.replace(/\n/g, "<br>");
+
+      setChatLog((prevLog) => [
+        ...prevLog,
+        { type: "answer", text: formattedAnswer },
+      ]);
     } catch (error) {
-      console.error(error);
-      const errorMessage = error.response ? error.response.data : error.message;
-      setResponse([...response, errorMessage]);
+      console.error("Error asking question");
     }
 
-    let check = 0;
+    setQuestion("");
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleAskQuestion();
+    }
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={inputMessage} onChange={handleInputChange} />
-        <button type="submit">Send</button>
-      </form>
+      <label>저는 </label>
+      <select onChange={handleFileChange} value={selectedFile}>
+        <option value="">
+          "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        </option>
+        {files.map((file) => {
+          const displayFileName = file.split(".")[0];
+          return (
+            <option key={file} value={file}>
+              {displayFileName}
+            </option>
+          );
+        })}
+      </select>
+      <label>에 대해 물어보고 싶어요.</label>
+      <input
+        type="text"
+        value={question}
+        onChange={handleQuestionChange}
+        onKeyDown={handleKeyDown}
+        placeholder="질문을 입력하세요"
+      />
+      <button onClick={handleAskQuestion}>질문하기</button>
       <div>
-        {
-          // 유저가 입력 -> check = 1
-          // 만약 check이 1이라면
-          // {Array.isArray(message) && message.length > 0 ? (
-          //   message.map((msg, index) => <li key={index}>{msg}</li>)
-          // ) : (
-          //   <li>No messages</li>
-          // )}
-          // check -> -1
-          // 만약 check이 -1이라면
-          // {Array.isArray(response) && response.length > 0 ? (
-          //   response.map((res, index) => <li key={index}>{res}</li>)
-          // ) : (
-          //   <li>No responses</li>
-          // )}
-          // check = 0
-        }
-        <ul>
-          {Array.isArray(message) &&
-          Array.isArray(response) &&
-          (message.length > 0 || response.length > 0) ? (
-            [
-              ...message.map((msg, index) => ({
-                type: "message",
-                content: msg,
-                key: `m-${index}`,
-              })),
-              ...response.map((res, index) => ({
-                type: "response",
-                content: res,
-                key: `r-${index}`,
-              })),
-            ].map((item) => <li key={item.key}>{item.content}</li>)
-          ) : (
-            <li>No messages</li>
-          )}
-        </ul>
+        {chatLog.map((entry, index) => (
+          <div
+            key={index}
+            className={
+              entry.type === "question" ? "chat-question" : "chat-answer"
+            }
+          >
+            <p dangerouslySetInnerHTML={{ __html: entry.text }}></p>
+          </div>
+        ))}
       </div>
     </div>
   );
-};
+}
 
-export default Chat;
+export default ChatBot;

@@ -19,7 +19,7 @@ llm = ChatOpenAI(
     model="gpt-4o-mini",
 )
 
-retriever = None  # retriever 변수를 전역 변수로 선언하고 초기값을 None으로 설정
+retriever = None
 
 
 class Question(BaseModel):
@@ -50,7 +50,6 @@ def embed_file(file_path: str):
 
 def format_docs(docs):
     combined_docs = "\n\n".join(doc.page_content for doc in docs)
-    print("\n\n" + combined_docs + "\n\n")
     return combined_docs
 
 
@@ -106,9 +105,11 @@ async def ask_question(question: Question):
     )
     response = chain.invoke(question.question)
 
+    print(response.content)
+
     if isinstance(response, dict):
-        return JSONResponse(content={"answer": response})
+        return JSONResponse(content={"answer": response.content})
     else:
-        return JSONResponse(content={"answer": str(response)})
+        return JSONResponse(content={"answer": str(response.content)})
 
 app.include_router(router)

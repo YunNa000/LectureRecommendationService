@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import Login from "./Login";
 import UpdateUserInfo from "./User/updateUserInfo";
 import LectureManagement from "./Lecture/LectureManagement";
-import Chat from "./chatbot";
+import ChatBot from "./chat";
 import GetListedLectureData from "./ListedLecture/GetListedLectureData";
 import UserList from "./Friend/UserList";
 import FriendList from "./Friend/FriendList";
@@ -17,8 +17,6 @@ import UserInfo from "./MyPage/userInfo";
 import TopBar from "./CommonPart/TopBar";
 import TopBarBack from "./CommonPart/TopBarBack";
 import LectureDetails from "./CommonPart/LectureDetail";
-
-
 
 // LectureView 컴포넌트
 function BasicView() {
@@ -49,11 +47,10 @@ function Chatbot() {
   return (
     <div>
       <TopBarBack title="챗봇" />
-      <Chat />
+      <ChatBot />
     </div>
   );
 }
-
 
 // SocialFeatures 컴포넌트
 function SocialFeatures() {
@@ -66,7 +63,6 @@ function SocialFeatures() {
   );
 }
 
-
 function Sebu() {
   return (
     <div>
@@ -75,7 +71,6 @@ function Sebu() {
     </div>
   );
 }
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
