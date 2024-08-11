@@ -3,7 +3,8 @@ import Cookies from "js-cookie"
 import "./Friend.css"
 
 
-const FriendList = () => {
+
+const FriendRequest = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,12 +21,36 @@ const FriendList = () => {
       fetchUserId();
     }, []);
   
+    const handleFriendRequest = async (friendId) => {
+        try {
+          const response = await fetch('http://localhost:8000/add_friend', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user_id1: myUserId.toString(),
+              user_id2: friendId.toString(), // 문자열로 변환
+            }),
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+    
+          const result = await response.json();
+          alert(result.message); // 성공 또는 실패 메시지를 표시
+        } catch (e) {
+          alert('친구 추가 오류:'  + e.message);
+        }
+      };
+
+
     useEffect(() => {
       const fetchFriends = async () => {
           if (!myUserId) return; // myUserId가 없으면 함수 종료
           setLoading(true);
           try {
-              const response = await fetch(`http://localhost:8000/friends?userId=${myUserId}`);
+              const response = await fetch(`http://localhost:8000/friendrequest?userId=${myUserId}`);
               if (!response.ok) {
                   throw new Error(`HTTP error! status: ${response.status}`+myUserId);
               }
@@ -56,8 +81,8 @@ const FriendList = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user_id1: myUserId.toString(),
-                    user_id2: friendId.toString(),
+                    user_id2: myUserId.toString(),
+                    user_id1: friendId.toString(),
                 }),
             });
 
@@ -74,31 +99,30 @@ const FriendList = () => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return   <div class="center-text">추가된 친구가 없습니다.</div>;
+    if (error) return <div></div>;
   
     return (
-      <div className="friend-list-container">
-
-        <div>
-          {users.map((user) => (
-            <div key={user.user_id} className="friend-item">
-              <div className="friend-info">
-                <div className="friend-name">{user.userName}</div>
-                <div className="friend-major">{user.userMajor}</div>
-              </div>
-              <button 
-                onClick={() => deleteFriendRequest(user.user_id)} 
-                className="friend-action-button"
-              >
-                &gt;
-              </button>
+      <div className="friendrequest-list-container">
+      <h2 className="friend-list-title">친구 요청</h2>
+      <div>
+        {users.map((user) => (
+          <div key={user.user_id} className="friend-item">
+            <div className="friend-info">
+              <div className="friend-name">{user.userName}</div>
+              <div className="friend-major">{user.userMajor}</div>
             </div>
-          ))}
-        </div>
+            <div className="friend-request-buttons">
+            <button onClick={() => handleFriendRequest(user.user_id)} className="friend-request-button">수락</button>
+            <button onClick={() => deleteFriendRequest(user.user_id)} className="friend-request-button"  >
+            거절</button>
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
     );
   };
-  
 
 
-export default FriendList;
+export default FriendRequest;
+

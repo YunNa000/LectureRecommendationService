@@ -24,7 +24,8 @@ const LectureManagement = () => {
   const [lecClassName, setLecClassName] = useState("");
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
-
+  const [coordinates, setCoordinates] = useState([]);
+  
   useEffect(() => {
     const fetchUserId = () => {
       const cookieUserId = Cookies.get("user_id");
@@ -99,6 +100,7 @@ const LectureManagement = () => {
           year: year,
           semester: semester,
           userId: userId,
+          userTime: coordinates, // coordinates를 userTime으로 전송
         },
         { withCredentials: true }
       )
@@ -140,6 +142,7 @@ const LectureManagement = () => {
           lecSubName: lecSubName,
           lecClassName: lecClassName,
           userId: userId,
+          lecTimeArray: coordinates,
         },
         { withCredentials: true }
       )
@@ -213,6 +216,8 @@ const LectureManagement = () => {
             setlecSubName={setlecSubName}
             lecClassName={lecClassName}
             setLecClassName={setLecClassName}
+            coordinates={coordinates}
+            setCoordinates={setCoordinates}
           />
         );
       case "교선":
@@ -233,6 +238,8 @@ const LectureManagement = () => {
             setlecSubName={setlecSubName}
             lecClassName={lecClassName}
             setLecClassName={setLecClassName}
+            coordinates={coordinates}
+            setCoordinates={setCoordinates}
           />
         );
       case "전공":
@@ -251,6 +258,8 @@ const LectureManagement = () => {
             handleSubmit={handleSubmit}
             lecClassName={lecClassName}
             setLecClassName={setLecClassName}
+            coordinates={coordinates}
+            setCoordinates={setCoordinates}
           />
         );
       case "전체":
@@ -272,6 +281,8 @@ const LectureManagement = () => {
             semester={semester}
             setYear={setYear}
             setSemester={setSemester}
+            coordinates={coordinates}
+            setCoordinates={setCoordinates}
           />
         );
       default:

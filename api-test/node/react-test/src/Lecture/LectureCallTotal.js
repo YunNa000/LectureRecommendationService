@@ -1,4 +1,5 @@
 import React from "react";
+import UserTimeTable from "./UserTimeTable";
 
 const LectureCallTotal = ({
   userGrade,
@@ -20,6 +21,8 @@ const LectureCallTotal = ({
   setSemester,
   year,
   setYear,
+  coordinates,
+  setCoordinates
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -101,6 +104,10 @@ const LectureCallTotal = ({
         name="lecClassName"
         value={lecClassName}
         onChange={(e) => setLecClassName(e.target.value)}
+      />
+                  <UserTimeTable 
+        coordinates={coordinates}
+        setCoordinates={setCoordinates}
       />
       <button type="submit">강의 리스트 불러오기</button>
     </form>
