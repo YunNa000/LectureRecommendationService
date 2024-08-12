@@ -75,9 +75,9 @@ async def auth_callback(code: str):
             cursor.execute(
                 '''
                 INSERT INTO user (
-                    user_id, userHakbun, userIsForeign, userBunban, userYear, 
-                    userMajor, userIsMultipleMajor, userWhatMultipleMajor, 
-                    userName, userMultipleMajorDepartment, totalGPA, junGPA
+                    user_id, hakBun, isForeign, bunban, userYear, 
+                    userMajor, isMultipleMajor, whatMultipleMajor, 
+                    userName, whatMultipleMajorDepartment, totalGPA, majorGPA
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''',
                 (
