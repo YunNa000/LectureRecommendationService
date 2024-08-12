@@ -12,7 +12,7 @@ def get_latest_year_semester():
     try:
         latest_year_semester_query = """
     SELECT year, semester
-    FROM LectureTable
+    FROM LectureList
     ORDER BY year DESC, semester DESC
     LIMIT 1
     """
