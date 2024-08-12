@@ -14,24 +14,24 @@ async def get_user_data(request: Request):
     user_id = request.cookies.get("user_id")
     if not user_id:
         raise HTTPException(
-            status_code=400, detail="User ID does not exist in cookies")
+            status_code=400, detail="cant get user id")
 
     conn = db_connect()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM user WHERE user_id = ?", (user_id,))
+    cursor.execute("SELECT * FROM User WHERE user_id = ?", (user_id,))
     rows = cursor.fetchall()
 
     if not rows:
         conn.close()
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="user not found")
 
     users = []
     for row in rows:
         user_dict = dict(row)
 
         cursor.execute(
-            "SELECT COALESCE(lecNumber, '') FROM userListedLecture WHERE user_id = ?", (
+            "SELECT COALESCE(lecNumber, '') FROM UserListedLecture WHERE user_id = ?", (
                 user_dict['user_id'],)
         )
         lecNumbers = cursor.fetchall()
@@ -40,8 +40,8 @@ async def get_user_data(request: Request):
 
         cursor.execute(
             """
-            SELECT takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester
-            FROM userTakenLecture
+            SELECT lecName, Classification, lecCredit, userCredit, year, semester
+            FROM UserTakenLecture
             WHERE user_id = ?
             """,
             (user_dict['user_id'],)
@@ -59,22 +59,34 @@ async def get_user_data(request: Request):
             for lecture in takenLectures
         ]
 
+        userHakbun = user_dict.get('hakBun', 0)
+        if isinstance(userHakbun, str):
+            userHakbun = int(userHakbun) if userHakbun.strip() != "" else 0
+        elif userHakbun is None:
+            userHakbun = 0
+
+        userYear = user_dict.get('userYear', 0)
+        if isinstance(userYear, str):
+            userYear = int(userYear) if userYear.strip() != "" else 0
+        elif userYear is None:
+            userYear = 0
+
         user_info = PersonalInformation(
             user_id=user_dict['user_id'],
-            userHakbun=user_dict.get('userHakbun', 0),
-            userIsForeign=user_dict.get('userIsForeign', False),
-            userBunban=user_dict.get('userBunban', ""),
-            userYear=user_dict.get('userYear', ""),
-            userMajor=user_dict.get('userMajor', "_"),
-            userIsMultipleMajor=user_dict.get('userIsMultipleMajor', False),
-            userWhatMultipleMajor=user_dict.get('userWhatMultipleMajor'),
+            userHakbun=userHakbun,
+            userIsForeign=user_dict.get('isForiegn', False),
+            userBunban=user_dict.get('bunBan', ""),
+            userYear=userYear,
+            userMajor=user_dict.get('userMajor', ""),
+            userIsMultipleMajor=user_dict.get('isMultipleMajor', False),
+            userWhatMultipleMajor=user_dict.get('whatMultipleMajor'),
             userTakenLecture=user_dict.get('userTakenLecture'),
             userName=user_dict['userName'],
             selectedLecNumbers=user_dict.get('selectedLecNumbers', []),
             userTakenLectures=user_dict.get('userTakenLectures', []),
             userCredit=user_dict.get('userCredit'),
-            userTotalGPA=user_dict.get('userTotalGPA', 0),
-            userJunGPA=user_dict.get('userJunGPA', 0)
+            userTotalGPA=user_dict.get('totalGPA', 0),
+            userJunGPA=user_dict.get('majorGPA', 0)
         )
 
         users.append(user_info)
@@ -89,7 +101,7 @@ async def update_user_hakbun(request: PersonalInformation):
     conn = db_connect()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT COUNT(*) FROM user WHERE userName = ? AND user_id != ?",
+    cursor.execute("SELECT COUNT(*) FROM User WHERE userName = ? AND user_id != ?",
                    (request.userName, request.user_id))
     count = cursor.fetchone()[0]
 
@@ -99,14 +111,14 @@ async def update_user_hakbun(request: PersonalInformation):
             status_code=400, detail="userName is duplicated")
 
     query = """
-    UPDATE user
-    SET userHakbun = ?,
-        userIsForeign = ?,
-        userBunban = ?,
+    UPDATE User
+    SET hakBun = ?,
+        isForeign = ?,
+        bunBan = ?,
         userYear = ?,
         userMajor = ?,
-        userIsMultipleMajor = ?,
-        userWhatMultipleMajor = ?,
+        isMultipleMajor = ?,
+        whatMultipleMajor = ?,
         userName = ?
     WHERE user_id = ?
     """
@@ -129,12 +141,12 @@ async def update_user_hakbun(request: PersonalInformation):
         raise HTTPException(status_code=404, detail="user not found")
 
     cursor.execute(
-        "DELETE FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
+        "DELETE FROM UserTakenLecture WHERE user_id = ?", (request.user_id,))
 
     if request.userTakenLectures:
         query = """
-        INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO UserTakenLecture (user_id, lecName, Classification, lecCredit, userCredit, year, semester)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         for lecture in request.userTakenLectures:
             cursor.execute(query, (
@@ -142,10 +154,11 @@ async def update_user_hakbun(request: PersonalInformation):
                 lecture.get('lectureName'),
                 lecture.get('lecClassification'),
                 lecture.get('lecCredit'),
-                lecture.get('userCredit')
+                lecture.get('userCredit'),
+                request.userYear,
+                lecture.get('semester')
             ))
 
-    # 여기 D+?이랑 D의 경우, NP와 P, F의 경우 등 고려해보는 것이 필요해요.
     grade_to_points = {
         "A+": 4.5,
         "A": 4.0,
@@ -153,10 +166,11 @@ async def update_user_hakbun(request: PersonalInformation):
         "B": 3.0,
         "C+": 2.5,
         "C": 2.0
+
     }
 
     cursor.execute(
-        "SELECT takenLecClassification, takenLecCredit, userCredit FROM userTakenLecture WHERE user_id = ?", (request.user_id,))
+        "SELECT Classification, lecCredit, userCredit FROM UserTakenLecture WHERE user_id = ?", (request.user_id,))
     lectures = cursor.fetchall()
 
     total_points = 0
@@ -181,8 +195,8 @@ async def update_user_hakbun(request: PersonalInformation):
     major_gpa = round(major_gpa, 2)
 
     cursor.execute("""
-    UPDATE user
-    SET totalGPA = ?, junGPA = ?
+    UPDATE User
+    SET totalGPA = ?, majorGPA = ?
     WHERE user_id = ?
     """, (total_gpa, major_gpa, request.user_id))
 
@@ -263,7 +277,6 @@ async def listed_lectures_data(request: Request):
     if count == 0:
         raise HTTPException(status_code=454, detail="선택한 강의가 없어요.")
 
-    # lecNumber가 null인 경우에 대한 쿼리
     null_lec_query = """
     SELECT userListedLecName, userListedLecTime, year, semester, isChecked, priority, userListedLecClassRoom, userListedLecMemo, userListedLecNumber
     FROM userListedLecture
@@ -272,7 +285,6 @@ async def listed_lectures_data(request: Request):
     cursor.execute(null_lec_query, (user_id,))
     null_lectures = cursor.fetchall()
 
-    # lecNumber가 null이 아닌 경우에 대한 쿼리
     query = """
     SELECT ull.userListedLecName, lt.lecNumber, lt.lecProfessor, ull.userListedLecTime, lt.lecClassification, lt.lecStars,
            lt.lecAssignment, lt.lecTeamplay, lt.lecGrade, lt.lecIsPNP, lt.lecCredit, lt.lecIsTBL, lt.lecIsPBL,
@@ -286,7 +298,6 @@ async def listed_lectures_data(request: Request):
 
     user_listed_lectures = []
 
-    # null_lec_query 결과 처리
     for lecture in null_lectures:
         user_listed_lectures.append({
             "userListedLecName": lecture["userListedLecName"] if lecture["userListedLecName"] else "",
@@ -316,7 +327,6 @@ async def listed_lectures_data(request: Request):
             "userListedLecMemo": lecture["userListedLecMemo"] if lecture["userListedLecMemo"] else "",
         })
 
-    # query 결과 처리
     for lecture in lectures:
         user_listed_lectures.append({
             "userListedLecName": lecture["userListedLecName"] if lecture["userListedLecName"] else "값이 비었어요",

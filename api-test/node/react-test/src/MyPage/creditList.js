@@ -18,8 +18,7 @@ const CreditList = () => {
       });
       const userData = response.data;
 
-      console.log(response.data);
-      console.log("hello!");
+      console.log("creditList.js", response.data);
 
       setGrades({
         total: userData.total,

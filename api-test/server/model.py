@@ -29,6 +29,7 @@ class LectureRequest(BaseModel):
     semester: Optional[str] = "1학기"
     lecTimeArray: Optional[List[str]] = None
 
+
 class LectureListed(BaseModel):
     userListedLecName: str
     lecNumber: str
@@ -68,19 +69,19 @@ class NotLoggedInResponse(BaseModel):
 
 
 class PersonalInformation(BaseModel):
-    user_id: str  # 유저 아이디
-    userHakbun: int  # 학번
-    userIsForeign: bool  # 외국인 여부
-    userBunban: str  # 분반
-    userYear: str  # 학년
-    userMajor: str  # 전공
-    userIsMultipleMajor: bool  # 복수전공 여부
-    userWhatMultipleMajor: Optional[str] = None  # 복수전공 전공학과
-    userTakenLecture: Optional[str] = None  # 수강 강의
+    user_id: str
+    userHakbun: int
+    userIsForeign: bool
+    userBunban: str
+    userYear: int
+    userMajor: str
+    userIsMultipleMajor: bool
+    userWhatMultipleMajor: Optional[str] = None
+    userTakenLecture: Optional[str] = None
     userName: str
     selectedLecNumbers: List[str]
-    userTakenLectures: List[dict]  # 유저가 수강한 강의(db에서가져온)
-    userCredit: Optional[str] = None  # 유저가 받은 학점
+    userTakenLectures: List[dict]
+    userCredit: Optional[str] = None
     userTotalGPA: Optional[float] = 0
     userJunGPA: Optional[float] = 0
 

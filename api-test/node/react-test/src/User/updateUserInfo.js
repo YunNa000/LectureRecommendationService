@@ -8,15 +8,19 @@ const UpdateUserForm = () => {
   const [ocrResults, setOcrResults] = useState([]);
   const [formData, setFormData] = useState({
     user_id: "",
-    userHakbun: "",
+    userHakbun: 0,
     userIsForeign: false,
     userBunban: "",
-    userYear: "",
+    userYear: 0,
     userMajor: "",
     userIsMultipleMajor: false,
     userWhatMultipleMajor: "",
     userTakenLectures: [],
     userName: "",
+    selectedLecNumbers: [],
+    userCredit: null,
+    userTotalGPA: 0,
+    userJunGPA: 0,
   });
   const [lectureInputs, setLectureInputs] = useState([
     {
@@ -24,6 +28,7 @@ const UpdateUserForm = () => {
       lecCredit: "",
       lecClassification: "",
       year: "",
+      userCredit: 0,
       semester: "",
     },
   ]);
@@ -94,7 +99,7 @@ const UpdateUserForm = () => {
     setIsLoading(false);
   };
 
-  const fetchUserData = async (userId) => {
+  const fetchUserData = async () => {
     try {
       const response = await axios.get("http://localhost:8000/user/data", {
         withCredentials: true,
@@ -102,14 +107,23 @@ const UpdateUserForm = () => {
       const userData = response.data[0];
       setFormData((prevData) => ({
         ...prevData,
-        ...userData,
-        userTakenLectures: userData.userTakenLectures,
+        userId: userData.user_id,
+        userHakbun: userData.userHakbun,
+        userIsForeign: userData.userIsForeign,
+        userBunban: userData.userBunban,
+        userYear: userData.userYear,
+        userMajor: userData.userMajor,
+        userIsMultipleMajor: userData.userIsMultipleMajor,
+        userWhatMultipleMajor: userData.userWhatMultipleMajor,
+        userName: userData.userName,
         userCredit: userData.userCredit,
+        userTotalGPA: userData.userTotalGPA,
+        userJunGPA: userData.userJunGPA,
       }));
       setLectureInputs(userData.userTakenLectures);
       console.log("userData:", userData.userTakenLectures);
     } catch (error) {
-      console.error("errr fetching user data", error);
+      console.error("errr fetching user data atasdfasdfasdf", error);
       alert(error.response?.data?.detail || "errr fetching user data");
     }
   };
@@ -165,8 +179,8 @@ const UpdateUserForm = () => {
             lecCredit: lecture.lecCredit,
             lecClassification: lecture.lecClassification,
             userCredit: lecture.userCredit,
+            semester: lecture.semester,
           })),
-          userCredit: formData.userCredit,
         },
         {
           headers: {
@@ -174,10 +188,10 @@ const UpdateUserForm = () => {
           },
         }
       );
-      console.log("user info update", response.data.message);
+      console.log("user info updated", response.data.message);
     } catch (error) {
-      console.error("errr updating user info", error);
-      alert(error.response?.data?.detail || "errr updating user info");
+      console.error("error updating user info", error);
+      alert(error.response?.data?.detail || "error updating user info");
     }
   };
 
@@ -246,7 +260,7 @@ const UpdateUserForm = () => {
       <div>
         <label>학년:</label>
         <input
-          type="text"
+          type="number"
           name="userYear"
           value={formData.userYear}
           onChange={handleChange}
