@@ -30,19 +30,20 @@ async def process_text(request: OCRRequest):
     for word in words:
         if len(word) > 3:
             cursor.execute(
-                "SELECT lecClassName, lecClassification, lecCredit FROM LectureTable WHERE lecClassName LIKE ?", ('%' + word + '%',))
+                "SELECT lecName, lecClassification, lecCredit FROM LectureList WHERE lecName LIKE ?", ('%' + word + '%',))
             rows = cursor.fetchall()
             for row in rows:
-                lecture_name = row['lecClassName']
+                lecture_name = row[0]  # lecName
+                lec_classification = row[1]  # lecClassification
+                lec_credit = row[2]  # lecCredit
                 if lecture_name not in lecture_names_set:
                     lecture_info = {
                         'lectureName': lecture_name,
-                        'lecClassification': row['lecClassification'],
-                        'lecCredit': str(row['lecCredit'])
+                        'lecClassification': lec_classification,
+                        'lecCredit': str(lec_credit)
                     }
                     user_taken_lectures.append(lecture_info)
                     lecture_names_set.add(lecture_name)
 
     conn.close()
-    # print(user_taken_lectures)
     return OCRResponse(userTakenLectures=user_taken_lectures)

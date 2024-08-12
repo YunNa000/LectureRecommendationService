@@ -87,8 +87,7 @@ const UpdateUserForm = () => {
             lectureName: lecture.lectureName,
             lecCredit: lecture.lecCredit,
             lecClassification: lecture.lecClassification,
-            year: lecture.yaer,
-            semester: lecture.semester,
+            // year와 semester는 FastAPI에서 반환되지 않으므로 삭제
           });
           existingLectureNames.add(lecture.lectureName);
         }
