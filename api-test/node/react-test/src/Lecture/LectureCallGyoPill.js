@@ -2,27 +2,27 @@ import React from "react";
 import UserTimeTable from "./UserTimeTable";
 
 const LectureCallGyoPill = ({
-  userGrade,
-  setUserGrade,
-  userBunban,
-  setUserBunban,
+  userYear,
+  setUserYear,
+  bunBan,
+  setBunBan,
   lecClassification,
   setLecClassification,
-  lecStars,
-  setLecStars,
-  setlecAssignment,
-  lecAssignment,
-  lecTeamplay,
-  setlecTeamplay,
-  lecGrade,
-  setlecGrade,
-  lecSubName,
-  setlecSubName,
+  star,
+  setStar,
+  setAssignmentAmount,
+  assignmentAmount,
+  setTeamplayAmount,
+  teamplayAmount,
+  gradeAmount,
+  setGradeAmount,
+  lecTheme,
+  setLecTheme,
   handleSubmit,
-  lecClassName,
-  setLecClassName,
+  lecName,
+  setLecName,
   coordinates,
-  setCoordinates
+  setCoordinates,
 }) => {
   React.useEffect(() => {
     setLecClassification("교필");
@@ -33,18 +33,18 @@ const LectureCallGyoPill = ({
       교필
       <input
         type="hidden"
-        id="userGrade"
-        name="userGrade"
-        value={userGrade}
-        onChange={(e) => setUserGrade(e.target.value)}
+        id="userYear"
+        name="userYear"
+        value={userYear}
+        onChange={(e) => setUserYear(e.target.value)}
         required
       />
       <input
         type="hidden"
-        id="userBunban"
-        name="userBunban"
-        value={userBunban}
-        onChange={(e) => setUserBunban(e.target.value)}
+        id="bunBan"
+        name="bunBan"
+        value={bunBan}
+        onChange={(e) => setBunBan(e.target.value)}
         required
       />
       <input
@@ -56,47 +56,47 @@ const LectureCallGyoPill = ({
       />
       <label>star</label>
       <input
-        id="lecStars"
-        name="lecStars"
-        value={lecStars}
-        onChange={(e) => setLecStars(e.target.value)}
+        id="star"
+        name="star"
+        value={star}
+        onChange={(e) => setStar(e.target.value)}
       />
       <label>assignment</label>
       <select
-        id="lecAssignment"
-        name="lecAssignment"
-        value={lecAssignment}
-        onChange={(e) => setlecAssignment(parseInt(e.target.value))}
+        id="assignmentAmount"
+        name="assignmentAmount"
+        value={assignmentAmount}
+        onChange={(e) => setAssignmentAmount(parseInt(e.target.value))}
       >
         <option>상관없음</option>
         <option value="1">적음</option>
       </select>
-      <label>lecTeamplay</label>
+      <label>teamplay</label>
       <select
-        id="lecTeamplay"
-        name="lecTeamplay"
-        value={lecTeamplay}
-        onChange={(e) => setlecTeamplay(parseInt(e.target.value))}
+        id="teamplayAmount"
+        name="teamplayAmount"
+        value={teamplayAmount}
+        onChange={(e) => setTeamplayAmount(parseInt(e.target.value))}
       >
         <option>상관없음</option>
         <option value="1">적음</option>
       </select>
-      <label>lecGrade</label>
+      <label>grade amount</label>
       <select
-        id="lecGrade"
-        name="lecGrade"
-        value={lecGrade}
-        onChange={(e) => setlecGrade(parseInt(e.target.value))}
+        id="gradeAmount"
+        name="gradeAmount"
+        value={gradeAmount}
+        onChange={(e) => setGradeAmount(parseInt(e.target.value))}
       >
         <option>상관없음</option>
         <option value="1">너그러움</option>
       </select>
-      <label>lecSubName</label>
+      <label>theme</label>
       <select
-        id="lecSubName"
-        name="lecSubName"
-        value={lecSubName}
-        onChange={(e) => setlecSubName(e.target.value)}
+        id="lecTheme"
+        name="lecTheme"
+        value={lecTheme}
+        onChange={(e) => setLecTheme(e.target.value)}
       >
         <option>전체보기</option>
         <option value="광운인되기">광운인되기</option>
@@ -104,14 +104,14 @@ const LectureCallGyoPill = ({
         <option value="정보">정보</option>
         <option value="융합적사고와글쓰기">융합적사고와글쓰기</option>
       </select>
-      <label>lecClassName</label>
+      <label>lecture name</label>
       <input
-        id="lecClassName"
-        name="lecClassName"
-        value={lecClassName}
-        onChange={(e) => setLecClassName(e.target.value)}
+        id="lecName"
+        name="lecName"
+        value={lecName}
+        onChange={(e) => setLecName(e.target.value)}
       />
-                  <UserTimeTable 
+      <UserTimeTable
         coordinates={coordinates}
         setCoordinates={setCoordinates}
       />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import LectureCallGyoPill from "./LectureCallGyoPill";
 import LectureCallGyoSun from "./LectureCallGyoSun";
 import LectureCallJunGong from "./LectureCallJunGong";
@@ -9,23 +9,23 @@ import LectureCallTotal from "./LectureCallTotal";
 import LectureList from "./LectureList";
 
 const LectureManagement = () => {
-  const [userGrade, setUserGrade] = useState("");
-  const [userBunban, setUserBunban] = useState("");
+  const [userYear, setUserYear] = useState("");
+  const [bunBan, setBunBan] = useState("");
   const [lecClassification, setLecClassification] = useState("");
   const [lectures, setLectures] = useState([]);
   const [selectedLectures, setSelectedLectures] = useState([]);
   const [userId, setUserId] = useState(null);
   const [selectedButton, setSelectedButton] = useState("교양");
-  const [lecStars, setLecStars] = useState();
-  const [lecAssignment, setlecAssignment] = useState();
-  const [lecTeamplay, setlecTeamplay] = useState();
-  const [lecGrade, setlecGrade] = useState();
-  const [lecSubName, setlecSubName] = useState();
-  const [lecClassName, setLecClassName] = useState("");
+  const [star, setStar] = useState();
+  const [assignmentAmount, setAssignmentAmount] = useState();
+  const [teamplayAmount, setTeamplayAmount] = useState();
+  const [gradeAmount, setGradeAmount] = useState();
+  const [lecTheme, setLecTheme] = useState();
+  const [lecName, setLecName] = useState("");
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
   const [coordinates, setCoordinates] = useState([]);
-  
+
   useEffect(() => {
     const fetchUserId = () => {
       const cookieUserId = Cookies.get("user_id");
@@ -45,8 +45,8 @@ const LectureManagement = () => {
         });
         const userData = response.data[0];
         console.log("userData", userData);
-        setUserGrade(userData.userYear || "");
-        setUserBunban(userData.userBunban || "");
+        setUserYear(userData.userYear || "");
+        setBunBan(userData.userBunban || "");
         setLecClassification(userData.userMajor || "");
         setSelectedLectures(userData.selectedLecNumbers || []);
       } catch (error) {
@@ -88,19 +88,19 @@ const LectureManagement = () => {
       .post(
         "http://127.0.0.1:8000/lectures/total",
         {
-          userGrade: userGrade,
-          userBunban: userBunban,
+          userYear: userYear,
+          bunBan: bunBan,
           lecClassification: lecClassification,
-          lecStars: lecStars,
-          lecAssignment: lecAssignment,
-          lecTeamplay: lecTeamplay,
-          lecGrade: lecGrade,
-          lecSubName: lecSubName,
-          lecClassName: lecClassName,
+          star: star,
+          assignmentAmount: assignmentAmount,
+          teamplayAmount: teamplayAmount,
+          gradeAmount: gradeAmount,
+          lecTheme: lecTheme,
+          lecName: lecName,
+          userId: userId,
           year: year,
           semester: semester,
-          userId: userId,
-          userTime: coordinates, // coordinates를 userTime으로 전송
+          lecTimeArray: coordinates,
         },
         { withCredentials: true }
       )
@@ -127,22 +127,22 @@ const LectureManagement = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log("data", userId, userYear, bunBan, lecClassification);
     axios
       .post(
         "http://127.0.0.1:8000/lectures",
         {
-          userGrade: userGrade,
-          userBunban: userBunban,
-          lecClassification: lecClassification,
-          lecStars: lecStars,
-          lecAssignment: lecAssignment,
-          lecTeamplay: lecTeamplay,
-          lecGrade: lecGrade,
-          lecSubName: lecSubName,
-          lecClassName: lecClassName,
           userId: userId,
-          lecTimeArray: coordinates,
+          userYear: userYear,
+          bunBan: bunBan,
+          lecClassification: lecClassification,
+          // star: star,
+          // assignmentAmount: assignmentAmount,
+          // teamplayAmount: teamplayAmount,
+          // gradeAmount: gradeAmount,
+          // lecTheme: lecTheme,
+          // lecName: lecName,
+          // lecTimeArray: coordinates,
         },
         { withCredentials: true }
       )
@@ -201,21 +201,21 @@ const LectureManagement = () => {
       case "교필":
         return (
           <LectureCallGyoPill
-            userGrade={userGrade}
-            setUserGrade={setUserGrade}
-            userBunban={userBunban}
-            setUserBunban={setUserBunban}
+            userYear={userYear}
+            setUserYear={setUserYear}
+            bunBan={bunBan}
+            setBunBan={setBunBan}
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
             handleSubmit={handleSubmit}
-            lecStars={lecStars}
-            setLecStars={setLecStars}
-            setlecAssignment={setlecAssignment}
-            setlecTeamplay={setlecTeamplay}
-            setlecGrade={setlecGrade}
-            setlecSubName={setlecSubName}
-            lecClassName={lecClassName}
-            setLecClassName={setLecClassName}
+            star={star}
+            setStar={setStar}
+            setAssignmentAmount={setAssignmentAmount}
+            setTeamplayAmount={setTeamplayAmount}
+            setGradeAmount={setGradeAmount}
+            setLecTheme={setLecTheme}
+            lecName={lecName}
+            setLecName={setLecName}
             coordinates={coordinates}
             setCoordinates={setCoordinates}
           />
@@ -223,21 +223,21 @@ const LectureManagement = () => {
       case "교선":
         return (
           <LectureCallGyoSun
-            userGrade={userGrade}
-            setUserGrade={setUserGrade}
-            userBunban={userBunban}
-            setUserBunban={setUserBunban}
+            userYear={userYear}
+            setUserYear={setUserYear}
+            bunBan={bunBan}
+            setBunBan={setBunBan}
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
             handleSubmit={handleSubmit}
-            lecStars={lecStars}
-            setLecStars={setLecStars}
-            setlecAssignment={setlecAssignment}
-            setlecTeamplay={setlecTeamplay}
-            setlecGrade={setlecGrade}
-            setlecSubName={setlecSubName}
-            lecClassName={lecClassName}
-            setLecClassName={setLecClassName}
+            star={star}
+            setStar={setStar}
+            setAssignmentAmount={setAssignmentAmount}
+            setTeamplayAmount={setTeamplayAmount}
+            setGradeAmount={setGradeAmount}
+            setLecTheme={setLecTheme}
+            lecName={lecName}
+            setLecName={setLecName}
             coordinates={coordinates}
             setCoordinates={setCoordinates}
           />
@@ -245,19 +245,19 @@ const LectureManagement = () => {
       case "전공":
         return (
           <LectureCallJunGong
-            userGrade={userGrade}
-            setUserGrade={setUserGrade}
-            userBunban={userBunban}
-            setUserBunban={setUserBunban}
+            userYear={userYear}
+            setUserYear={setUserYear}
+            bunBan={bunBan}
+            setBunBan={setBunBan}
             lecClassification={lecClassification}
             setLecClassification={setLecClassification}
-            setLecStars={setLecStars}
-            setlecAssignment={setlecAssignment}
-            setlecTeamplay={setlecTeamplay}
-            setlecGrade={setlecGrade}
+            setStar={setStar}
+            setAssignmentAmount={setAssignmentAmount}
+            setTeamplayAmount={setTeamplayAmount}
+            setGradeAmount={setGradeAmount}
             handleSubmit={handleSubmit}
-            lecClassName={lecClassName}
-            setLecClassName={setLecClassName}
+            lecName={lecName}
+            setLecName={setLecName}
             coordinates={coordinates}
             setCoordinates={setCoordinates}
           />
@@ -265,18 +265,18 @@ const LectureManagement = () => {
       case "전체":
         return (
           <LectureCallTotal
-            userGrade={userGrade}
-            setUserGrade={setUserGrade}
-            userBunban={userBunban}
-            setUserBunban={setUserBunban}
+            userYear={userYear}
+            setUserYear={setUserYear}
+            bunBan={bunBan}
+            setBunBan={setBunBan}
             handleSubmit={handleSubmitTotalLec}
-            lecStars={lecStars}
-            setLecStars={setLecStars}
-            setlecAssignment={setlecAssignment}
-            setlecTeamplay={setlecTeamplay}
-            setlecGrade={setlecGrade}
-            lecClassName={lecClassName}
-            setLecClassName={setLecClassName}
+            star={star}
+            setStar={setStar}
+            setAssignmentAmount={setAssignmentAmount}
+            setTeamplayAmount={setTeamplayAmount}
+            setGradeAmount={setGradeAmount}
+            lecName={lecName}
+            setLecName={setLecName}
             year={year}
             semester={semester}
             setYear={setYear}
@@ -293,7 +293,7 @@ const LectureManagement = () => {
   return (
     <div>
       <div>
-        <Link to="/mypage" style={{ textDecoration: 'none' }}>
+        <Link to="/mypage" style={{ textDecoration: "none" }}>
           <button>MyPage</button>
         </Link>
         <button onClick={() => setSelectedButton("교필")}>교필</button>
