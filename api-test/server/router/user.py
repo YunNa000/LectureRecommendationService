@@ -155,7 +155,7 @@ async def update_user_hakbun(request: PersonalInformation):
                 lecture.get('lecClassification'),
                 lecture.get('lecCredit'),
                 lecture.get('userCredit'),
-                request.userYear,
+                request.userYear,  # userYear 말고 해당 강의의 year로?
                 lecture.get('semester')
             ))
 
@@ -533,11 +533,11 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
 
     check_query = """
     SELECT COUNT(*) FROM userTakenLecture
-    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
+    WHERE user_id = ? AND lecName = ? AND Classification = ? AND year = ? AND semester = ?
     """
 
-    cursor.execute(check_query, (user_id, lecture_user_done.takenLecName,
-                   lecture_user_done.takenLecClassification, lecture_user_done.year, lecture_user_done.semester))
+    cursor.execute(check_query, (user_id, lecture_user_done.lecName,
+                   lecture_user_done.Classification, lecture_user_done.year, lecture_user_done.semester))
     result = cursor.fetchone()
 
     if result[0] > 0:
@@ -545,7 +545,7 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
             status_code=400, detail="lecture already completed")
 
     insert_query = """
-    INSERT INTO userTakenLecture (user_id, takenLecName, takenLecClassification, takenLecCredit, userCredit, year, semester)
+    INSERT INTO userTakenLecture (user_id, lecName, Classification, lecCredit, userCredit, year, semester)
     VALUES (?, ?, ?, ?, ?, ?, ?)
     """
     user_credit = ""
@@ -553,9 +553,9 @@ async def complete_lecture(request: Request, lecture_user_done: LectureUserDone)
     try:
         cursor.execute(insert_query, (
             user_id,
-            lecture_user_done.takenLecName,
-            lecture_user_done.takenLecClassification,
-            lecture_user_done.takenLecCredit,
+            lecture_user_done.lecName,
+            lecture_user_done.Classification,
+            lecture_user_done.lecCredit,
             user_credit,
             lecture_user_done.year,
             lecture_user_done.semester
@@ -581,7 +581,7 @@ async def user_taken_lectures(request: Request):
     cursor = conn.cursor()
 
     query = """
-    SELECT takenLecName, takenLecClassification, takenLecCredit 
+    SELECT lecName, Classification, lecCredit 
     FROM userTakenLecture 
     WHERE user_id = ? AND userCredit NOT IN ('F', 'NP')
     """
@@ -591,7 +591,7 @@ async def user_taken_lectures(request: Request):
     cursor.close()
     conn.close()
 
-    return {"lectures": [{"takenLecName": row[0], "takenLecClassification": row[1], "takenLecCredit": row[2]} for row in results]}
+    return {"lectures": [{"lecName": row[0], "Classification": row[1], "lecCredit": row[2]} for row in results]}
 
 
 @router.post("/user/data/uncomplete_lecture")
@@ -601,8 +601,8 @@ async def uncomplete_lecture(request: Request):
     if not user_id:
         raise HTTPException(status_code=400, detail="User not authenticated")
 
-    takenLecName = data.get("takenLecName")
-    takenLecClassification = data.get("takenLecClassification")
+    lecName = data.get("lecName")
+    Classification = data.get("Classification")
     year = data.get("year")
     semester = data.get("semester")
 
@@ -611,10 +611,10 @@ async def uncomplete_lecture(request: Request):
 
     query = """
     DELETE FROM userTakenLecture 
-    WHERE user_id = ? AND takenLecName = ? AND takenLecClassification = ? AND year = ? AND semester = ?
+    WHERE user_id = ? AND lecName = ? AND Classification = ? AND year = ? AND semester = ?
     """
-    cursor.execute(query, (user_id, takenLecName,
-                   takenLecClassification, year, semester))
+    cursor.execute(query, (user_id, lecName,
+                   Classification, year, semester))
     conn.commit()
 
     cursor.close()
