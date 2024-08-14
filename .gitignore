@@ -2078,4 +2078,4 @@ main/server/router/__pycache__/auth.cpython-311.pyc
 main/server/router/__pycache__/lectureCall.cpython-311.pyc
 main/server/router/__pycache__/lectureSelect.cpython-311.pyc
 lecture-data/data_preprocessing/pdf2md/PRIVATE.py
-main/server/router/__pycache__/user.cpython-311.pyc
+main/server/router/__pycache__/
