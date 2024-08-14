@@ -228,7 +228,10 @@ const UpdateTakenLecture = () => {
                   <option value="">분류 선택</option>
                   <option value="전필">전필</option>
                   <option value="전선">전선</option>
+                  <option value="교필">교필</option>
                   <option value="교선">교선</option>
+                  <option value="일선">일선</option>
+                  <option value="기타">기타</option>
                 </select>
                 <select
                   type="number"
@@ -293,7 +296,10 @@ const UpdateTakenLecture = () => {
         <option value="">분류 선택</option>
         <option value="전필">전필</option>
         <option value="전선">전선</option>
+        <option value="교필">교필</option>
         <option value="교선">교선</option>
+        <option value="일선">일선</option>
+        <option value="기타">기타</option>
       </select>
       <select
         type="number"
