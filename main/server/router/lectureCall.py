@@ -233,7 +233,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     }
 
     for row in lectures:
-        lecture_id = row[0]  # lectureID
+        lecture_id = row[0]
         if lecture_id in seen_lecture_ids:
             continue
 
@@ -248,17 +248,16 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         if bunBan_lower not in can_take_bunban:
             more_info += "분반에 속하지 않아요. "
 
-        # majorRecogBunBan 체크
-        major_recog_bunban = row[10].split(',')  # majorRecogBunBan
+        major_recog_bunban = row[10].split(',')
         for major in major_recog_bunban:
-            major = major.strip()  # 공백 제거
+            major = major.strip()
             if major in major_mapping:
                 more_info += f"{major_mapping[major]} 전공 과목. "
 
-        can_take_foreign_people = row[15]  # lc.canTakeForeignPeople
-        if not isForeign and can_take_foreign_people == 1:
+        can_take_foreign_people = row[16]
+        if (isForeign == 0) and (can_take_foreign_people == "1"):
             more_info += "유학생만 들을 수 있어요. "
-        elif isForeign and can_take_foreign_people == 2:
+        elif isForeign == 1 and can_take_foreign_people == "2":
             more_info += "유학생은 들을 수 없어요. "
 
         response.append(LectureCallResponse(

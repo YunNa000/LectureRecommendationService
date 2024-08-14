@@ -96,7 +96,7 @@ const LectureList = ({ lectures }) => {
   }, []);
 
   useEffect(() => {
-    fetchSelectedLectures(); // 유저가 로그인된 후 선택된 강의 목록을 가져옴
+    fetchSelectedLectures();
   }, [user]);
 
   return (
@@ -110,10 +110,11 @@ const LectureList = ({ lectures }) => {
             <div key={`${lecture.lectureID}-${index}`}>
               <input
                 type="checkbox"
-                checked={!!selectedLectures[lectureKey]} // 체크 상태
-                onChange={() => handleCheckboxChange(lecture)} // 체크박스 변경 핸들러
+                checked={!!selectedLectures[lectureKey]}
+                onChange={() => handleCheckboxChange(lecture)}
               />
               <label>
+                {lecture.moreInfo}
                 {lecture.lecName} - {lecture.lecProfessor} | {lecture.lecCredit}{" "}
                 | {lecture.lecTime} | {lecture.lecClassroom} | {lecture.year}년{" "}
                 {lecture.semester}
