@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 const LectureList = ({ lectures }) => {
   const [user, setUser] = useState(null);
   const [selectedLectures, setSelectedLectures] = useState({});
-  const [expandedLectures, setExpandedLectures] = useState({}); // 토글 상태 관리
+  const [expandedLectures, setExpandedLectures] = useState({});
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");

@@ -11,6 +11,8 @@ import reportWebVitals from "./reportWebVitals";
 
 import Login from "./Login";
 import CallLecture from "./lecture/CallLecture";
+import UpdateUserInfo from "./user/UpdateUserInfo";
+import OCR from "./user/OCR";
 
 function LoginPage() {
   return (
@@ -19,10 +21,20 @@ function LoginPage() {
     </div>
   );
 }
+
 function MainPage() {
   return (
     <div>
       <CallLecture />
+    </div>
+  );
+}
+
+function UserPage() {
+  return (
+    <div>
+      <UpdateUserInfo />
+      <OCR />
     </div>
   );
 }
@@ -34,6 +46,7 @@ root.render(
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/mypage" element={<UserPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
