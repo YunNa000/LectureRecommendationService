@@ -38,6 +38,7 @@ class LectureCallInput(BaseModel):
     lectureName: str
     year: int
     semester: str
+    lecCredit: int
 
 
 class LectureSelect(BaseModel):

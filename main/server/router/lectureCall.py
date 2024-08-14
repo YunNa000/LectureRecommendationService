@@ -35,7 +35,7 @@ def get_user_info(user_id):
         conn.close()
 
 
-def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool):
+def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int):
 
     conn = db_connect()
     cursor = conn.cursor()
@@ -108,6 +108,14 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         base_query += " AND ll.lecName LIKE ?"
         query_params.append(f'%{lectureName}%')
 
+    if lecCredit != 0:
+        if lecCredit == 4:
+            base_query += " AND ll.lecCredit >= ?"
+            query_params.append(lecCredit)
+        else:
+            base_query += " AND ll.lecCredit = ?"
+            query_params.append(lecCredit)
+
     base_query = base_query.replace("{userYear}", str(userYear))
 
     cursor.execute(base_query, query_params)
@@ -142,7 +150,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     return response
 
 
-def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool):
+def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int):
 
     conn = db_connect()
     cursor = conn.cursor()
@@ -186,7 +194,16 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         base_query += " AND le.star >= ?"
         query_params.append(star)
 
+    print(lecCredit)
+    if lecCredit != 0:
+        if lecCredit == 4:
+            base_query += " AND ll.lecCredit >= ?"
+            query_params.append(lecCredit)
+        else:
+            base_query += " AND ll.lecCredit = ?"
+            query_params.append(lecCredit)
     cursor.execute(base_query, query_params)
+
     lectures = cursor.fetchall()
     conn.close()
 
@@ -297,12 +314,13 @@ async def get_lectures(input_data: LectureCallInput):
     star = input_data.star
     lecTheme = input_data.lecTheme
     lectureName = input_data.lectureName
+    lecCredit = input_data.lecCredit
 
     if lecClassification == "전체":
         response = print_Total(
-            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign)
+            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit)
     else:
         response = print_JunGong_n_GyoYang(
-            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign)
+            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit)
 
     return response

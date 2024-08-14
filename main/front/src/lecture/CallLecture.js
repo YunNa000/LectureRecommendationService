@@ -22,6 +22,7 @@ const CallLecture = () => {
   const [lectureName, setLectureName] = useState("");
   const [year, setYear] = useState(24);
   const [semester, setSemester] = useState("1학기");
+  const [lecCredit, setLecCredit] = useState(0);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -75,6 +76,7 @@ const CallLecture = () => {
       semester,
       isPillSu,
       lectureName,
+      lecCredit,
     };
 
     try {
@@ -115,6 +117,7 @@ const CallLecture = () => {
     assignmentAmount,
     star,
     isPillSu,
+    lecCredit,
   ]);
 
   if (loading) return <div>Loading...</div>;
@@ -162,6 +165,8 @@ const CallLecture = () => {
           fetchLectures={fetchLectures}
           setLectureName={setLectureName}
           lectureName={lectureName}
+          setLecCredit={setLecCredit}
+          lecCredit={lecCredit}
         />
       )}
 
@@ -184,6 +189,8 @@ const CallLecture = () => {
           fetchLectures={fetchLectures}
           setLectureName={setLectureName}
           lectureName={lectureName}
+          setLecCredit={setLecCredit}
+          lecCredit={lecCredit}
         />
       )}
 
@@ -204,6 +211,8 @@ const CallLecture = () => {
           setSemester={setSemester}
           year={year}
           semester={semester}
+          setLecCredit={setLecCredit}
+          lecCredit={lecCredit}
         />
       )}
 

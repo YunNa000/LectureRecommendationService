@@ -17,6 +17,8 @@ const GyoYangLectureSearch = ({
   setStar,
   lectureName,
   setLectureName,
+  lecCredit,
+  setLecCredit,
 }) => {
   return (
     <div>
@@ -105,6 +107,19 @@ const GyoYangLectureSearch = ({
         >
           <option value="상관없음">상관없음</option>
           <option value="적음">적음</option>
+        </select>
+      </div>
+      <div>
+        <label>학점</label>
+        <select
+          value={lecCredit}
+          onChange={(e) => setLecCredit(e.target.value)}
+        >
+          <option value={0}>상관없음</option>
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4 이상</option>
         </select>
       </div>
       <hr />
