@@ -47,7 +47,7 @@ async def update_user_info(input_data: UserBasicInfo):
     except Exception as e:
 
         conn.rollback()
-        print("Error occurred:", str(e))  # 오류 메시지 출력
+        print("Error occurred:", str(e))
         raise HTTPException(status_code=434, detail=str(e))
 
     finally:

@@ -12,7 +12,7 @@ import reportWebVitals from "./reportWebVitals";
 import Login from "./Login";
 import CallLecture from "./lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
-import OCR from "./user/OCR";
+import UpdateTakenLecture from "./user/UpdateTakenLecture";
 
 function LoginPage() {
   return (
@@ -34,7 +34,7 @@ function UserPage() {
   return (
     <div>
       <UpdateUserInfo />
-      <OCR />
+      <UpdateTakenLecture />
     </div>
   );
 }

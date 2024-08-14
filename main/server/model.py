@@ -62,3 +62,49 @@ class UserBasicInfo(BaseModel):
     isMultipleMajor: bool
     whatMultipleMajor: str
     whatMultipleMajorDepartment: str
+
+
+class OCRLectureInfo(BaseModel):
+    lectureName: str
+    lecClassification: str
+    lecCredit: int
+
+    def __eq__(self, other):
+        if isinstance(other, OCRLectureInfo):
+            return (self.lectureName, self.lecClassification, self.lecCredit) == (other.lectureName, other.lecClassification, other.lecCredit)
+        return False
+
+    def __hash__(self):
+        return hash((self.lectureName, self.lecClassification, self.lecCredit))
+
+
+class OCRResponse(BaseModel):
+    userTakenLectures: List[OCRLectureInfo]
+
+
+class OCRRequest(BaseModel):
+    user_id: str
+    ocrResults: List[str]
+
+
+class TakenLectureManaullyUpdate(BaseModel):
+    user_id: str
+    lecName: str
+    Classification: str
+    lecCredit: int
+    userCredit: Optional[str] = None
+
+
+class TakenLectureDelete(BaseModel):
+    user_id: str
+    lecName: str
+    Classification: str
+    lecCredit: int
+
+
+class TakenLectureUpdate(BaseModel):
+    user_id: str
+    lecName: str
+    Classification: str
+    lecCredit: int
+    userCredit: Optional[str] = None
