@@ -1,3 +1,4 @@
+import math
 from typing import List, Dict, Optional, Union
 from fastapi import FastAPI, HTTPException, Request, Depends, HTTPException, Cookie, APIRouter
 from pydantic import BaseModel
@@ -14,6 +15,70 @@ from db import db_connect
 from model import OCRResponse, OCRRequest, OCRLectureInfo, TakenLectureManaullyUpdate, TakenLectureDelete, userID, TakenLectureUpdate
 
 router = APIRouter()
+
+
+def updateUserGPA(userID):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    grade_points = {
+        'A+': 4.5,
+        'A': 4.0,
+        'B+': 3.5,
+        'B': 3.0,
+        'C+': 2.5,
+        'C': 2.0,
+        'P': 0.0,
+        'NP': 0.0,
+        'F': 0.0
+    }
+
+    cursor.execute("""
+    SELECT userCredit
+    FROM UserTakenLecture
+    WHERE user_id = ?
+    """, (userID,))
+
+    user_credits = cursor.fetchall()
+    total_score = 0
+    total_courses = 0
+
+    for row in user_credits:
+        credit = row[0]
+        if credit in grade_points:
+            total_score += grade_points[credit]
+            total_courses += 1
+
+    total_gpa = total_score / total_courses if total_courses > 0 else 0.0
+    total_gpa = math.floor(total_gpa * 100) / 100
+
+    cursor.execute("""
+    SELECT userCredit
+    FROM UserTakenLecture
+    WHERE user_id = ? AND Classification IN ('전선', '전필')
+    """, (userID,))
+
+    major_credits = cursor.fetchall()
+    major_score = 0
+    major_courses = 0
+
+    for row in major_credits:
+        credit = row[0]
+        if credit in grade_points:
+            major_score += grade_points[credit]
+            major_courses += 1
+
+    major_gpa = major_score / major_courses if major_courses > 0 else 0.0
+    major_gpa = math.floor(major_gpa * 100) / 100
+
+    cursor.execute("""
+    UPDATE User
+    SET totalGPA = ?, majorGPA = ?
+    WHERE user_id = ?
+    """, (total_gpa, major_gpa, userID))
+
+    conn.commit()
+    conn.close()
 
 
 @router.post("/ocr", response_model=OCRResponse)
@@ -45,22 +110,21 @@ async def update_lecture_data_by_ocr(request: OCRRequest):
                 )
                 user_taken_lectures.add(lecture_info)
 
-                # 중복 강의 존재 여부 확인
                 cursor.execute(
                     "SELECT COUNT(*) FROM UserTakenLecture WHERE lecName = ? AND Classification = ? AND lecCredit = ? AND user_id = ?",
                     (row[0], row[1], row[2], request.user_id)
                 )
                 count = cursor.fetchone()[0]
 
-                if count == 0:  # 중복이 없을 경우에만 삽입
+                if count == 0:
                     insert_query = """
                         INSERT INTO UserTakenLecture (lecName, Classification, lecCredit, user_id)
                         VALUES (?, ?, ?, ?)
                     """
                     cursor.execute(insert_query, (
-                        row[0],  # lecName
-                        row[1],  # Classification
-                        row[2],  # lecCredit
+                        row[0],
+                        row[1],
+                        row[2],
                         request.user_id
                     ))
 
@@ -100,6 +164,8 @@ async def add_user_taken_lecture_manually(input_data: TakenLectureManaullyUpdate
 
         conn.commit()
 
+        updateUserGPA(input_data.user_id)
+
         return {"message": "successfully added taken lecture"}
 
     except Exception as e:
@@ -134,6 +200,8 @@ async def delete_user_taken_lecture(input_data: TakenLectureDelete):
         ))
 
         conn.commit()
+
+        updateUserGPA(input_data.user_id)
 
         return {"message": "delete taken lecture"}
 
@@ -210,6 +278,8 @@ async def update_user_taken_lecture(input_data: TakenLectureUpdate):
 
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Lecture not found")
+
+        updateUserGPA(input_data.user_id)
 
         return {"message": "Successfully updated taken lecture"}
 

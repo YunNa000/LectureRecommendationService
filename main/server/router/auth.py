@@ -109,6 +109,6 @@ async def auth_callback(code: str):
         response = RedirectResponse(url=REDIRECTRESPONSE)
         max_age = 300000
         response.set_cookie(key="user_id", value=hashed_user_id,
-                            max_age=max_age)  # 해시된 user_id 저장
+                            max_age=max_age)
 
         return response

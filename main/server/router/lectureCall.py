@@ -119,10 +119,10 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
 
     for row in lectures:
         lecture_id = row[0]
-        lecture_name = row[2]  # 강의명
+        lecture_name = row[2]
 
         if lecture_id in seen_lecture_ids or lecture_name in user_taken_courses:
-            continue  # 이미 본 강의이거나 유저가 수강한 강의와 겹치는 경우 건너뜀
+            continue
 
         response.append(LectureCallResponse(
             lectureID=lecture_id,
