@@ -49,3 +49,16 @@ class LectureSelect(BaseModel):
 
 class userID(BaseModel):
     user_id: str
+
+
+class UserBasicInfo(BaseModel):
+    user_id: str
+    hakBun: int
+    bunBan: str
+    userYear: int
+    userMajor: str
+    username: str
+    isForeign: bool
+    isMultipleMajor: bool
+    whatMultipleMajor: str
+    whatMultipleMajorDepartment: str

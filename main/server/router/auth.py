@@ -36,7 +36,6 @@ async def root(user_id: str = Cookie(None)):
 
         if user:
             userName = user[0]
-            print(user_id)
             return LoggedInResponse(message="log in", user_id=user_id, userName=userName)
 
     return NotLoggedInResponse(message="log in required")

@@ -24,11 +24,10 @@ def get_user_info(user_id):
             bunBan, userYear, isForeign, isMultipleMajor, whatMultipleMajor, whatMultipleMajorDepartment = result
             return bunBan, userYear, isForeign, isMultipleMajor, whatMultipleMajor, whatMultipleMajorDepartment
         else:
-            print("user id err")
             return None
 
     except Exception as e:
-        print("오류 발생:", e)
+        print(e)
         return None
 
     finally:
@@ -106,7 +105,6 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         query_params.append(f'%{lecTheme}%')
 
     if lectureName != "":
-        print(lectureName)
         base_query += " AND ll.lecName LIKE ?"
         query_params.append(f'%{lectureName}%')
 
@@ -170,7 +168,6 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     ]
 
     if lectureName != "":
-        print(lectureName)
         base_query += " AND ll.lecName LIKE ?"
         query_params.append(f'%{lectureName}%')
 
