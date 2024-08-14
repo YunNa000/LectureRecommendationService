@@ -34,8 +34,8 @@ const LectureList = ({ lectures }) => {
     const lecNumber = lecture.lecNumber;
     const year = lecture.year;
     const semester = lecture.semester;
-    const lectureKey = `${lecNumber}-${year}-${semester}`; // 강의 키 조합
-    const isSelected = !!selectedLectures[lectureKey]; // 선택 상태 확인
+    const lectureKey = `${lecNumber}-${year}-${semester}`;
+    const isSelected = !!selectedLectures[lectureKey];
 
     if (isSelected) {
       try {
@@ -63,7 +63,7 @@ const LectureList = ({ lectures }) => {
         });
         setSelectedLectures((prev) => ({
           ...prev,
-          [lectureKey]: true, // 선택 상태 추가
+          [lectureKey]: true,
         }));
       } catch (error) {
         console.error("LectureList.js when selecting lecture:", error);
@@ -72,7 +72,7 @@ const LectureList = ({ lectures }) => {
   };
 
   const fetchSelectedLectures = async () => {
-    if (!user) return; // 유저가 없으면 반환
+    if (!user) return;
     try {
       const response = await axios.post(
         "http://localhost:8000/selected_lecture",
@@ -126,11 +126,10 @@ const LectureList = ({ lectures }) => {
         <p>조건에 맞는 강의가 없어요😥</p>
       ) : (
         Object.entries(groupedLectures).map(([lecName, lectureGroup]) => {
-          const isSoloLecture = lectureGroup.length === 1; // 1개인 강의인지 확인
+          const isSoloLecture = lectureGroup.length === 1;
           return (
             <div key={lecName}>
               {isSoloLecture ? (
-                // 1개인 강의는 그냥 보여줌
                 lectureGroup.map((lecture, index) => {
                   const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
                   return (

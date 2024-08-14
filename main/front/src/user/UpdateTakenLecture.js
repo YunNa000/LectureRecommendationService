@@ -87,10 +87,10 @@ const UpdateTakenLecture = () => {
   const handleDeleteLecture = async (lecture) => {
     const inputData = {
       user_id: user,
-      lecName: lecture.lecName,
-      Classification: lecture.Classification,
-      lecCredit: lecture.lecCredit,
+      id: lecture.id,
     };
+
+    console.log(user, lecture.id);
 
     try {
       const response = await axios.post(
@@ -109,33 +109,28 @@ const UpdateTakenLecture = () => {
     }
   };
 
-  const handleUpdateLectures = async () => {
-    try {
-      const responses = await Promise.all(
-        lectures.map(async (lecture) => {
-          const inputData = {
-            user_id: user,
-            lecName: lecture.lecName,
-            Classification: lecture.Classification,
-            lecCredit: lecture.lecCredit,
-            userCredit: lecture.userCredit,
-          };
+  const handleUpdateLecture = async (lecture) => {
+    const inputData = {
+      user_id: user,
+      id: lecture.id,
+      lecName: lecture.lecName,
+      Classification: lecture.Classification,
+      lecCredit: lecture.lecCredit,
+      userCredit: lecture.userCredit,
+    };
 
-          return axios.post(
-            "http://localhost:8000/user/update_taken_lecture",
-            inputData,
-            {
-              withCredentials: true,
-            }
-          );
-        })
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/update_taken_lecture",
+        inputData,
+        { withCredentials: true }
       );
 
-      if (responses.every((response) => response.status === 200)) {
+      if (response.status === 200) {
         getTakenLecture(user);
       }
     } catch (error) {
-      console.error("Error updating lectures:", error);
+      console.error("Error updating lecture:", error);
     }
   };
 
@@ -210,19 +205,35 @@ const UpdateTakenLecture = () => {
 
             return acc;
           }, {})
-        ).map(([key, group], index) => (
-          <div key={index}>
+        ).map(([key, group]) => (
+          <div key={key}>
             <h3>{key}</h3>
-            {group.map((lecture, idx) => (
-              <div key={idx}>
-                <p>{lecture.lecName || ""}</p>
+            {group.map((lecture) => (
+              <div key={lecture.id}>
+                <input
+                  type="text"
+                  value={lecture.lecName || ""}
+                  onChange={(e) => {
+                    const updatedLectures = [...lectures];
+                    const index = updatedLectures.findIndex(
+                      (l) => l.id === lecture.id
+                    );
+                    updatedLectures[index].lecName = e.target.value;
+                    setLectures(updatedLectures);
+                    handleUpdateLecture(updatedLectures[index]);
+                  }}
+                  placeholder="강의 이름"
+                />
                 <select
                   value={lecture.Classification || ""}
                   onChange={(e) => {
                     const updatedLectures = [...lectures];
+                    const index = updatedLectures.findIndex(
+                      (l) => l.id === lecture.id
+                    );
                     updatedLectures[index].Classification = e.target.value;
                     setLectures(updatedLectures);
-                    handleUpdateLectures();
+                    handleUpdateLecture(updatedLectures[index]);
                   }}
                 >
                   <option value="">분류 선택</option>
@@ -238,9 +249,12 @@ const UpdateTakenLecture = () => {
                   value={lecture.lecCredit || 0}
                   onChange={(e) => {
                     const updatedLectures = [...lectures];
+                    const index = updatedLectures.findIndex(
+                      (l) => l.id === lecture.id
+                    );
                     updatedLectures[index].lecCredit = +e.target.value;
                     setLectures(updatedLectures);
-                    handleUpdateLectures();
+                    handleUpdateLecture(updatedLectures[index]);
                   }}
                 >
                   <option value="">학점 선택</option>
@@ -256,9 +270,12 @@ const UpdateTakenLecture = () => {
                   placeholder="받은 점수"
                   onChange={(e) => {
                     const updatedLectures = [...lectures];
+                    const index = updatedLectures.findIndex(
+                      (l) => l.id === lecture.id
+                    );
                     updatedLectures[index].userCredit = e.target.value;
                     setLectures(updatedLectures);
-                    handleUpdateLectures();
+                    handleUpdateLecture(updatedLectures[index]);
                   }}
                 >
                   <option value="">받은 점수</option>
@@ -266,7 +283,6 @@ const UpdateTakenLecture = () => {
                   <option value="A">A</option>
                   <option value="B+">B+</option>
                   <option value="B">B</option>
-                  <option value="B+">B+</option>
                   <option value="C+">C+</option>
                   <option value="C">C</option>
                   <option value="F">F</option>

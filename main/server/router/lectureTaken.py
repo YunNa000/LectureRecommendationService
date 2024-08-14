@@ -185,18 +185,14 @@ async def delete_user_taken_lecture(input_data: TakenLectureDelete):
 
     update_query = """
         delete from UserTakenLecture
-        where user_id = ? 
-            and lecName = ? 
-            and Classification = ? 
-            and lecCredit = ?
+        where id = ?  
+        and user_id = ? 
     """
 
     try:
         cursor.execute(update_query, (
-            input_data.user_id,
-            input_data.lecName,
-            input_data.Classification,
-            input_data.lecCredit
+            input_data.id,
+            input_data.user_id
         ))
 
         conn.commit()
@@ -221,7 +217,7 @@ async def get_user_taken_lectures(request: userID):
     cursor = conn.cursor()
 
     select_query = """
-        SELECT lecName, Classification, lecCredit, userCredit, year, semester
+        SELECT id, lecName, Classification, lecCredit, userCredit, year, semester
         FROM UserTakenLecture
         WHERE user_id = ?
     """
@@ -233,12 +229,13 @@ async def get_user_taken_lectures(request: userID):
         lectures_list = []
         for lecture in lectures:
             lectures_list.append({
-                "lecName": lecture[0],
-                "Classification": lecture[1],
-                "lecCredit": lecture[2],
-                "userCredit": lecture[3],
-                "year": lecture[4],
-                "semester": lecture[5]
+                "id": lecture[0],
+                "lecName": lecture[1],
+                "Classification": lecture[2],
+                "lecCredit": lecture[3],
+                "userCredit": lecture[4],
+                "year": lecture[5],
+                "semester": lecture[6]
             })
 
         return {"taken_lectures": lectures_list}
@@ -261,8 +258,8 @@ async def update_user_taken_lecture(input_data: TakenLectureUpdate):
 
     update_query = """
         UPDATE UserTakenLecture
-        SET Classification = ?, lecCredit = ?, userCredit = ?
-        WHERE lecName = ? AND user_id = ?
+        SET Classification = ?, lecCredit = ?, userCredit = ?, lecName = ?
+        WHERE id = ?  AND user_id = ?
     """
 
     try:
@@ -271,7 +268,8 @@ async def update_user_taken_lecture(input_data: TakenLectureUpdate):
             input_data.lecCredit,
             input_data.userCredit,
             input_data.lecName,
-            input_data.user_id
+            input_data.id,
+            input_data.user_id,
         ))
 
         conn.commit()

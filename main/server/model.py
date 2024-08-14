@@ -97,9 +97,7 @@ class TakenLectureManaullyUpdate(BaseModel):
 
 class TakenLectureDelete(BaseModel):
     user_id: str
-    lecName: str
-    Classification: str
-    lecCredit: int
+    id: int
 
 
 class TakenLectureUpdate(BaseModel):
@@ -108,3 +106,4 @@ class TakenLectureUpdate(BaseModel):
     Classification: str
     lecCredit: int
     userCredit: Optional[str] = None
+    id: int
