@@ -43,10 +43,11 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     user_taken_query = """
     SELECT lecName
     FROM userTakenLecture
-    WHERE user_id = ? AND userCredit is not 'F'
+    WHERE user_id = ? AND userCredit IS NOT 'F'
     """
     cursor.execute(user_taken_query, (user_id,))
-    user_taken_courses = [row['lecName'] for row in cursor.fetchall()]
+    user_taken_courses = {row['lecName']
+                          for row in cursor.fetchall()}
 
     base_query = """
     SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year
@@ -80,8 +81,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         if not isPillSu:
             base_query += " AND ll.lecClassification IN ('교선', '교필')"
         else:
-            base_query += " AND ll.lecClassification = ?"
-            query_params.append(lecClassification)
+            base_query += " AND ll.lecClassification = '교필'"
 
     if assignmentAmount != "상관없음":
         base_query += " AND le.assignmentAmount >= 70"
@@ -115,17 +115,19 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     conn.close()
 
     response = []
-    seen_lecture_ids = set()  # 중복 강의를 체크하기 위한 집합
+    seen_lecture_ids = set()
 
     for row in lectures:
-        lecture_id = row[0]  # lectureID
-        if lecture_id in seen_lecture_ids:
-            continue  # 이미 추가된 강의는 무시
+        lecture_id = row[0]
+        lecture_name = row[2]  # 강의명
+
+        if lecture_id in seen_lecture_ids or lecture_name in user_taken_courses:
+            continue  # 이미 본 강의이거나 유저가 수강한 강의와 겹치는 경우 건너뜀
 
         response.append(LectureCallResponse(
             lectureID=lecture_id,
             lecNumber=row[1],
-            lecName=row[2],
+            lecName=lecture_name,
             lecProfessor=row[3],
             lecCredit=row[4],
             lecTime=row[5],
@@ -189,9 +191,8 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     conn.close()
 
     response = []
-    seen_lecture_ids = set()  # 중복 강의를 체크하기 위한 집합
+    seen_lecture_ids = set()
 
-    # major_mapping 딕셔너리 정의
     major_mapping = {
         "E1": "전자공학과",
         "E5": "전자통신공학과",
