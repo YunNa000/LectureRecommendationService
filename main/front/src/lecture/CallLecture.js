@@ -47,6 +47,20 @@ const CallLecture = () => {
     }
   };
 
+  const fetchYearAndSemester = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/get_year_n_semester"
+      );
+      const { year: fetchedYear, semester: fetchedSemester } =
+        response.data.year_n_semester;
+      setYear(fetchedYear);
+      setSemester(fetchedSemester);
+    } catch (err) {
+      console.error("errr fetching year and semester", err);
+    }
+  };
+
   const fetchLectures = async () => {
     const inputData = {
       user_id: user,
@@ -57,7 +71,7 @@ const CallLecture = () => {
       assignmentAmount,
       star,
       userWantTime: "",
-      year, // get_now_year_n_semester 으로 year와 semester 가져오기
+      year,
       semester,
       isPillSu,
       lectureName,
@@ -82,10 +96,18 @@ const CallLecture = () => {
 
   useEffect(() => {
     if (user) {
+      fetchYearAndSemester();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && year && semester) {
       fetchLectures();
     }
   }, [
     user,
+    year,
+    semester,
     lecClassification,
     lecTheme,
     teamplayAmount,
@@ -178,6 +200,10 @@ const CallLecture = () => {
           fetchLectures={fetchLectures}
           setLectureName={setLectureName}
           lectureName={lectureName}
+          setYear={setYear}
+          setSemester={setSemester}
+          year={year}
+          semester={semester}
         />
       )}
 

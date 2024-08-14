@@ -12,10 +12,14 @@ const TotalLectureSearch = ({
   setStar,
   lectureName,
   setLectureName,
+  setYear,
+  setSemester,
+  year,
+  semester,
 }) => {
   return (
     <div>
-      <div>
+      {/* <div>
         <label>별점</label>
         <select value={star} onChange={(e) => setStar(e.target.value)}>
           <option value={0}>상관없음</option>
@@ -56,9 +60,26 @@ const TotalLectureSearch = ({
           <option value="상관없음">상관없음</option>
           <option value="적음">적음</option>
         </select>
+      </div> */}
+
+      <div>
+        <input
+          type="number"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        />
+        <label>년도</label>
       </div>
 
-      <hr />
+      <div>
+        <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+          <option value="1학기">1학기</option>
+          <option value="여름학기">여름학기</option>
+          <option value="2학기">2학기</option>
+          <option value="겨울학기">겨울학기</option>
+        </select>
+      </div>
+
       <div>
         <label>강의명</label>
         <input

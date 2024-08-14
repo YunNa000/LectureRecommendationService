@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 const LectureList = ({ lectures }) => {
   const [user, setUser] = useState(null);
   const [selectedLectures, setSelectedLectures] = useState({});
+  const [expandedLectures, setExpandedLectures] = useState({}); // 토글 상태 관리
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -91,6 +92,24 @@ const LectureList = ({ lectures }) => {
     }
   };
 
+  const groupLecturesByName = (lectures) => {
+    return lectures.reduce((acc, lecture) => {
+      const { lecName } = lecture;
+      if (!acc[lecName]) {
+        acc[lecName] = [];
+      }
+      acc[lecName].push(lecture);
+      return acc;
+    }, {});
+  };
+
+  const handleToggle = (lecName) => {
+    setExpandedLectures((prev) => ({
+      ...prev,
+      [lecName]: !prev[lecName],
+    }));
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -99,27 +118,71 @@ const LectureList = ({ lectures }) => {
     fetchSelectedLectures();
   }, [user]);
 
+  const groupedLectures = groupLecturesByName(lectures);
+
   return (
     <div>
       {lectures.length === 0 ? (
         <p>조건에 맞는 강의가 없어요😥</p>
       ) : (
-        lectures.map((lecture, index) => {
-          const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
+        Object.entries(groupedLectures).map(([lecName, lectureGroup]) => {
+          const isSoloLecture = lectureGroup.length === 1; // 1개인 강의인지 확인
           return (
-            <div key={`${lecture.lectureID}-${index}`}>
-              <input
-                type="checkbox"
-                checked={!!selectedLectures[lectureKey]}
-                onChange={() => handleCheckboxChange(lecture)}
-              />
-              <label>
-                {lecture.moreInfo}
-                {lecture.lecName} - {lecture.lecProfessor} | {lecture.lecCredit}{" "}
-                | {lecture.lecTime} | {lecture.lecClassroom} | {lecture.year}년{" "}
-                {lecture.semester}
-              </label>
-              <hr />
+            <div key={lecName}>
+              {isSoloLecture ? (
+                // 1개인 강의는 그냥 보여줌
+                lectureGroup.map((lecture, index) => {
+                  const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
+                  return (
+                    <div key={`${lecture.lectureID}-${index}`}>
+                      <input
+                        type="checkbox"
+                        checked={!!selectedLectures[lectureKey]}
+                        onChange={() => handleCheckboxChange(lecture)}
+                      />
+                      <label>
+                        {lecture.moreInfo}
+                        {lecture.lecName} | {lecture.lecProfessor} |{" "}
+                        {lecture.lecCredit} | {lecture.lecTime} |{" "}
+                        {lecture.lecClassroom} | {lecture.year}년{" "}
+                        {lecture.semester}
+                      </label>
+                      <hr />
+                    </div>
+                  );
+                })
+              ) : (
+                <>
+                  <p
+                    onClick={() => handleToggle(lecName)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {expandedLectures[lecName] ? "▼" : "▲"} {lecName} (
+                    {lectureGroup.length})
+                  </p>
+                  {expandedLectures[lecName] &&
+                    lectureGroup.map((lecture, index) => {
+                      const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
+                      return (
+                        <div key={`${lecture.lectureID}-${index}`}>
+                          <input
+                            type="checkbox"
+                            checked={!!selectedLectures[lectureKey]}
+                            onChange={() => handleCheckboxChange(lecture)}
+                          />
+                          <label>
+                            {lecture.moreInfo}
+                            {lecture.lecName} | {lecture.lecProfessor} |{" "}
+                            {lecture.lecCredit} | {lecture.lecTime} |{" "}
+                            {lecture.lecClassroom} | {lecture.year}년{" "}
+                            {lecture.semester}
+                          </label>
+                          <hr />
+                        </div>
+                      );
+                    })}
+                </>
+              )}
             </div>
           );
         })
