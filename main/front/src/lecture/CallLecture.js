@@ -59,6 +59,8 @@ const CallLecture = () => {
       setSemester(fetchedSemester);
     } catch (err) {
       console.error("errr fetching year and semester", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,8 +89,6 @@ const CallLecture = () => {
       setLectures(response.data);
     } catch (err) {
       setError(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,41 +102,26 @@ const CallLecture = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && year && semester) {
-      fetchLectures();
-    }
-  }, [
-    user,
-    year,
-    semester,
-    lecClassification,
-    lecTheme,
-    teamplayAmount,
-    gradeAmount,
-    assignmentAmount,
-    star,
-    isPillSu,
-    lecCredit,
-  ]);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
-
   const handleGyoYangClick = () => {
     setLecClassification("교양");
     setActiveComponent("GyoYang");
+    fetchLectures();
   };
 
   const handleJunGongClick = () => {
     setLecClassification("전공");
     setActiveComponent("JunGong");
+    fetchLectures();
   };
 
   const handleTotalClick = () => {
     setLecClassification("전체");
     setActiveComponent("Total");
+    fetchLectures();
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
 
   return (
     <div>
@@ -145,7 +130,6 @@ const CallLecture = () => {
         <button onClick={handleJunGongClick}>전공 강의 검색</button>
         <button onClick={handleTotalClick}>전체 강의 검색</button>
       </div>
-
       {activeComponent === "GyoYang" && (
         <GyoYangLectureSearch
           lecClassification={lecClassification}
@@ -169,7 +153,6 @@ const CallLecture = () => {
           lecCredit={lecCredit}
         />
       )}
-
       {activeComponent === "JunGong" && (
         <JunGongLectureSearch
           lecClassification={lecClassification}
@@ -193,7 +176,6 @@ const CallLecture = () => {
           lecCredit={lecCredit}
         />
       )}
-
       {activeComponent === "Total" && (
         <TotalLectureSearch
           teamplayAmount={teamplayAmount}
@@ -215,8 +197,7 @@ const CallLecture = () => {
           lecCredit={lecCredit}
         />
       )}
-
-      <LectureList lectures={lectures} />
+      {activeComponent && <LectureList lectures={lectures} />}{" "}
     </div>
   );
 };
