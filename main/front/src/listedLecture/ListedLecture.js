@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import ListedLectureList from "./ListedLectureList";
 import ListedLectureFilter from "./ListedLectureFilter";
 import AddListedLectureManaully from "./AddListedLectureManually";
+import ListedLectureTimeTable from "./ListedLectureTimeTable";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -94,6 +95,30 @@ const ListedLecture = () => {
     }
   };
 
+  const getCheckedLectures = () => {
+    return lectures.filter(
+      (lecture) =>
+        lecture.priority && lecture.priority.split(" ").includes(priority)
+    );
+  };
+
+  const unselectLecture = async (lecNumber, year, semester) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/lecture_unselect",
+        {
+          user_id: user,
+          lecNumber: lecNumber,
+          year: year,
+          semester: semester,
+        }
+      );
+      fetchLectures(user);
+    } catch (error) {
+      console.error("err unlist lecture", error);
+    }
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -127,7 +152,9 @@ const ListedLecture = () => {
         filteredLectures={filteredLectures}
         updateLecturePriority={updateLecturePriority}
         priority={priority}
+        unselectLecture={unselectLecture}
       />
+      <ListedLectureTimeTable lectures={getCheckedLectures()} />
     </div>
   );
 };

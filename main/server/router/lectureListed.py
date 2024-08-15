@@ -43,12 +43,12 @@ async def user_listed_lecture(request: userID):
             })
         else:
             cursor.execute(
-                "SELECT lecTheme, lecClassification, lecCredit FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
+                "SELECT lecTheme, lecClassification, lecCredit, lecProfessor FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
                 (year, semester, lecNumber))
             lecture_list = cursor.fetchone()
 
             if lecture_list:
-                lecTheme, lecClassification, lecCredit = lecture_list
+                lecTheme, lecClassification, lecCredit, lecProfessor = lecture_list
 
                 cursor.execute(
                     "SELECT star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary FROM LectureEverytimeData WHERE lectureID = (SELECT lectureID FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?)",
@@ -75,6 +75,7 @@ async def user_listed_lecture(request: userID):
                         "teamPlayAmount": teamPlayAmount,
                         "gradeAmount": gradeAmount,
                         "reviewSummary": reviewSummary,
+                        "lecProfessor": lecProfessor,
                     })
 
     conn.close()
@@ -103,20 +104,18 @@ async def update_user_listed_lecture_priority(request: PriorityUpdate):
         result = cursor.fetchone()
 
         if result:
-            existing_priority = result[0]
+            existing_priority = result[0] or ""  # None일 경우 빈 문자열로 설정
             new_priority = request.priority.strip()
 
-            # 기존의 우선순위에서 새로운 우선순위가 이미 존재하는지 체크
-            priorities = set(existing_priority.split())
+            # 기존 우선순위가 빈 문자열인 경우 처리
+            priorities = set(existing_priority.split()
+                             ) if existing_priority else set()
 
             if new_priority in priorities:
-                # 기존 우선순위에서 새로운 우선순위를 제거
                 priorities.remove(new_priority)
             else:
-                # 새로운 우선순위를 추가
                 priorities.add(new_priority)
 
-            # 우선순위를 공백으로 구분하여 문자열로 변환
             updated_priority = ' '.join(
                 sorted(priorities, key=lambda x: (x != new_priority, x)))
 

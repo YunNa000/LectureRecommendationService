@@ -4,10 +4,15 @@ const ListedLectureList = ({
   filteredLectures,
   updateLecturePriority,
   priority,
+  unselectLecture,
 }) => {
   if (filteredLectures.length === 0) {
     return <p>강의를 추가해주세요.</p>;
   }
+
+  const handleUnselect = (lecNumber, year, semester) => {
+    unselectLecture(lecNumber, year, semester);
+  };
 
   return (
     <div>
@@ -37,6 +42,13 @@ const ListedLectureList = ({
             {lecture.gradeAmount} | {lecture.reviewSummary} |{" "}
             {lecture.lecCredit}
           </p>
+          <button
+            onClick={() =>
+              handleUnselect(lecture.lecNumber, lecture.year, lecture.semester)
+            }
+          >
+            unselect
+          </button>
         </div>
       ))}
     </div>
