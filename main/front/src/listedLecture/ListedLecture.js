@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import ListedLectureList from "./ListedLectureList";
 import ListedLectureFilter from "./ListedLectureFilter";
+import AddListedLectureManaully from "./AddListedLectureManually";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -60,6 +61,7 @@ const ListedLecture = () => {
         { user_id: userID }
       );
       setLectures(response.data);
+      console.log(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -120,6 +122,7 @@ const ListedLecture = () => {
         priority={priority}
         setPriority={setPriority}
       />
+      <AddListedLectureManaully user={user} />
       <ListedLectureList
         filteredLectures={filteredLectures}
         updateLecturePriority={updateLecturePriority}

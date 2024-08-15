@@ -89,14 +89,10 @@ async def update_lecture_data_by_ocr(request: OCRRequest):
     splited_ocr_data = []
 
     try:
-        print(request.ocrResults)
-
         for ocr_text in request.ocrResults:
             words = ocr_text.split()
             filtered_words = [word for word in words if len(word) >= 3]
             splited_ocr_data.extend(filtered_words)
-
-        print("splited ocr data: ", splited_ocr_data)
 
         for word in splited_ocr_data:
             cursor.execute(

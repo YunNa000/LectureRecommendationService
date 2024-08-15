@@ -116,3 +116,13 @@ class PriorityUpdate(BaseModel):
     year: int
     semester: str
     priority: str
+
+
+class ManuallyAddListedLecture(BaseModel):
+    user_id: str
+    year: int
+    semester: str
+    classroom: Optional[str] = None
+    memo: Optional[str] = None
+    lecName: str
+    lecTime: Optional[str] = None

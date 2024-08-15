@@ -1,7 +1,9 @@
 from typing import List
 from fastapi import HTTPException, APIRouter
 from db import db_connect
-from model import userID, PriorityUpdate
+from model import userID, PriorityUpdate, ManuallyAddListedLecture
+import random
+import string
 
 router = APIRouter()
 
@@ -20,40 +22,60 @@ async def user_listed_lecture(request: userID):
     for lecture in user_lectures:
         year, semester, lecNumber, priority, classroom, memo, lecName, lecTime = lecture
 
-        cursor.execute(
-            "SELECT lecTheme, lecClassification, lecCredit FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
-            (year, semester, lecNumber))
-        lecture_list = cursor.fetchone()
-
-        if lecture_list:
-            lecTheme, lecClassification, lecCredit = lecture_list
-
+        if lecNumber.startswith("user"):
+            results.append({
+                "year": year,
+                "semester": semester,
+                "lecNumber": lecNumber,
+                "priority": priority,
+                "classroom": classroom,
+                "memo": memo,
+                "lecName": lecName,
+                "lecTime": lecTime,
+                "lecTheme": "",
+                "lecClassification": "",
+                "lecCredit": "",
+                "star": "",
+                "assignmentAmount": "",
+                "teamPlayAmount": "",
+                "gradeAmount": "",
+                "reviewSummary": "",
+            })
+        else:
             cursor.execute(
-                "SELECT star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary FROM LectureEverytimeData WHERE lectureID = (SELECT lectureID FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?)",
+                "SELECT lecTheme, lecClassification, lecCredit FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
                 (year, semester, lecNumber))
-            everytime_data = cursor.fetchone()
+            lecture_list = cursor.fetchone()
 
-            if everytime_data:
-                star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary = everytime_data
+            if lecture_list:
+                lecTheme, lecClassification, lecCredit = lecture_list
 
-                results.append({
-                    "year": year,
-                    "semester": semester,
-                    "lecNumber": lecNumber,
-                    "priority": priority,
-                    "classroom": classroom,
-                    "memo": memo,
-                    "lecName": lecName,
-                    "lecTime": lecTime,
-                    "lecTheme": lecTheme,
-                    "lecClassification": lecClassification,
-                    "lecCredit": lecCredit,
-                    "star": star,
-                    "assignmentAmount": assignmentAmount,
-                    "teamPlayAmount": teamPlayAmount,
-                    "gradeAmount": gradeAmount,
-                    "reviewSummary": reviewSummary,
-                })
+                cursor.execute(
+                    "SELECT star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary FROM LectureEverytimeData WHERE lectureID = (SELECT lectureID FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?)",
+                    (year, semester, lecNumber))
+                everytime_data = cursor.fetchone()
+
+                if everytime_data:
+                    star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary = everytime_data
+
+                    results.append({
+                        "year": year,
+                        "semester": semester,
+                        "lecNumber": lecNumber,
+                        "priority": priority,
+                        "classroom": classroom,
+                        "memo": memo,
+                        "lecName": lecName,
+                        "lecTime": lecTime,
+                        "lecTheme": lecTheme,
+                        "lecClassification": lecClassification,
+                        "lecCredit": lecCredit,
+                        "star": star,
+                        "assignmentAmount": assignmentAmount,
+                        "teamPlayAmount": teamPlayAmount,
+                        "gradeAmount": gradeAmount,
+                        "reviewSummary": reviewSummary,
+                    })
 
     conn.close()
     return results
@@ -116,6 +138,48 @@ async def update_user_listed_lecture_priority(request: PriorityUpdate):
         print(f"errr updating priority {str(e)}")
         raise HTTPException(
             status_code=500, detail=f"errr updating priority {str(e)}")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@router.post("/user/add_user_listed_lecture_manually")
+async def add_user_listed_lecture_manually(request: ManuallyAddListedLecture):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    random_string = ''.join(random.choices(
+        string.ascii_letters + string.digits, k=6))
+    lecNumber = f"user-{request.year}-{request.semester}-{random_string}"
+
+    insert_query = """
+    INSERT INTO UserListedLecture (user_id, year, semester, priority, classroom, memo, lecName, lecTime, lecNumber)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+
+    try:
+        cursor.execute(insert_query, (
+            request.user_id,
+            request.year,
+            request.semester,
+            "",
+            request.classroom,
+            request.memo,
+            request.lecName,
+            request.lecTime,
+            lecNumber
+        ))
+        conn.commit()
+
+        return {"detail": "add lecture manually done", "lecNumber": lecNumber}
+
+    except Exception as e:
+        conn.rollback()
+        print(f"err add lecture manually: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"err add lecture manually: {str(e)}"
+        )
 
     finally:
         cursor.close()
