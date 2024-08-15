@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import ListedLectureList from "./ListedLectureList";
+import ListedLectureFilter from "./ListedLectureFilter";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -111,73 +113,19 @@ const ListedLecture = () => {
 
   return (
     <div>
-      <h1>강의 목록</h1>
-      <div>
-        <label>
-          연도:
-          <input
-            type="number"
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-          />
-        </label>
-        <label>
-          학기:
-          <select
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
-          >
-            <option value="1학기">1학기</option>
-            <option value="여름학기">여름학기</option>
-            <option value="2학기">2학기</option>
-            <option value="겨울학기">겨울학기</option>
-          </select>
-        </label>
-        <label>
-          우선 순위:
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-          >
-            <option value="1순위">1순위</option>
-            <option value="2순위">2순위</option>
-            <option value="3순위">3순위</option>
-          </select>
-        </label>
-      </div>
-      {filteredLectures.length > 0 ? (
-        <div>
-          {filteredLectures.map((lecture, index) => (
-            <div key={index}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={
-                    lecture.priority &&
-                    lecture.priority.split(" ").includes(priority)
-                  }
-                  onChange={() =>
-                    updateLecturePriority(lecture.lecNumber, priority)
-                  }
-                />
-                <span>{lecture.lecName}</span>
-              </label>
-              <small>
-                {lecture.year}년 {lecture.semester}학기
-              </small>
-              <p>
-                {lecture.lecNumber} | {lecture.priority} | {lecture.classroom} |{" "}
-                {lecture.memo} | {lecture.lecTime} | {lecture.lecTheme} |{" "}
-                {lecture.lecClassification} | {lecture.star} |{" "}
-                {lecture.assignmentAmount} | {lecture.teamPlayAmount} |{" "}
-                {lecture.gradeAmount} | {lecture.reviewSummary} |
-              </p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>등록된 강의가 없습니다.</p>
-      )}
+      <ListedLectureFilter
+        year={year}
+        setYear={setYear}
+        semester={semester}
+        setSemester={setSemester}
+        priority={priority}
+        setPriority={setPriority}
+      />
+      <ListedLectureList
+        filteredLectures={filteredLectures}
+        updateLecturePriority={updateLecturePriority}
+        priority={priority}
+      />
     </div>
   );
 };
