@@ -96,6 +96,14 @@ class TakenLectureManaullyUpdate(BaseModel):
     userCredit: Optional[str] = None
 
 
+class TakenLectureAutoUpdate(BaseModel):
+    user_id: str
+    year: int
+    semester: str
+    lecName: str
+    lecNumber: str
+
+
 class TakenLectureDelete(BaseModel):
     user_id: str
     id: int

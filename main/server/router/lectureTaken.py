@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta
 from db import db_connect
-from model import OCRResponse, OCRRequest, OCRLectureInfo, TakenLectureManaullyUpdate, TakenLectureDelete, userID, TakenLectureUpdate
+from model import OCRResponse, OCRRequest, OCRLectureInfo, TakenLectureManaullyUpdate, TakenLectureDelete, userID, TakenLectureUpdate, TakenLectureAutoUpdate
 
 router = APIRouter()
 
@@ -213,7 +213,7 @@ async def get_user_taken_lectures(request: userID):
     cursor = conn.cursor()
 
     select_query = """
-        SELECT id, lecName, Classification, lecCredit, userCredit, year, semester
+        SELECT id, lecName, Classification, lecCredit, userCredit, year, semester, lecNumber
         FROM UserTakenLecture
         WHERE user_id = ?
     """
@@ -231,7 +231,8 @@ async def get_user_taken_lectures(request: userID):
                 "lecCredit": lecture[3],
                 "userCredit": lecture[4],
                 "year": lecture[5],
-                "semester": lecture[6]
+                "semester": lecture[6],
+                "lecNumber": lecture[7],
             })
 
         return {"taken_lectures": lectures_list}
@@ -275,7 +276,88 @@ async def update_user_taken_lecture(input_data: TakenLectureUpdate):
 
         updateUserGPA(input_data.user_id)
 
-        return {"message": "Successfully updated taken lecture"}
+        return {"message": "updated taken lecture info"}
+
+    except Exception as e:
+        conn.rollback()
+        print("Error occurred:", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@router.post("/user/add_taken_lecture_auto")
+async def add_taken_lecture_auto(input_data: TakenLectureAutoUpdate):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    try:
+        check_query = """
+        SELECT COUNT(*) 
+        FROM UserTakenLecture 
+        WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+        """
+        cursor.execute(check_query, (input_data.user_id,
+                                     input_data.lecNumber, input_data.year, input_data.semester))
+        count = cursor.fetchone()[0]
+
+        if count > 0:
+            raise HTTPException(
+                status_code=400, detail="Lecture already taken")
+
+        if input_data.lecNumber.startswith("user"):
+
+            insert_query = """
+            INSERT INTO UserTakenLecture (user_id, lecName, Classification, year, semester, lecNumber, lecCredit) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """
+            cursor.execute(insert_query, (input_data.user_id, input_data.lecName, "기타",
+                                          input_data.year, input_data.semester, input_data.lecNumber, 0))
+
+            update_query = """
+            UPDATE UserListedLecture 
+            SET isCompleted = ? 
+            WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+            """
+            cursor.execute(update_query, (True, input_data.user_id,
+                                          input_data.lecNumber, input_data.year, input_data.semester))
+
+        else:
+            query = """
+            SELECT lecCredit, lecClassification, lecTheme 
+            FROM LectureList 
+            WHERE lecNumber = ? AND year = ? AND semester = ? AND lecName = ?
+            """
+            cursor.execute(query, (input_data.lecNumber, input_data.year,
+                                   input_data.semester, input_data.lecName))
+            lecture_info = cursor.fetchone()
+
+            if lecture_info is None:
+                raise HTTPException(
+                    status_code=404, detail="Lecture not found")
+
+            lecCredit, lecClassification, lecTheme = lecture_info
+
+            insert_query = """
+            INSERT INTO UserTakenLecture (user_id, lecName, Classification, lecCredit, year, semester, lecNumber, lecTheme) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            cursor.execute(insert_query, (input_data.user_id, input_data.lecName, lecClassification,
+                                          lecCredit, input_data.year, input_data.semester, input_data.lecNumber, lecTheme))
+
+            update_query = """
+            UPDATE UserListedLecture 
+            SET isCompleted = ? 
+            WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+            """
+            cursor.execute(update_query, (True, input_data.user_id,
+                                          input_data.lecNumber, input_data.year, input_data.semester))
+
+        conn.commit()
+
+        return {"message": "lecture completed done"}
 
     except Exception as e:
         conn.rollback()

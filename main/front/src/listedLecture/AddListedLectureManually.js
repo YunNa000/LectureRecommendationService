@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AddListedLectureManaully = ({ user }) => {
+const AddListedLectureManaully = ({ user, fetchLectures }) => {
   const [year, setYear] = useState("");
   const [semester, setSemester] = useState("");
   const [classroom, setClassroom] = useState("");
@@ -30,6 +30,7 @@ const AddListedLectureManaully = ({ user }) => {
         }
       );
       setSuccess(response.data.detail);
+      fetchLectures(user);
       setYear("");
       setSemester("");
       setClassroom("");
@@ -38,7 +39,7 @@ const AddListedLectureManaully = ({ user }) => {
       setLecTime("");
     } catch (err) {
       setError(
-        err.response.data.detail || "강의 수동 추가 중 오류가 밠애했어요."
+        err.response.data.detail || "강의 수동 추가 중 오류가 발생했어요."
       );
     }
   };
@@ -56,12 +57,18 @@ const AddListedLectureManaully = ({ user }) => {
           <label>년도</label>
         </div>
         <div>
-          <input
+          <select
             type="text"
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
             required
-          />
+          >
+            <option value="1학기">1학기</option>
+            <option value="여름학기">여름학기</option>
+            <option value="2학기">2학기</option>
+            <option value="겨울학기">겨울학기</option>
+          </select>
+
           <label>학기:</label>
         </div>
         <div>

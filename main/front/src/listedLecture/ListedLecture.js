@@ -21,6 +21,7 @@ const ListedLecture = () => {
   const [majorCredits, setMajorCredits] = useState(0);
   const [gyoYangCredits, setGyoYangCredits] = useState(0);
   const [otherCredits, setOtherCredits] = useState(0);
+  const [takenLectures, setTakenLectures] = useState(null);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -37,6 +38,7 @@ const ListedLecture = () => {
           setUser(data.user_id);
           fetchLectures(data.user_id);
           fetchTotalGPA(data.user_id);
+          getTakenLecture(data.user_id);
         }
       } else {
         console.log("로그인 해주세요.");
@@ -150,6 +152,35 @@ const ListedLecture = () => {
     }
   };
 
+  const getTakenLecture = async (user) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/get_taken_lectures",
+        { user_id: user },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        setTakenLectures(response.data.taken_lectures);
+      }
+    } catch (error) {
+      console.error("Error fetching lectures:", error);
+    }
+  };
+
+  const markLectureAsCompleted = async (lectureData) => {
+    try {
+      lectureData.user_id = user;
+      const response = await axios.post(
+        "http://localhost:8000/user/add_taken_lecture_auto",
+        lectureData
+      );
+      fetchLectures(user);
+    } catch (error) {
+      console.error("err update lecture info", error);
+    }
+  };
+
   useEffect(() => {
     const checkedLectures = getCheckedLectures();
 
@@ -212,7 +243,7 @@ const ListedLecture = () => {
         priority={priority}
         setPriority={setPriority}
       />
-      <AddListedLectureManaully user={user} />
+      <AddListedLectureManaully user={user} fetchLectures={fetchLectures} />
       <ShowCheckedLectureCredit
         totalCredits={totalCredits}
         majorCredits={majorCredits}
@@ -227,6 +258,8 @@ const ListedLecture = () => {
         updateLectureInfo={updateLectureInfo}
         totalGPA={totalGPA}
         totalCredits={totalCredits}
+        markLectureAsCompleted={markLectureAsCompleted}
+        takenLectures={takenLectures}
       />
       <ListedLectureTimeTable
         lectures={getCheckedLectures()}

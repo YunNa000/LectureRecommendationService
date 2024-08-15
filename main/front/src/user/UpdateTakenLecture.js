@@ -110,6 +110,14 @@ const UpdateTakenLecture = () => {
   };
 
   const handleUpdateLecture = async (lecture) => {
+    console.log(
+      user,
+      lecture.id,
+      lecture.lecName,
+      lecture.classification,
+      lecture.lecCredit,
+      lecture.userCredit
+    );
     const inputData = {
       user_id: user,
       id: lecture.id,

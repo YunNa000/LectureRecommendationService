@@ -8,6 +8,8 @@ const ListedLectureList = ({
   updateLectureInfo,
   totalGPA,
   totalCredits,
+  markLectureAsCompleted,
+  takenLectures,
 }) => {
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -66,6 +68,30 @@ const ListedLectureList = ({
     setEditingLectureIndex(null);
   };
 
+  const handleMarkComplete = async (lecture) => {
+    try {
+      await markLectureAsCompleted({
+        user_id: lecture.user_id,
+        year: lecture.year,
+        semester: lecture.semester,
+        lecName: lecture.lecName,
+        lecNumber: lecture.lecNumber,
+      });
+      setEditingLectureIndex(null);
+    } catch (error) {
+      console.error("error handle mark complete", error);
+    }
+  };
+
+  const isLectureCompleted = (lecture) => {
+    return takenLectures.some(
+      (takenLecture) =>
+        takenLecture.lecNumber === lecture.lecNumber &&
+        takenLecture.year === lecture.year &&
+        takenLecture.semester === lecture.semester
+    );
+  };
+
   return (
     <div>
       {warningMessage}
@@ -110,6 +136,13 @@ const ListedLectureList = ({
                 placeholder="강의실"
               />
               <button onClick={() => handleUpdate(lecture)}>저장</button>
+              {!isLectureCompleted(lecture) ? (
+                <button onClick={() => handleMarkComplete(lecture)}>
+                  수강 완료 처리
+                </button>
+              ) : (
+                <p>수강 완료했어요!</p>
+              )}
             </div>
           ) : (
             <button onClick={() => handleEditClick(lecture, index)}>
