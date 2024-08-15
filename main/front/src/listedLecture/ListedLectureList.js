@@ -6,7 +6,7 @@ const ListedLectureList = ({
   priority,
 }) => {
   if (filteredLectures.length === 0) {
-    return <p>등록된 강의가 없습니다.</p>;
+    return <p>강의를 추가해주세요.</p>;
   }
 
   return (
@@ -34,7 +34,8 @@ const ListedLectureList = ({
             {lecture.memo} | {lecture.lecTime} | {lecture.lecTheme} |{" "}
             {lecture.lecClassification} | {lecture.star} |{" "}
             {lecture.assignmentAmount} | {lecture.teamPlayAmount} |{" "}
-            {lecture.gradeAmount} | {lecture.reviewSummary} |
+            {lecture.gradeAmount} | {lecture.reviewSummary} |{" "}
+            {lecture.lecCredit}
           </p>
         </div>
       ))}

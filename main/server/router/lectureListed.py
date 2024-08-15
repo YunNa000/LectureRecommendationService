@@ -21,20 +21,20 @@ async def user_listed_lecture(request: userID):
         year, semester, lecNumber, priority, classroom, memo, lecName, lecTime = lecture
 
         cursor.execute(
-            "SELECT lecTheme, lecClassification FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
+            "SELECT lecTheme, lecClassification, lecCredit FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
             (year, semester, lecNumber))
         lecture_list = cursor.fetchone()
 
         if lecture_list:
-            lecTheme, lecClassification = lecture_list
+            lecTheme, lecClassification, lecCredit = lecture_list
 
             cursor.execute(
-                "SELECT star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary, everytimeURL FROM LectureEverytimeData WHERE lectureID = (SELECT lectureID FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?)",
+                "SELECT star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary FROM LectureEverytimeData WHERE lectureID = (SELECT lectureID FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?)",
                 (year, semester, lecNumber))
             everytime_data = cursor.fetchone()
 
             if everytime_data:
-                star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary, everytimeURL = everytime_data
+                star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary = everytime_data
 
                 results.append({
                     "year": year,
@@ -47,6 +47,7 @@ async def user_listed_lecture(request: userID):
                     "lecTime": lecTime,
                     "lecTheme": lecTheme,
                     "lecClassification": lecClassification,
+                    "lecCredit": lecCredit,
                     "star": star,
                     "assignmentAmount": assignmentAmount,
                     "teamPlayAmount": teamPlayAmount,
@@ -81,16 +82,23 @@ async def update_user_listed_lecture_priority(request: PriorityUpdate):
 
         if result:
             existing_priority = result[0]
-            new_priority = request.priority
+            new_priority = request.priority.strip()
 
-            if new_priority in existing_priority.split():
-                existing_priority = ' '.join(
-                    p for p in existing_priority.split() if p != new_priority
-                )
+            # 기존의 우선순위에서 새로운 우선순위가 이미 존재하는지 체크
+            priorities = set(existing_priority.split())
+
+            if new_priority in priorities:
+                # 기존 우선순위에서 새로운 우선순위를 제거
+                priorities.remove(new_priority)
             else:
-                existing_priority += f" {new_priority}".strip()
+                # 새로운 우선순위를 추가
+                priorities.add(new_priority)
 
-            cursor.execute(update_query, (existing_priority, request.user_id,
+            # 우선순위를 공백으로 구분하여 문자열로 변환
+            updated_priority = ' '.join(
+                sorted(priorities, key=lambda x: (x != new_priority, x)))
+
+            cursor.execute(update_query, (updated_priority, request.user_id,
                            request.lecNumber, request.year, request.semester))
             conn.commit()
 

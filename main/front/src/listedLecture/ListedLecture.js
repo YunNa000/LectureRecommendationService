@@ -86,7 +86,6 @@ const ListedLecture = () => {
           priority: newPriority,
         }
       );
-      console.log(response.data);
       fetchLectures(user);
     } catch (err) {
       console.error("err update lecture priority", err);
