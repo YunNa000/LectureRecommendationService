@@ -92,3 +92,31 @@ async def return_basic_user_data(request: userID):
     finally:
         cursor.close()
         conn.close()
+
+
+@router.post("/user/data/totalgpa")
+async def return_user_total_gpa(request: userID):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT totalGPA
+        FROM User
+        WHERE user_id = ?
+    """
+
+    try:
+        cursor.execute(query, (request.user_id,))
+        user_data = cursor.fetchone()
+
+        if user_data is None:
+            raise HTTPException(status_code=434, detail="user not exist")
+
+        return user_data[0]
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        cursor.close()
+        conn.close()

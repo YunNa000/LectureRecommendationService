@@ -6,6 +6,8 @@ const ListedLectureList = ({
   priority,
   unselectLecture,
   updateLectureInfo,
+  totalGPA,
+  totalCredits,
 }) => {
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -14,6 +16,33 @@ const ListedLectureList = ({
   if (filteredLectures.length === 0) {
     return <p>강의를 추가해주세요.</p>;
   }
+
+  const checkedLectures = filteredLectures.filter(
+    (lecture) =>
+      lecture.priority && lecture.priority.split(" ").includes(priority)
+  );
+
+  const maxCredits = checkedLectures.some((lecture) =>
+    lecture.lecName.includes("광운인되기")
+  )
+    ? totalGPA < 3.5
+      ? 20
+      : 23
+    : totalGPA < 3.5
+    ? 19
+    : 22;
+
+  const warningMessage =
+    (totalGPA < 3.5 && totalCredits > maxCredits) ||
+    (totalGPA >= 3.5 && totalCredits > maxCredits) ? (
+      <p>
+        {checkedLectures.some((lecture) =>
+          lecture.lecName.includes("광운인되기")
+        )
+          ? `광운인되기를 포함해서 ${maxCredits}학점 까지 들을 수 있어요.`
+          : `${maxCredits}학점 까지 들을 수 있어요.`}
+      </p>
+    ) : null;
 
   const handleUnselect = (lecNumber, year, semester) => {
     unselectLecture(lecNumber, year, semester);
@@ -39,6 +68,7 @@ const ListedLectureList = ({
 
   return (
     <div>
+      {warningMessage}
       {filteredLectures.map((lecture, index) => (
         <div key={index}>
           <label>

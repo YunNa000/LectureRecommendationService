@@ -5,6 +5,7 @@ import ListedLectureList from "./ListedLectureList";
 import ListedLectureFilter from "./ListedLectureFilter";
 import AddListedLectureManaully from "./AddListedLectureManually";
 import ListedLectureTimeTable from "./ListedLectureTimeTable";
+import ShowCheckedLectureCredit from "./ShowCheckedLectureCredit";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -15,6 +16,11 @@ const ListedLecture = () => {
   const [priority, setPriority] = useState("1순위");
   const [lectures, setLectures] = useState([]);
   const [filteredLectures, setFilteredLectures] = useState([]);
+  const [totalGPA, setTotalGPA] = useState(null);
+  const [totalCredits, setTotalCredits] = useState(0);
+  const [majorCredits, setMajorCredits] = useState(0);
+  const [gyoYangCredits, setGyoYangCredits] = useState(0);
+  const [otherCredits, setOtherCredits] = useState(0);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -30,6 +36,7 @@ const ListedLecture = () => {
         if (response.ok && data.user_id) {
           setUser(data.user_id);
           fetchLectures(data.user_id);
+          fetchTotalGPA(data.user_id);
         }
       } else {
         console.log("로그인 해주세요.");
@@ -62,7 +69,6 @@ const ListedLecture = () => {
         { user_id: userID }
       );
       setLectures(response.data);
-      console.log(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -132,6 +138,52 @@ const ListedLecture = () => {
     }
   };
 
+  const fetchTotalGPA = async (userId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/data/totalgpa",
+        { user_id: userId }
+      );
+      setTotalGPA(response.data);
+    } catch (error) {
+      console.error("err update lecture info", error);
+    }
+  };
+
+  useEffect(() => {
+    const checkedLectures = getCheckedLectures();
+
+    const total = checkedLectures.reduce(
+      (sum, lecture) => sum + lecture.lecCredit,
+      0
+    );
+    const major = checkedLectures
+      .filter(
+        (lecture) =>
+          lecture.lecClassification === "전필" ||
+          lecture.lecClassification === "전선"
+      )
+      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
+    const gyoYang = checkedLectures
+      .filter(
+        (lecture) =>
+          lecture.lecClassification === "교필" ||
+          lecture.lecClassification === "교선"
+      )
+      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
+    const other = checkedLectures
+      .filter(
+        (lecture) =>
+          !["전필", "전선", "교필", "교선"].includes(lecture.lecClassification)
+      )
+      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
+
+    setTotalCredits(total);
+    setMajorCredits(major);
+    setGyoYangCredits(gyoYang);
+    setOtherCredits(other);
+  }, [filteredLectures, priority]);
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -161,12 +213,20 @@ const ListedLecture = () => {
         setPriority={setPriority}
       />
       <AddListedLectureManaully user={user} />
+      <ShowCheckedLectureCredit
+        totalCredits={totalCredits}
+        majorCredits={majorCredits}
+        gyoYangCredits={gyoYangCredits}
+        otherCredits={otherCredits}
+      />
       <ListedLectureList
         filteredLectures={filteredLectures}
         updateLecturePriority={updateLecturePriority}
         priority={priority}
         unselectLecture={unselectLecture}
         updateLectureInfo={updateLectureInfo}
+        totalGPA={totalGPA}
+        totalCredits={totalCredits}
       />
       <ListedLectureTimeTable
         lectures={getCheckedLectures()}
