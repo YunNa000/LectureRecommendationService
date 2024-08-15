@@ -29,6 +29,8 @@ const ListedLectureTimeTable = ({
     }
   });
 
+  maxHour = Math.max(maxHour, 6);
+
   const handleEditClick = (lecture, rowIndex, cellIndex, index) => {
     setEditingLectureIndex(`${rowIndex}-${cellIndex}-${index}`);
     setMemo(lecture.memo || "");
@@ -47,13 +49,38 @@ const ListedLectureTimeTable = ({
     setEditingLectureIndex(null);
   };
 
+  const daysOfWeek = ["시간/요일", "월", "화", "수", "목", "금"];
+  const hasSaturday = lectures.some((lecture) => {
+    const times = lecture.lecTime ? lecture.lecTime.split(",") : [];
+    return times.some((time) => {
+      const [day] = time.replace(/[()]/g, "").split(":").map(Number);
+      return day === 6;
+    });
+  });
+
+  const hasSunday = lectures.some((lecture) => {
+    const times = lecture.lecTime ? lecture.lecTime.split(",") : [];
+    return times.some((time) => {
+      const [day] = time.replace(/[()]/g, "").split(":").map(Number);
+      return day === 7;
+    });
+  });
+
+  if (hasSaturday) {
+    daysOfWeek.push("토");
+  }
+  if (hasSunday) {
+    daysOfWeek.push("일");
+  }
+
   const timetable = Array.from(
     { length: hasZeroHour ? maxHour + 1 : maxHour },
     () =>
-      Array(maxDay)
+      Array(daysOfWeek.length - 1)
         .fill(null)
         .map(() => [])
   );
+
   const noTimeLectures = [];
 
   lectures.forEach((lecture) => {
@@ -70,14 +97,12 @@ const ListedLectureTimeTable = ({
     }
   });
 
-  const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
-
   return (
     <div>
       <table>
         <thead>
           <tr>
-            {daysOfWeek.slice(0, maxDay).map((day, index) => (
+            {daysOfWeek.map((day, index) => (
               <th key={index}>{day}</th>
             ))}
           </tr>
@@ -92,22 +117,30 @@ const ListedLectureTimeTable = ({
                   <td key={cellIndex}>
                     {timetable[0][cellIndex].length > 0 ? (
                       timetable[0][cellIndex].map((lecture, index) => (
-                        <div key={index}>
-                          <input
-                            type="checkbox"
-                            checked={
-                              lecture.priority &&
-                              lecture.priority.split(" ").includes(priority)
-                            }
-                            onChange={() =>
-                              updateLecturePriority(lecture.lecNumber, priority)
-                            }
-                          />
+                        <div
+                          key={index}
+                          onClick={() =>
+                            handleEditClick(lecture, 0, cellIndex, index)
+                          }
+                        >
                           <p>{lecture.lecName}</p>
                           <p>{lecture.lecProfessor}</p>
                           {editingLectureIndex ===
                             `0-${cellIndex}-${index}` && (
                             <div>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  lecture.priority &&
+                                  lecture.priority.split(" ").includes(priority)
+                                }
+                                onChange={() =>
+                                  updateLecturePriority(
+                                    lecture.lecNumber,
+                                    priority
+                                  )
+                                }
+                              />
                               <input
                                 type="text"
                                 value={memo}
@@ -125,13 +158,6 @@ const ListedLectureTimeTable = ({
                               </button>
                             </div>
                           )}
-                          <button
-                            onClick={() =>
-                              handleEditClick(lecture, 0, cellIndex, index)
-                            }
-                          >
-                            수정
-                          </button>
                         </div>
                       ))
                     ) : (
@@ -148,24 +174,37 @@ const ListedLectureTimeTable = ({
                 <td key={cellIndex}>
                   {cell.length > 0 ? (
                     cell.map((lecture, index) => (
-                      <div key={index}>
-                        <input
-                          type="checkbox"
-                          checked={
-                            lecture.priority &&
-                            lecture.priority.split(" ").includes(priority)
-                          }
-                          onChange={() =>
-                            updateLecturePriority(lecture.lecNumber, priority)
-                          }
-                        />
+                      <div
+                        key={index}
+                        onClick={() =>
+                          handleEditClick(
+                            lecture,
+                            rowIndex + (hasZeroHour ? 1 : 0),
+                            cellIndex,
+                            index
+                          )
+                        }
+                      >
                         <p>{lecture.lecName}</p>
                         <p>{lecture.lecProfessor}</p>
                         {editingLectureIndex ===
                           `${
                             rowIndex + (hasZeroHour ? 1 : 0)
-                          }-${cellIndex}-${index}` && ( // 수정된 부분
+                          }-${cellIndex}-${index}` && (
                           <div>
+                            <input
+                              type="checkbox"
+                              checked={
+                                lecture.priority &&
+                                lecture.priority.split(" ").includes(priority)
+                              }
+                              onChange={() =>
+                                updateLecturePriority(
+                                  lecture.lecNumber,
+                                  priority
+                                )
+                              }
+                            />
                             <input
                               type="text"
                               value={memo}
@@ -183,20 +222,6 @@ const ListedLectureTimeTable = ({
                             </button>
                           </div>
                         )}
-                        <button
-                          onClick={() =>
-                            handleEditClick(
-                              lecture,
-                              rowIndex + (hasZeroHour ? 1 : 0),
-                              cellIndex,
-                              index
-                            )
-                          }
-                        >
-                          {" "}
-                          {/* 수정된 부분 */}
-                          수정
-                        </button>
                       </div>
                     ))
                   ) : (

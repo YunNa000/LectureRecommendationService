@@ -95,7 +95,7 @@ const ListedLectureList = ({
             {lecture.gradeAmount} | {lecture.reviewSummary} |{" "}
             {lecture.lecCredit}
           </p>
-          {editingLectureIndex === index && (
+          {editingLectureIndex === index ? (
             <div>
               <input
                 type="text"
@@ -109,11 +109,13 @@ const ListedLectureList = ({
                 onChange={(e) => setClassroom(e.target.value)}
                 placeholder="강의실"
               />
-              <button onClick={() => handleUpdate(lecture)}>업데이트</button>
-              <button onClick={() => setEditingLectureIndex(null)}>취소</button>
+              <button onClick={() => handleUpdate(lecture)}>저장</button>
             </div>
+          ) : (
+            <button onClick={() => handleEditClick(lecture, index)}>
+              수정
+            </button>
           )}
-          <button onClick={() => handleEditClick(lecture, index)}>수정</button>
           <button
             onClick={() =>
               handleUnselect(lecture.lecNumber, lecture.year, lecture.semester)
