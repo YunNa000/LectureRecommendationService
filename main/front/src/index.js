@@ -13,6 +13,7 @@ import Login from "./Login";
 import CallLecture from "./lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
+import ListedLecture from "./listedLecture/ListedLecture";
 
 function LoginPage() {
   return (
@@ -26,6 +27,7 @@ function MainPage() {
   return (
     <div>
       <CallLecture />
+      <ListedLecture />
     </div>
   );
 }

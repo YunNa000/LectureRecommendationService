@@ -108,3 +108,11 @@ class TakenLectureUpdate(BaseModel):
     lecCredit: int
     userCredit: Optional[str] = None
     id: int
+
+
+class PriorityUpdate(BaseModel):
+    user_id: str
+    lecNumber: str
+    year: int
+    semester: str
+    priority: str
