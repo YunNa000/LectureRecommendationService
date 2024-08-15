@@ -119,6 +119,19 @@ const ListedLecture = () => {
     }
   };
 
+  const updateLectureInfo = async (lectureData) => {
+    try {
+      lectureData.user_id = user;
+      const response = await axios.post(
+        "http://localhost:8000/user/update_user_listed_lecture_info",
+        lectureData
+      );
+      fetchLectures(user);
+    } catch (error) {
+      console.error("err update lecture info", error);
+    }
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -153,8 +166,14 @@ const ListedLecture = () => {
         updateLecturePriority={updateLecturePriority}
         priority={priority}
         unselectLecture={unselectLecture}
+        updateLectureInfo={updateLectureInfo}
       />
-      <ListedLectureTimeTable lectures={getCheckedLectures()} />
+      <ListedLectureTimeTable
+        lectures={getCheckedLectures()}
+        priority={priority}
+        updateLecturePriority={updateLecturePriority}
+        updateLectureInfo={updateLectureInfo}
+      />
     </div>
   );
 };

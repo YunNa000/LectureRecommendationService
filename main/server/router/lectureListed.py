@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import HTTPException, APIRouter
 from db import db_connect
-from model import userID, PriorityUpdate, ManuallyAddListedLecture
+from model import userID, PriorityUpdate, ManuallyAddListedLecture, ListedLecturInfoUpdate
 import random
 import string
 
@@ -104,10 +104,9 @@ async def update_user_listed_lecture_priority(request: PriorityUpdate):
         result = cursor.fetchone()
 
         if result:
-            existing_priority = result[0] or ""  # None일 경우 빈 문자열로 설정
+            existing_priority = result[0] or ""
             new_priority = request.priority.strip()
 
-            # 기존 우선순위가 빈 문자열인 경우 처리
             priorities = set(existing_priority.split()
                              ) if existing_priority else set()
 
@@ -179,6 +178,42 @@ async def add_user_listed_lecture_manually(request: ManuallyAddListedLecture):
         raise HTTPException(
             status_code=500, detail=f"err add lecture manually: {str(e)}"
         )
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@router.post("/user/update_user_listed_lecture_info")
+async def update_user_listed_lecture_info(request: ListedLecturInfoUpdate):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    update_query = """
+    UPDATE UserListedLecture
+    SET memo = ?, classroom = ?
+    WHERE user_id = ? AND lecNumber = ? AND year = ? AND semester = ?
+    """
+
+    try:
+
+        cursor.execute(update_query, (request.memo, request.classroom,
+                                      request.user_id, request.lecNumber,
+                                      request.year, request.semester))
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=434, detail="cursor.rowcount == 0")
+
+        return {"detail": "lecture info updated"}
+
+    except Exception as e:
+
+        conn.rollback()
+        print(f"err update lecture info: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"err update lecture info: {str(e)}")
 
     finally:
         cursor.close()

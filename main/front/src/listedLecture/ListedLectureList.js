@@ -1,17 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 
 const ListedLectureList = ({
   filteredLectures,
   updateLecturePriority,
   priority,
   unselectLecture,
+  updateLectureInfo,
 }) => {
+  const [editingLectureIndex, setEditingLectureIndex] = useState(null);
+  const [memo, setMemo] = useState("");
+  const [classroom, setClassroom] = useState("");
+
   if (filteredLectures.length === 0) {
     return <p>강의를 추가해주세요.</p>;
   }
 
   const handleUnselect = (lecNumber, year, semester) => {
     unselectLecture(lecNumber, year, semester);
+  };
+
+  const handleEditClick = (lecture, index) => {
+    setEditingLectureIndex(index);
+    setMemo(lecture.memo);
+    setClassroom(lecture.classroom);
+  };
+
+  const handleUpdate = async (lecture) => {
+    await updateLectureInfo({
+      user_id: lecture.user_id,
+      lecNumber: lecture.lecNumber,
+      year: lecture.year,
+      semester: lecture.semester,
+      memo,
+      classroom,
+    });
+    setEditingLectureIndex(null);
   };
 
   return (
@@ -42,6 +65,25 @@ const ListedLectureList = ({
             {lecture.gradeAmount} | {lecture.reviewSummary} |{" "}
             {lecture.lecCredit}
           </p>
+          {editingLectureIndex === index && (
+            <div>
+              <input
+                type="text"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="메모"
+              />
+              <input
+                type="text"
+                value={classroom}
+                onChange={(e) => setClassroom(e.target.value)}
+                placeholder="강의실"
+              />
+              <button onClick={() => handleUpdate(lecture)}>업데이트</button>
+              <button onClick={() => setEditingLectureIndex(null)}>취소</button>
+            </div>
+          )}
+          <button onClick={() => handleEditClick(lecture, index)}>수정</button>
           <button
             onClick={() =>
               handleUnselect(lecture.lecNumber, lecture.year, lecture.semester)

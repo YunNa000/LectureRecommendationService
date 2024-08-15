@@ -118,6 +118,15 @@ class PriorityUpdate(BaseModel):
     priority: str
 
 
+class ListedLecturInfoUpdate(BaseModel):
+    user_id: str
+    lecNumber: str
+    year: int
+    semester: str
+    memo: str
+    classroom: str
+
+
 class ManuallyAddListedLecture(BaseModel):
     user_id: str
     year: int
