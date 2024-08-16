@@ -23,6 +23,7 @@ const CallLecture = () => {
   const [year, setYear] = useState(24);
   const [semester, setSemester] = useState("1학기");
   const [lecCredit, setLecCredit] = useState(0);
+  const [lecTimeTable, setlecTimeTable] = useState([]);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -79,6 +80,7 @@ const CallLecture = () => {
       isPillSu,
       lectureName,
       lecCredit,
+      lecTimeTable,
     };
 
     try {
@@ -150,7 +152,8 @@ const CallLecture = () => {
           setLectureName={setLectureName}
           lectureName={lectureName}
           setLecCredit={setLecCredit}
-          lecCredit={lecCredit}
+          lecTimeTable={lecTimeTable}
+          setlecTimeTable={setlecTimeTable}
         />
       )}
       {activeComponent === "JunGong" && (
@@ -174,6 +177,8 @@ const CallLecture = () => {
           lectureName={lectureName}
           setLecCredit={setLecCredit}
           lecCredit={lecCredit}
+          lecTimeTable={lecTimeTable}
+          setlecTimeTable={setlecTimeTable}
         />
       )}
       {activeComponent === "Total" && (
@@ -195,6 +200,8 @@ const CallLecture = () => {
           semester={semester}
           setLecCredit={setLecCredit}
           lecCredit={lecCredit}
+          lecTimeTable={lecTimeTable}
+          setlecTimeTable={setlecTimeTable}
         />
       )}
       {activeComponent && <LectureList lectures={lectures} />}{" "}

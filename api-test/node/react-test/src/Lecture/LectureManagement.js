@@ -22,7 +22,7 @@ const LectureManagement = () => {
   const [gradeAmount, setGradeAmount] = useState();
   const [lecTheme, setLecTheme] = useState();
   const [lecName, setLecName] = useState("");
-  const [year, setYear] = useState("");
+  const [year, setYear] = useState("");1
   const [semester, setSemester] = useState("");
   const [coordinates, setCoordinates] = useState([]);
 
@@ -100,7 +100,6 @@ const LectureManagement = () => {
           userId: userId,
           year: year,
           semester: semester,
-          lecTimeArray: coordinates,
         },
         { withCredentials: true }
       )
