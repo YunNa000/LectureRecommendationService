@@ -14,6 +14,7 @@ import CallLecture from "./lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
+import GraduationRequirements from "./user/GraduationRequirements";
 
 function LoginPage() {
   return (
@@ -37,6 +38,7 @@ function UserPage() {
     <div>
       <UpdateUserInfo />
       <UpdateTakenLecture />
+      <GraduationRequirements />
     </div>
   );
 }
