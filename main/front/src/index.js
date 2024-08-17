@@ -16,6 +16,7 @@ import UpdateTakenLecture from "./user/UpdateTakenLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
 import ChatBot from "./chatBot/ChatBot";
+import CallLectureForAdmin from "./admin/CallLectureForAdmin";
 
 import FriendRequest from "./Friend/FriendRequest";
 import UserList from "./Friend/UserList";
@@ -96,6 +97,14 @@ function ChatBotPage() {
   );
 }
 
+function AdminPage() {
+  return (
+    <div>
+      <CallLectureForAdmin />
+    </div>
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -107,6 +116,7 @@ root.render(
         <Route path="/social" element={<SocialFeatures />} />
         <Route path="/users" element={<SocialFeatures2 />} />
         <Route path="/chat" element={<ChatBotPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </Router>
   </React.StrictMode>

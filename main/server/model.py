@@ -144,3 +144,66 @@ class ManuallyAddListedLecture(BaseModel):
     memo: Optional[str] = None
     lecName: str
     lecTime: Optional[str] = None
+
+
+class AdminLectureSearch(BaseModel):
+    year: int
+    semester: str
+    search_term: str
+
+
+class AdminLectureEdit(BaseModel):
+    lecNumber: Optional[str] = None
+    lecName: Optional[str] = None
+    lecProfessor: Optional[str] = None
+    lecClassification: Optional[str] = None
+    lecTheme: Optional[str] = None
+    lecCredit: Optional[int] = None
+    lecTime: Optional[str] = None
+    lecWeekTime: Optional[str] = None
+    lecClassroom: Optional[str] = None
+    isLecClose: Optional[bool] = None
+    takenPeople1yearsAgo: Optional[int] = None
+    takenPeople2yearsAgo: Optional[int] = None
+    takenPeople3yearsAgo: Optional[int] = None
+    ForeignLanguage: Optional[bool] = None
+    percentageOfOnline: Optional[int] = None
+    isPNP: Optional[bool] = None
+    isEngineering: Optional[bool] = None
+    isTBL: Optional[bool] = None
+    isPBL: Optional[bool] = None
+    isSeminar: Optional[bool] = None
+    isSmall: Optional[bool] = None
+    isConvergence: Optional[bool] = None
+    isTeamTeaching: Optional[bool] = None
+    isFocus: Optional[bool] = None
+    isExperimentDesign: Optional[bool] = None
+    isELearning: Optional[bool] = None
+    isArt: Optional[bool] = None
+    representCompetency: Optional[str] = None
+    learningGoalNmethod: Optional[str] = None
+    Overview: Optional[str] = None
+    VCompetencyRatio: Optional[float] = None
+    LCompetencyRatio: Optional[float] = None
+    evaluationRatio: Optional[float] = None
+    mainBook: Optional[str] = None
+    scheduleNcontent: Optional[str] = None
+    canTakeBunBan: Optional[bool] = None
+    majorRecogBunBan: Optional[bool] = None
+    canTakeOnly1year: Optional[bool] = None
+    canTakeOnly2year: Optional[bool] = None
+    canTakeOnly3year: Optional[bool] = None
+    canTakeOnly4year: Optional[bool] = None
+    canTakeOnly5year: Optional[bool] = None
+    canTakeForeignPeople: Optional[bool] = None
+    canTakeMultipleMajor: Optional[bool] = None
+    canTakeOnlyAthlete: Optional[bool] = None
+    canTakeOnlyChambit: Optional[bool] = None
+    requirementClass: Optional[str] = None
+    lecLinkedMajorDifficulty: Optional[str] = None
+    password: str
+
+
+class AdminEditTime(BaseModel):
+    lectureID: int
+    lecTime: str
