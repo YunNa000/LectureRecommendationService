@@ -15,6 +15,7 @@ import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
+import ChatBot from "./chatBot/ChatBot";
 
 function LoginPage() {
   return (
@@ -43,6 +44,14 @@ function UserPage() {
   );
 }
 
+function ChatBotPage() {
+  return (
+    <div>
+      <ChatBot />
+    </div>
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -51,6 +60,7 @@ root.render(
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mypage" element={<UserPage />} />
+        <Route path="/chat" element={<ChatBotPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
