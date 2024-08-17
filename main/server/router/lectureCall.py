@@ -202,13 +202,14 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         base_query += " AND le.star >= ?"
         query_params.append(star)
 
-    # if lecTimeTable and len(lecTimeTable) > 0:
-    #     time_conditions = []
-    #     for time in lecTimeTable:
-    #         time_conditions.append("ll.lecTime LIKE ?")
-    #         query_params.append(f'%{time}%')
+    if lecTimeTable and len(lecTimeTable) > 0:
+        time_conditions = []
+        for time in lecTimeTable:
+            time_conditions.append("ll.lecTime LIKE ?")
+            query_params.append(f'%{time}%')
+        base_query += f" AND ({' OR '.join(time_conditions)})"
+
         
-    #     base_query += f" AND ({' OR '.join(time_conditions)})"
     print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:

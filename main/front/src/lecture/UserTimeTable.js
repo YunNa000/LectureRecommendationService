@@ -7,6 +7,16 @@ const UserTimeTable = ({ coordinates, setCoordinates }) => {
   const periods = Array.from({length: 6}, (_, i) => i + 1);
   const [selectedCells, setSelectedCells] = useState({});
 
+  // coordinates prop을 기반으로 초기 상태 설정
+  useEffect(() => {
+    const initialSelectedCells = {};
+    coordinates.forEach(coord => {
+      const [day, period] = coord.slice(1, -1).split(':');
+      const dayString = days[Number(day) - 1];
+      initialSelectedCells[`${dayString}:${period}`] = true;
+    });
+    setSelectedCells(initialSelectedCells);
+  }, []);
 
   const handleCellClick = (day, period) => {
     const key = `${day}:${period}`;
