@@ -35,7 +35,7 @@ def get_user_info(user_id):
         conn.close()
 
 
-def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str]):
+def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str] | None):
     print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
@@ -113,7 +113,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         for time in lecTimeTable:
             time_conditions.append("ll.lecTime LIKE ?")
             query_params.append(f'%{time}%')
-        
+
         base_query += f" AND ({' OR '.join(time_conditions)})"
 
     if lecCredit != 0:
@@ -158,7 +158,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     return response
 
 
-def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str]):
+def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: list[str] | None):
 
     conn = db_connect()
     cursor = conn.cursor()
@@ -209,7 +209,6 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             query_params.append(f'%{time}%')
         base_query += f" AND ({' OR '.join(time_conditions)})"
 
-        
     print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:
