@@ -35,8 +35,8 @@ def get_user_info(user_id):
         conn.close()
 
 
-def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int):
-
+def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str]):
+    print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -108,6 +108,14 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         base_query += " AND ll.lecName LIKE ?"
         query_params.append(f'%{lectureName}%')
 
+    if lecTimeTable and len(lecTimeTable) > 0:
+        time_conditions = []
+        for time in lecTimeTable:
+            time_conditions.append("ll.lecTime LIKE ?")
+            query_params.append(f'%{time}%')
+        
+        base_query += f" AND ({' OR '.join(time_conditions)})"
+
     if lecCredit != 0:
         if lecCredit == 4:
             base_query += " AND ll.lecCredit >= ?"
@@ -150,7 +158,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     return response
 
 
-def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int):
+def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str]):
 
     conn = db_connect()
     cursor = conn.cursor()
@@ -194,6 +202,14 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         base_query += " AND le.star >= ?"
         query_params.append(star)
 
+    if lecTimeTable and len(lecTimeTable) > 0:
+        time_conditions = []
+        for time in lecTimeTable:
+            time_conditions.append("ll.lecTime LIKE ?")
+            query_params.append(f'%{time}%')
+        base_query += f" AND ({' OR '.join(time_conditions)})"
+
+        
     print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:
@@ -315,12 +331,13 @@ async def get_lectures(input_data: LectureCallInput):
     lecTheme = input_data.lecTheme
     lectureName = input_data.lectureName
     lecCredit = input_data.lecCredit
+    lecTimeTable = input_data.lecTimeTable
 
     if lecClassification == "전체":
         response = print_Total(
-            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit)
+            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable)
     else:
         response = print_JunGong_n_GyoYang(
-            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit)
+            year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable)
 
     return response

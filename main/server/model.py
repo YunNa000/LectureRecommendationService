@@ -39,6 +39,7 @@ class LectureCallInput(BaseModel):
     year: int
     semester: str
     lecCredit: int
+    lecTimeTable: Optional[List[str]] = None
 
 
 class LectureSelect(BaseModel):

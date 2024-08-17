@@ -1,4 +1,5 @@
 import React from "react";
+import UserTimeTable from "./UserTimeTable";
 
 const TotalLectureSearch = ({
   teamplayAmount,
@@ -18,6 +19,8 @@ const TotalLectureSearch = ({
   semester,
   lecCredit,
   setLecCredit,
+  lecTimeTable,
+  setlecTimeTable,
 }) => {
   return (
     <div>
@@ -101,6 +104,10 @@ const TotalLectureSearch = ({
           onChange={(e) => setLectureName(e.target.value)}
         />
       </div>
+      <UserTimeTable 
+        coordinates={lecTimeTable}
+        setCoordinates={setlecTimeTable}
+      />
       <button onClick={fetchLectures}>강의 검색</button>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-
+import UserTimeTable from "./UserTimeTable";
 const JunGongLectureSearch = ({
   lecClassification,
   isPillSu,
@@ -19,6 +19,8 @@ const JunGongLectureSearch = ({
   setLectureName,
   lecCredit,
   setLecCredit,
+  lecTimeTable,
+  setlecTimeTable,
 }) => {
   return (
     <div>
@@ -130,6 +132,10 @@ const JunGongLectureSearch = ({
           onChange={(e) => setLectureName(e.target.value)}
         />
       </div>
+      <UserTimeTable 
+        coordinates={lecTimeTable}
+        setCoordinates={setlecTimeTable}
+      />
       <button onClick={fetchLectures}>강의 검색</button>
     </div>
   );

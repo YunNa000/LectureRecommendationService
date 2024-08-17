@@ -1,11 +1,10 @@
-from fastapi import FastAPI, HTTPException, Request, Query,APIRouter
+from fastapi import FastAPI, HTTPException,Cookie, Request,Depends, Query,APIRouter
 from pydantic import BaseModel
 from typing import List, Optional
 import sqlite3
 import uvicorn
 import os
 import sqlite3
-from fastapi import FastAPI, Depends, HTTPException, Cookie
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from fastapi.responses import RedirectResponse
 import httpx
@@ -143,6 +142,7 @@ async def add_friend(request: FriendRequest):
     cursor = conn.cursor()
     
     try:
+        print(request.user_id1)
         # 먼저 이미 팔로우 관계가 있는지 확인
         cursor.execute("SELECT * FROM friend WHERE (user_id1 = ? AND user_id2 = ?)",
                        (request.user_id1, request.user_id2))
@@ -177,7 +177,7 @@ async def add_friend(request: FriendRequest):
     
     except sqlite3.Error as e:
         conn.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}, {request.user_id1}, {request.user_id2}")
     
     finally:
         cursor.close()
