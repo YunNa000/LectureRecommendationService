@@ -22,13 +22,13 @@ import FriendRequest from "./Friend/FriendRequest";
 import UserList from "./Friend/UserList";
 import FriendList from "./Friend/FriendList";
 
-
 import TopBar from "./CommonPart/TopBar";
 import TopBarBack from "./CommonPart/TopBarBack";
 import LectureDetails from "./CommonPart/LectureDetail";
 import TopBarBackAddFriend from "./CommonPart/TopBarBackAddFriend";
 
 import UserTimeTable from "./lecture/UserTimeTable";
+import CrawlingNewLecture from "./admin/CrawlingNewLecture";
 
 function LoginPage() {
   return (
@@ -101,6 +101,7 @@ function AdminPage() {
   return (
     <div>
       <CallLectureForAdmin />
+      <CrawlingNewLecture />
     </div>
   );
 }

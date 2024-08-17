@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv import load_dotenv
-from router import auth, lectureCall, lectureSelect, user, lectureTaken, getYearSemester, lectureListed, chat, admin, friend
+from router import auth, lectureCall, lectureSelect, user, lectureTaken, getYearSemester, lectureListed, chat, admin, friend, crawlingNewLecture
 
 
 load_dotenv()
@@ -34,6 +34,7 @@ app.include_router(lectureTaken.router)
 app.include_router(getYearSemester.router)
 app.include_router(lectureListed.router)
 app.include_router(friend.router)
+app.include_router(crawlingNewLecture.router)
 
 app.include_router(chat.router)
 app.include_router(admin.router)
