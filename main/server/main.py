@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv import load_dotenv
 
-from router import auth, lectureCall, lectureSelect, user, lectureTaken, getYearSemester, lectureListed, friend, chat
+from router import auth, lectureCall, lectureSelect, user, lectureTaken, getYearSemester, lectureListed, friend, chat, lectureDetail
 
 load_dotenv()
 
@@ -34,7 +34,7 @@ app.include_router(lectureTaken.router)
 app.include_router(getYearSemester.router)
 app.include_router(lectureListed.router)
 app.include_router(friend.router)
-
+#app.include_router(lectureDatail.router)
 app.include_router(chat.router)
 
 if __name__ == "__main__":
