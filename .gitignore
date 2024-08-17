@@ -2079,3 +2079,5 @@ main/server/router/__pycache__/lectureCall.cpython-311.pyc
 main/server/router/__pycache__/lectureSelect.cpython-311.pyc
 lecture-data/data_preprocessing/pdf2md/PRIVATE.py
 main/server/router/__pycache__/
+main/server/router/gecko/geckodriver
+main/server/router/gecko/geckodriver-v0.34.0-linux64.tar.gz
