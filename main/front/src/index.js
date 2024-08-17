@@ -15,6 +15,7 @@ import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
+import ChatBot from "./chatBot/ChatBot";
 
 import FriendRequest from "./Friend/FriendRequest";
 import UserList from "./Friend/UserList";
@@ -87,6 +88,14 @@ function UserPage() {
   );
 }
 
+function ChatBotPage() {
+  return (
+    <div>
+      <ChatBot />
+    </div>
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -97,7 +106,7 @@ root.render(
         <Route path="/mypage" element={<UserPage />} />
         <Route path="/social" element={<SocialFeatures />} />
         <Route path="/users" element={<SocialFeatures2 />} />
-        <Route path="/chat" element={<Chatbot />} />
+        <Route path="/chat" element={<ChatBotPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
