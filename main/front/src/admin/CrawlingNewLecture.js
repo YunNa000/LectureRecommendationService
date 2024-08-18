@@ -8,6 +8,7 @@ const CrawlingNewLecture = () => {
   const [semester, setSemester] = useState("1학기");
   const [loading, setLoading] = useState(false);
   const [lectureData, setLectureData] = useState(null);
+  const [password, setPassword] = useState("");
 
   const reqtoWorkCrawling = async () => {
     const inputData = {
@@ -15,6 +16,7 @@ const CrawlingNewLecture = () => {
       lecName: lecName,
       year: year,
       semester: semester,
+      password: password,
     };
 
     setLoading(true);
@@ -64,6 +66,12 @@ const CrawlingNewLecture = () => {
         placeholder="학정번호"
         value={lecNumber}
         onChange={(e) => setLecNumber(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="비밀번호 입력"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       {loading ? (
         <p>로딩중...</p>

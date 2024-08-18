@@ -207,6 +207,7 @@ class AdminLectureEdit(BaseModel):
 class AdminEditTime(BaseModel):
     lectureID: int
     lecTime: str
+    password: str
 
 
 class CrawlingNewLecture(BaseModel):
@@ -214,3 +215,4 @@ class CrawlingNewLecture(BaseModel):
     lecName: str
     year: int
     semester: str
+    password: str

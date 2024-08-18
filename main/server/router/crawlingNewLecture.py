@@ -92,6 +92,11 @@ async def get_data(request: CrawlingNewLecture):
     conn = db_connect()
     cursor = conn.cursor()
 
+    admin_password = os.getenv("ADMIN_PASSWORD")
+
+    if admin_password != request.password:
+        return "비밀번호를 입력해주세요. 32자리 랜덤숫자+영어+기호"
+
     year = request.year
     semester = request.semester
     lecNumber = request.lecNumber
