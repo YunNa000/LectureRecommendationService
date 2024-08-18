@@ -162,38 +162,113 @@ async def get_data(request: CrawlingNewLecture):
             raise HTTPException(status_code=434, detail="cant find lecture")
         time.sleep(1)
         time_classroom = driver.find_element(
-            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[4]/td[1]").text
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[5]/td[1]").text
         lecClassification = driver.find_element(
             By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[2]/td[2]").text
         lecCredit_lecWeekTime = driver.find_element(
-            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[3]/td[2]").text
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[4]/td[2]").text
         lecProfessor = driver.find_element(
-            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[5]/td[1]").text
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[6]/td[1]").text
+        year_semester = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[1]/tbody/tr[1]/td[2]").text
+
+        splitted_year = year_semester.split('/')[0]
+        splitted_semester = year_semester.split('/')[1]
+
+        get_year = splitted_year[2:]
+        if splitted_semester == "1":
+            get_semester = "1학기"
+        elif splitted_semester == "2":
+            get_semester = "2학기"
+        elif splitted_semester == "3":
+            get_semester = "여름학기"
+        elif splitted_semester == "4":
+            get_semester = "겨울학기"
+        else:
+            get_semester = ""
 
         lecClassroom = extract_classrooms(time_classroom)
         lecTime = extract_lec_time(time_classroom)
+
+        print(1)
+        print(lecCredit_lecWeekTime)
+        print(type(lecCredit_lecWeekTime))
         lecCredit = int(lecCredit_lecWeekTime.split("/")[0])
+        print(2)
         lecWeekTime = int(lecCredit_lecWeekTime.split("/")[1])
+
+        grade_ratio1 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[1]").text
+        grade_ratio2 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[2]").text
+        grade_ratio3 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[3]").text
+        grade_ratio4 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[4]").text
+        grade_ratio5 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[5]").text
+        grade_ratio6 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[6]").text
+        grade_ratio7 = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[13]/td/table/tbody/tr[2]/td[7]").text
+
+        evaluationRatio = f"{grade_ratio1},{grade_ratio2},{grade_ratio3},{grade_ratio4},{grade_ratio5},{grade_ratio6},{grade_ratio7}"
+
+        main_book = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[16]/td/table/tbody/tr[2]/td[2]").text
+
+        overview = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[2]/td").text
+        representCompetency = driver.find_element(
+            By.XPATH, "/html/body/main/div/div/div/div[2]/div[2]/table[2]/tbody/tr[3]/td").text
 
         try:
             insert_query = '''
-        INSERT INTO LectureList (lectureID, year, semester, lecNumber, lecName, lecProfessor, lecClassification, lecTheme, lecCredit, lecTime, lecWeekTime, lecClassroom, isLecClose)
-        VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO LectureList (lectureID, year, semester, lecNumber, lecName, lecProfessor, lecClassification, lecTheme, lecCredit, lecTime, lecWeekTime, lecClassroom, isLecClose)
+            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             '''
 
-            cursor.execute(insert_query, (year, semester, lecNumber, lecName, lecProfessor,
-                           lecClassification, "", lecCredit, lecTime, lecWeekTime, lecClassroom, 0))
+            cursor.execute(insert_query, (get_year, get_semester, lecNumber, lecName, lecProfessor,
+                                          lecClassification, "", lecCredit, lecTime, lecWeekTime, lecClassroom, 0))
+
+            lecture_id = cursor.lastrowid
 
             conn.commit()
 
-            conn.close()
+            print(f"""
+                year: {get_year}
+                semester: {get_semester}
+                lecNumber: {lecNumber}
+                lecName: {lecName}
+                lecProfessor: {lecProfessor}
+                lecTime: {lecTime}
+                lecClassification: {lecClassification}
+                lecCredit: {lecCredit}
+                lecClassroom: {lecClassroom}
+            """)
 
-            print(year, semester, lecNumber, lecName, lecProfessor,
-                  lecTime, lecClassification, lecCredit, lecClassification)
+            insert_detail_query = '''
+            INSERT INTO LectureDetailData (lectureID, evaluationRatio, mainBook, overview, representCompetency)
+            VALUES (?, ?, ?, ?, ?)
+            '''
+
+            cursor.execute(insert_detail_query, (lecture_id,
+                           evaluationRatio, main_book, overview, representCompetency))
+
+            conn.commit()
+
+            print(f"""
+                lecClassroom: {lecClassroom}
+                evaluationRatio: {evaluationRatio}
+                main_book: {main_book}
+                overview: {overview}
+                representCompetency: {representCompetency}
+            """)
 
             return {
-                "yaer": year,
-                "semester": semester,
+                "year": get_year,
+                "semester": get_semester,
+                "lectureID": lecture_id,
                 "lecNumber": lecNumber,
                 "lecName": lecName,
                 "lecProfessor": lecProfessor,
@@ -201,6 +276,10 @@ async def get_data(request: CrawlingNewLecture):
                 "lecClassification": lecClassification,
                 "lecCredit": lecCredit,
                 "lecClassroom": lecClassroom,
+                "evaluationRatio": evaluationRatio,
+                "main_book": main_book,
+                "overview": overview,
+                "representCompetency": representCompetency,
             }
 
         except Exception as e:

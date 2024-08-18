@@ -74,11 +74,17 @@ const CrawlingNewLecture = () => {
       {lectureData && (
         <div>
           <h3>강의 정보:</h3>
-          <p>학과: {lectureData.lecClassification}</p>
+          <p>{lectureData.get_year}</p>
+          <p>{lectureData.get_semester}</p>
+          <p>이수구분: {lectureData.lecClassification}</p>
           <p>교수명: {lectureData.lecProfessor}</p>
           <p>강의 시간: {lectureData.lecTime}</p>
           <p>학점: {lectureData.lecCredit}</p>
           <p>강의실: {lectureData.lecClassroom}</p>
+          <p>대표 역량: {lectureData.representCompetency}</p>
+          <p>overview: {lectureData.overview}</p>
+          <p>주 교재: {lectureData.main_book}</p>
+          <p>평가 비율: {lectureData.evaluationRatio}</p>
         </div>
       )}
     </div>
