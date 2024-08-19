@@ -128,6 +128,13 @@ const CallLecture = () => {
   return (
     <div>
       <div>
+        <button
+          onClick={() =>
+            (window.location.href = "http://localhost:3000/mypage")
+          }
+        >
+          my page
+        </button>
         <button onClick={handleGyoYangClick}>교양 강의 검색</button>
         <button onClick={handleJunGongClick}>전공 강의 검색</button>
         <button onClick={handleTotalClick}>전체 강의 검색</button>
