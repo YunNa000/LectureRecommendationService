@@ -11,7 +11,7 @@ const CallLecture = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-  const [lecClassification, setLecClassification] = useState("전공");
+  const [lecClassification, setLecClassification] = useState("");
   const [isPillSu, setIsPillSu] = useState(false);
   const [lecTheme, setLecTheme] = useState("");
   const [teamplayAmount, setTeamplayAmount] = useState("상관없음");
@@ -108,20 +108,23 @@ const CallLecture = () => {
   const handleGyoYangClick = () => {
     setLecClassification("교양");
     setActiveComponent("GyoYang");
-    fetchLectures();
   };
 
   const handleJunGongClick = () => {
     setLecClassification("전공");
     setActiveComponent("JunGong");
-    fetchLectures();
   };
 
   const handleTotalClick = () => {
     setLecClassification("전체");
     setActiveComponent("Total");
-    fetchLectures();
   };
+
+  useEffect(() => {
+    if (lecClassification) {
+      fetchLectures();
+    }
+  }, [lecClassification, activeComponent]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
