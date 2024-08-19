@@ -308,7 +308,6 @@ async def add_taken_lecture_auto(input_data: TakenLectureAutoUpdate):
                 status_code=400, detail="Lecture already taken")
 
         if input_data.lecNumber.startswith("user"):
-
             insert_query = """
             INSERT INTO UserTakenLecture (user_id, lecName, Classification, year, semester, lecNumber, lecCredit) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -326,7 +325,7 @@ async def add_taken_lecture_auto(input_data: TakenLectureAutoUpdate):
 
         else:
             query = """
-            SELECT lecCredit, lecClassification, lecTheme 
+            SELECT lecCredit, lecClassification, lecTheme, lectureID 
             FROM LectureList 
             WHERE lecNumber = ? AND year = ? AND semester = ? AND lecName = ?
             """
@@ -338,14 +337,24 @@ async def add_taken_lecture_auto(input_data: TakenLectureAutoUpdate):
                 raise HTTPException(
                     status_code=404, detail="Lecture not found")
 
-            lecCredit, lecClassification, lecTheme = lecture_info
+            lecCredit, lecClassification, lecTheme, lectureID = lecture_info
+
+            major_query = """
+            SELECT majorRecogBunBan 
+            FROM LectureConditions 
+            WHERE lectureID = ?
+            """
+            cursor.execute(major_query, (lectureID,))
+            major_info = cursor.fetchone()
+
+            majorRecogBunBan = major_info[0] if major_info else None
 
             insert_query = """
-            INSERT INTO UserTakenLecture (user_id, lecName, Classification, lecCredit, year, semester, lecNumber, lecTheme) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO UserTakenLecture (user_id, lecName, Classification, lecCredit, year, semester, lecNumber, lecTheme, majorRecogBunBan) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             cursor.execute(insert_query, (input_data.user_id, input_data.lecName, lecClassification,
-                                          lecCredit, input_data.year, input_data.semester, input_data.lecNumber, lecTheme))
+                                          lecCredit, input_data.year, input_data.semester, input_data.lecNumber, lecTheme, majorRecogBunBan))
 
             update_query = """
             UPDATE UserListedLecture 
