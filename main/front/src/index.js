@@ -25,7 +25,7 @@ import FriendList from "./Friend/FriendList";
 
 import TopBar from "./CommonPart/TopBar";
 import TopBarBack from "./CommonPart/TopBarBack";
-import LectureDetails from "./CommonPart/LectureDetail";
+import LectureDetail from "./CommonPart/LectureDetail";
 import TopBarBackAddFriend from "./CommonPart/TopBarBackAddFriend";
 
 import UserTimeTable from "./lecture/UserTimeTable";
@@ -105,6 +105,20 @@ function AdminPage() {
   );
 }
 
+function LectureDetailPage() {
+  const { year, semester, lectureNumber } = useParams();
+  return (
+    <div>
+      <TopBarBack title="강의세부사항" />
+      <LectureDetail 
+        year={year} 
+        semester={semester} 
+        lectureNumber={lectureNumber} 
+      />
+    </div>
+  );
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -117,6 +131,7 @@ root.render(
         <Route path="/users" element={<SocialFeatures2 />} />
         <Route path="/chat" element={<ChatBotPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/lecture/:year/:semester/:lectureNumber" element={<LectureDetailPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
