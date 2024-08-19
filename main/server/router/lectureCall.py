@@ -142,7 +142,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
-    WHERE ll.isLecClose IS NULL
+    WHERE (ll.isLecClose IS NULL OR ll.isLecClose is 0)
     AND (lc.canTakeOnly{userYear}year = 1 OR (lc.canTakeOnly1year IS NULL AND lc.canTakeOnly2year IS NULL AND lc.canTakeOnly3year IS NULL AND lc.canTakeOnly4year IS NULL AND lc.canTakeOnly5year IS NULL))
     AND ll.year = ?
     AND ll.semester = ?
@@ -233,7 +233,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     conn.close()
 
     print(base_query)
-    print("")
+    print("print_JunGong_n_GyoYang")
     print(query_params)
 
     response = []
@@ -388,6 +388,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         bunBan_lower = bunBan.lower()
 
         user_plused_bunban = None
+        user_plused_bunban_lower = None
 
         if lecClassification == "전공":
             if whatMultipleMajor in ("복수전공", "부전공"):

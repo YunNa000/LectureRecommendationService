@@ -11,20 +11,20 @@ async def get_year_n_semester():
     cursor = conn.cursor()
 
     try:
+
         cursor.execute(
             """SELECT 
                 year,
-                CASE 
-                    WHEN EXISTS (SELECT 1 FROM LectureList WHERE year = l.year AND semester = '겨울학기') THEN '겨울학기'
-                    WHEN EXISTS (SELECT 1 FROM LectureList WHERE year = l.year AND semester = '2학기') THEN '2학기'
-                    WHEN EXISTS (SELECT 1 FROM LectureList WHERE year = l.year AND semester = '여름학기') THEN '여름학기'
-                    WHEN EXISTS (SELECT 1 FROM LectureList WHERE year = l.year AND semester = '1학기') THEN '1학기'
-                    ELSE NULL
-                END AS semester
+                semester
             FROM 
-                LectureList l
-            GROUP BY 
-                year
+                LectureList
+            WHERE 
+                lectureID = (
+                    SELECT lectureID
+                    FROM LectureList
+                    ORDER BY lectureID DESC
+                    LIMIT 1
+                )
             ORDER BY 
                 year DESC
             LIMIT 1;
@@ -39,7 +39,16 @@ async def get_year_n_semester():
         if not date:
             raise HTTPException(status_code=404, detail="No data found")
 
-        return {"year_n_semester": {"year": date[0], "semester": date[1]}}
+        year, semester = date
+
+        if semester == "겨울학기":
+            return {"year_n_semester": {"year": year, "semester": "겨울학기"}}
+        elif semester == "2학기":
+            return {"year_n_semester": {"year": year, "semester": "2학기"}}
+        elif semester == "여름학기":
+            return {"year_n_semester": {"year": year, "semester": "여름학기"}}
+        else:
+            return {"year_n_semester": {"year": year, "semester": "1학기"}}
 
     except Exception as e:
         conn.rollback()

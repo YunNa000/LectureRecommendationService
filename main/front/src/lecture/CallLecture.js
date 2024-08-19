@@ -56,7 +56,8 @@ const CallLecture = () => {
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
-      setYear(fetchedYear);
+      setYear(Number(fetchedYear));
+
       setSemester(fetchedSemester);
     } catch (err) {
       console.error("errr fetching year and semester", err);
