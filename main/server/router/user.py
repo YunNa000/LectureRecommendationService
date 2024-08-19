@@ -173,7 +173,6 @@ async def return_user_graduation_conditions(request: userID):
 
     user_id = request.user_id
 
-    # 유저의 총 학점 계산
     cursor.execute(
         "SELECT SUM(lecCredit) FROM UserTakenLecture WHERE user_id = ?", (user_id,))
     user_taken_total_credit = cursor.fetchone()[0] or 0
@@ -210,7 +209,6 @@ async def return_user_graduation_conditions(request: userID):
         elif user_plused_bunban and user_plused_bunban in majorRecogBunBan:
             user_taken_multiple_major_credit += lecCredit
 
-    # 나머지 학점 계산
     cursor.execute("""
         SELECT SUM(lecCredit) 
         FROM UserTakenLecture 

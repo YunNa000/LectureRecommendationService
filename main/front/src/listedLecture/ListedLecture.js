@@ -184,30 +184,40 @@ const ListedLecture = () => {
   useEffect(() => {
     const checkedLectures = getCheckedLectures();
 
-    const total = checkedLectures.reduce(
-      (sum, lecture) => sum + lecture.lecCredit,
-      0
+    const total = Math.floor(
+      checkedLectures.reduce(
+        (sum, lecture) => Math.floor(sum) + Math.floor(lecture.lecCredit),
+        0
+      )
     );
-    const major = checkedLectures
-      .filter(
-        (lecture) =>
-          lecture.lecClassification === "전필" ||
-          lecture.lecClassification === "전선"
-      )
-      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
-    const gyoYang = checkedLectures
-      .filter(
-        (lecture) =>
-          lecture.lecClassification === "교필" ||
-          lecture.lecClassification === "교선"
-      )
-      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
-    const other = checkedLectures
-      .filter(
-        (lecture) =>
-          !["전필", "전선", "교필", "교선"].includes(lecture.lecClassification)
-      )
-      .reduce((sum, lecture) => sum + lecture.lecCredit, 0);
+    const major = Math.floor(
+      checkedLectures
+        .filter(
+          (lecture) =>
+            lecture.lecClassification === "전필" ||
+            lecture.lecClassification === "전선"
+        )
+        .reduce((sum, lecture) => sum + lecture.lecCredit, 0)
+    );
+    const gyoYang = Math.floor(
+      checkedLectures
+        .filter(
+          (lecture) =>
+            lecture.lecClassification === "교필" ||
+            lecture.lecClassification === "교선"
+        )
+        .reduce((sum, lecture) => sum + lecture.lecCredit, 0)
+    );
+    const other = Math.floor(
+      checkedLectures
+        .filter(
+          (lecture) =>
+            !["전필", "전선", "교필", "교선"].includes(
+              lecture.lecClassification
+            )
+        )
+        .reduce((sum, lecture) => sum + lecture.lecCredit, 0)
+    );
 
     setTotalCredits(total);
     setMajorCredits(major);
