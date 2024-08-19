@@ -690,21 +690,21 @@ Recording assignment due</td></tr><tr></tr><!----> <tr><th>15</th> <td style=""t
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -743,21 +743,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -942,21 +942,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -964,21 +964,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -1009,21 +1009,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -1031,21 +1031,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -1053,21 +1053,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -1075,21 +1075,21 @@ Stacktrace:
 Message: unexpected alert open: {Alert text : 폐강된 강의 입니다.}
   (Session info: chrome=127.0.6533.120)
 Stacktrace:
-	GetHandleVerifier [0x00007FF694B29642+30946]
-	(No symbol) [0x00007FF694ADE3D9]
-	(No symbol) [0x00007FF6949D6FDA]
-	(No symbol) [0x00007FF694A6B7CC]
-	(No symbol) [0x00007FF694A4C813]
-	(No symbol) [0x00007FF694A1A6E5]
-	(No symbol) [0x00007FF694A1B021]
-	GetHandleVerifier [0x00007FF694C5F84D+1301229]
-	GetHandleVerifier [0x00007FF694C6BDC7+1351783]
-	GetHandleVerifier [0x00007FF694C62A13+1313971]
-	GetHandleVerifier [0x00007FF694B5DD16+245686]
-	(No symbol) [0x00007FF694AE759F]
-	(No symbol) [0x00007FF694AE3814]
-	(No symbol) [0x00007FF694AE39A2]
-	(No symbol) [0x00007FF694ADA3FF]
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
 	BaseThreadInitThunk [0x00007FFBD82D257D+29]
 	RtlUserThreadStart [0x00007FFBD99CAF28+40]
 ",리스트
@@ -1124,22 +1124,358 @@ Stacktrace:
 평가반영율(%) 10 0 70 20 0 0 0
 기대평균치 0 0 0 0 0 0 0
 *기대평균치는 각 항목별 100점 만점 기준","<table class=""AType""><tbody><tr><th style=""width: 10%;"">평가유형</th> <th style=""width: 10%;"">출석</th> <th style=""width: 10%;"">중간시험</th> <th style=""width: 10%;"">기말시험</th> <th style=""width: 10%;"">과제물</th> <th style=""width: 10%;"">수업태도</th> <th style=""width: 10%;"">Quiz</th> <th style=""width: 10%;"">기타</th></tr> <tr><th style=""text-align: center;"">평가반영율(%)</th> <td style=""text-align: center; font-size: 10pt;""><span>10</span></td> <td style=""text-align: center; font-size: 10pt;""><span>0</span></td> <td style=""text-align: center; font-size: 10pt;""><span>70</span></td> <td style=""text-align: center; font-size: 10pt;""><span>20</span></td> <td style=""text-align: center; font-size: 10pt;""><span>0</span></td> <td style=""text-align: center; font-size: 10pt;""><span>0</span></td> <td style=""text-align: center; font-size: 10pt;""><span>0</span></td></tr> <tr><th style=""text-align: center;"">기대평균치</th> <td style=""text-align: center; font-size: 10pt;""><span id=""attendExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""middleExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""lastExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""reportExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""learnExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""quizExpect"">0</span></td> <td style=""text-align: center; font-size: 10pt;""><span id=""gitaExpect"">0</span></td></tr> <tr><td colspan=""8""><font color=""red"">*기대평균치는 각 항목별 100점 만점 기준</font></td></tr></tbody></table>",,,기타
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,폐강
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,폐강
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,list index out of range,폐강
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"Alert Text: 강의 계획서 정보가 없습니다!
+Message: unexpected alert open: {Alert text : 강의 계획서 정보가 없습니다!}
+  (Session info: chrome=127.0.6533.120)
+Stacktrace:
+	GetHandleVerifier [0x00007FF74D919642+30946]
+	(No symbol) [0x00007FF74D8CE3D9]
+	(No symbol) [0x00007FF74D7C6FDA]
+	(No symbol) [0x00007FF74D85B7CC]
+	(No symbol) [0x00007FF74D83C813]
+	(No symbol) [0x00007FF74D80A6E5]
+	(No symbol) [0x00007FF74D80B021]
+	GetHandleVerifier [0x00007FF74DA4F84D+1301229]
+	GetHandleVerifier [0x00007FF74DA5BDC7+1351783]
+	GetHandleVerifier [0x00007FF74DA52A13+1313971]
+	GetHandleVerifier [0x00007FF74D94DD16+245686]
+	(No symbol) [0x00007FF74D8D759F]
+	(No symbol) [0x00007FF74D8D3814]
+	(No symbol) [0x00007FF74D8D39A2]
+	(No symbol) [0x00007FF74D8CA3FF]
+	BaseThreadInitThunk [0x00007FFBD82D257D+29]
+	RtlUserThreadStart [0x00007FFBD99CAF28+40]
+",웹 상호작용 불가능

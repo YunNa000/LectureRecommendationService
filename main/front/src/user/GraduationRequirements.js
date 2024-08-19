@@ -17,6 +17,10 @@ const GraduationRequirements = () => {
     not_taken_gyoGyunTheme: [],
     taken_gyoPillName: [],
     not_taken_gyoPillName: [],
+    user_taken_multiple_major_credit: "",
+    multiple_major_credit: "",
+    what_multiple_major_department: "",
+    what_multiple_major: "",
   });
 
   const checkLoginStatus = async () => {
@@ -68,6 +72,12 @@ const GraduationRequirements = () => {
           not_taken_gyoGyunTheme: data.not_taken_gyoGyunTheme || [],
           taken_gyoPillName: data.taken_gyoPillName || [],
           not_taken_gyoPillName: data.not_taken_gyoPillName || [],
+          user_taken_multiple_major_credit:
+            data.user_taken_multiple_major_credit || 0,
+          multiple_major_credit: data.multiple_major_credit || 0,
+          what_multiple_major_department:
+            data.what_multiple_major_department || "",
+          what_multiple_major: data.what_multiple_major || "",
         });
       }
     } catch (error) {
@@ -93,8 +103,14 @@ const GraduationRequirements = () => {
               {formData.taken_gyoyang_credit} /{" "}
               {formData.user_require_gyoGyunCredit +
                 formData.user_require_gyoPillCredit}{" "}
-              | 기타 학점: {formData.taken_other_credit}
+              | 기타 학점: {formData.taken_other_credit} |{" "}
+              {formData.what_multiple_major_department}{" "}
+              {formData.what_multiple_major} 학점:{" "}
+              {formData.user_taken_multiple_major_credit} /{" "}
+              {formData.multiple_major_credit}
             </p>
+            <p>복수 전공 학과: {formData.what_multiple_major_department}</p>
+            <p>복수 전공: {formData.what_multiple_major}</p>
           </div>
           <hr />
           <div>

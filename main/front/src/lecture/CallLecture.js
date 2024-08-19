@@ -11,7 +11,7 @@ const CallLecture = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-  const [lecClassification, setLecClassification] = useState("전공");
+  const [lecClassification, setLecClassification] = useState("");
   const [isPillSu, setIsPillSu] = useState(false);
   const [lecTheme, setLecTheme] = useState("");
   const [teamplayAmount, setTeamplayAmount] = useState("상관없음");
@@ -56,7 +56,8 @@ const CallLecture = () => {
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
-      setYear(fetchedYear);
+      setYear(Number(fetchedYear));
+
       setSemester(fetchedSemester);
     } catch (err) {
       console.error("errr fetching year and semester", err);
@@ -107,20 +108,23 @@ const CallLecture = () => {
   const handleGyoYangClick = () => {
     setLecClassification("교양");
     setActiveComponent("GyoYang");
-    fetchLectures();
   };
 
   const handleJunGongClick = () => {
     setLecClassification("전공");
     setActiveComponent("JunGong");
-    fetchLectures();
   };
 
   const handleTotalClick = () => {
     setLecClassification("전체");
     setActiveComponent("Total");
-    fetchLectures();
   };
+
+  useEffect(() => {
+    if (lecClassification) {
+      fetchLectures();
+    }
+  }, [lecClassification, activeComponent]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
@@ -128,6 +132,13 @@ const CallLecture = () => {
   return (
     <div>
       <div>
+        <button
+          onClick={() =>
+            (window.location.href = "http://localhost:3000/mypage")
+          }
+        >
+          my page
+        </button>
         <button onClick={handleGyoYangClick}>교양 강의 검색</button>
         <button onClick={handleJunGongClick}>전공 강의 검색</button>
         <button onClick={handleTotalClick}>전체 강의 검색</button>
