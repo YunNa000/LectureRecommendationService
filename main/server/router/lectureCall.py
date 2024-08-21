@@ -2,6 +2,7 @@ from typing import List
 from fastapi import HTTPException, APIRouter
 from db import db_connect
 from model import LectureCallResponse, LectureCallInput
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -123,7 +124,7 @@ def check_multi_major(bunban):
         return None
 
 
-def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str] | None, whatMultipleMajor: str, whatMultipleMajorDepartment: str):
+def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
     print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
@@ -270,7 +271,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     return response
 
 
-def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: list[str] | None, whatMultipleMajor: str, whatMultipleMajorDepartment: str):
+def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
 
     conn = db_connect()
     cursor = conn.cursor()
