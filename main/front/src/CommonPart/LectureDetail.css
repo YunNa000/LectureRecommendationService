@@ -1,0 +1,66 @@
+.lecture-detail {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 10px;
+  }
+  
+  .lecture-main {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+  }
+  
+  .lecture-left {
+    text-align: left;
+    width: 70%;
+  }
+  
+  .lecture-right {
+    text-align: right;
+    color: #666;
+    font-size: 12px;
+  }
+  
+  .lecture-title {
+    font-weight: bold;
+  }
+  
+  .lecture-code,
+  .lecture-department {
+    color: #666;
+    font-size: 12px;
+  }
+
+
+  .rating-bar {
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    position: relative;
+  }
+  
+  .rating-bar-fill {
+    height: 100%;
+    background-color: #ffc107;
+    border-radius: 10px;
+  }
+  
+  .rating-bar-label {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+  }
+
+    
+  .lecture-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  

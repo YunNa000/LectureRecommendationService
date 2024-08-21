@@ -27,7 +27,7 @@ import TopBarBack from "./CommonPart/TopBarBack";
 import LectureDetail from "./CommonPart/LectureDetail";
 import TopBarBackAddFriend from "./CommonPart/TopBarBackAddFriend";
 
-import UserTimeTable from "./lecture/UserTimeTable";
+
 import CrawlingNewLecture from "./admin/CrawlingNewLecture";
 
 function LoginPage() {
