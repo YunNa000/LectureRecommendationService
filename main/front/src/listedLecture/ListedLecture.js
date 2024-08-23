@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import ListedLectureList from "./ListedLectureList";
@@ -23,7 +23,7 @@ const ListedLecture = () => {
   const [otherCredits, setOtherCredits] = useState(0);
   const [takenLectures, setTakenLectures] = useState(null);
 
-  const checkLoginStatus = async () => {
+  const checkLoginStatus = useCallback(async () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
@@ -48,7 +48,11 @@ const ListedLecture = () => {
       console.log("ListedLecture.js - checkLogin");
       console.error(err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
 
   const fetchYearAndSemester = async () => {
     try {
@@ -78,16 +82,16 @@ const ListedLecture = () => {
     }
   };
 
-  const filterLectures = () => {
+  const filterLectures = useCallback(() => {
     const filtered = lectures.filter((lecture) => {
       return lecture.year === year && lecture.semester === semester;
     });
     setFilteredLectures(filtered);
-  };
+  }, [year, semester, lectures]);
 
   const updateLecturePriority = async (lecNumber, newPriority) => {
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/update_listed_lecture_priority",
         {
           user_id: user,
@@ -103,24 +107,21 @@ const ListedLecture = () => {
     }
   };
 
-  const getCheckedLectures = () => {
+  const getCheckedLectures = useCallback(() => {
     return lectures.filter(
       (lecture) =>
         lecture.priority && lecture.priority.split(" ").includes(priority)
     );
-  };
+  }, [lectures, priority]);
 
   const unselectLecture = async (lecNumber, year, semester) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/lecture_unselect",
-        {
-          user_id: user,
-          lecNumber: lecNumber,
-          year: year,
-          semester: semester,
-        }
-      );
+      await axios.post("http://localhost:8000/lecture_unselect", {
+        user_id: user,
+        lecNumber: lecNumber,
+        year: year,
+        semester: semester,
+      });
       fetchLectures(user);
     } catch (error) {
       console.error("err unlist lecture", error);
@@ -130,7 +131,7 @@ const ListedLecture = () => {
   const updateLectureInfo = async (lectureData) => {
     try {
       lectureData.user_id = user;
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/update_user_listed_lecture_info",
         lectureData
       );
@@ -171,7 +172,7 @@ const ListedLecture = () => {
   const markLectureAsCompleted = async (lectureData) => {
     try {
       lectureData.user_id = user;
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/add_taken_lecture_auto",
         lectureData
       );
@@ -223,11 +224,7 @@ const ListedLecture = () => {
     setMajorCredits(major);
     setGyoYangCredits(gyoYang);
     setOtherCredits(other);
-  }, [filteredLectures, priority]);
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
+  }, [filteredLectures, priority, getCheckedLectures]);
 
   useEffect(() => {
     if (user) {
@@ -238,7 +235,7 @@ const ListedLecture = () => {
 
   useEffect(() => {
     filterLectures();
-  }, [year, semester, lectures]);
+  }, [year, semester, lectures, filterLectures]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;

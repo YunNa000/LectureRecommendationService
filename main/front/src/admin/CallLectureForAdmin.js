@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 const CallLectureForAdmin = () => {
@@ -9,6 +9,7 @@ const CallLectureForAdmin = () => {
   const [error, setError] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [lecName, setLecName] = useState("");
+  const [lecNumber, setLecNumber] = useState("");
   const [lecProfessor, setLecProfessor] = useState("");
   const [lecTime, setLecTime] = useState("");
   const [isLecClose, setIsLecClose] = useState(false);
@@ -41,15 +42,21 @@ const CallLectureForAdmin = () => {
 
     const updateData = {
       lecName: lecName,
+      lecNumber: lecNumber,
       lecProfessor: lecProfessor,
       isLecClose: isLecClose,
       percentageOfOnline: percentageOfOnline,
       canTakeForeignPeople: canTakeForeignPeople,
       password: password,
+      year: parseInt(year),
+      semester: semester,
     };
 
     const confirmEdit = window.confirm("수정 전, 한번 더 확인해요");
     if (!confirmEdit) return;
+
+    console.log("year: ", year);
+    console.log("typeof", typeof year);
 
     try {
       const response = await axios.put(
@@ -129,6 +136,7 @@ const CallLectureForAdmin = () => {
                   setLecTime(lecture.lecTime);
                   setIsLecClose(lecture.isLecClose);
                   setCanTakeForeignPeople(lecture.canTakeForeignPeople);
+                  setLecNumber(lecture.lecNumber);
                 }}
               >
                 수정
@@ -138,6 +146,7 @@ const CallLectureForAdmin = () => {
               selectedLecture.lectureID === lecture.lectureID && (
                 <div>
                   <p>강의 수정</p>
+                  <p>{lecNumber}</p>
                   <input
                     type="text"
                     value={lecName}
@@ -159,7 +168,7 @@ const CallLectureForAdmin = () => {
                   <label>
                     전체:0, 외국인유학생만:1, 한국인만:2
                     <input
-                      type="checkbox"
+                      type="number"
                       checked={canTakeForeignPeople}
                       onChange={(e) =>
                         setCanTakeForeignPeople(e.target.checked)

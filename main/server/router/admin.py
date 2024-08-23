@@ -25,7 +25,7 @@ async def admin(request: AdminLectureSearch):
         d.isTBL, d.isPBL, d.isSeminar, d.isSmall, d.isConvergence,
         d.isTeamTeaching, d.isFocus, d.isExperimentDesign, d.isELearning,
         d.isArt, d.representCompetency, d.learningGoalNmethod,
-        d.Overview, d.VCompetencyRatio, d.LCompetencyRatio, d.evaluationRatio,
+        d.Overview, d.evaluationRatio,
         d.mainBook, d.scheduleNcontent,
         c.canTakeBunBan, c.majorRecogBunBan, c.canTakeOnly1year,
         c.canTakeOnly2year, c.canTakeOnly3year, c.canTakeOnly4year,
@@ -98,24 +98,22 @@ async def admin(request: AdminLectureSearch):
                     "representCompetency": row[30],
                     "learningGoalNmethod": row[31],
                     "Overview": row[32],
-                    "VCompetencyRatio": row[33],
-                    "LCompetencyRatio": row[34],
-                    "evaluationRatio": row[35],
-                    "mainBook": row[36],
-                    "scheduleNcontent": row[37],
-                    "canTakeBunBan": row[38],
-                    "majorRecogBunBan": row[39],
-                    "canTakeOnly1year": row[40],
-                    "canTakeOnly2year": row[41],
-                    "canTakeOnly3year": row[42],
-                    "canTakeOnly4year": row[43],
-                    "canTakeOnly5year": row[44],
-                    "canTakeForeignPeople": row[45],
-                    "canTakeMultipleMajor": row[46],
-                    "canTakeOnlyAthlete": row[47],
-                    "canTakeOnlyChambit": row[48],
-                    "requirementClass": row[49],
-                    "lecLinkedMajorDifficulty": row[50],
+                    "evaluationRatio": row[33],
+                    "mainBook": row[34],
+                    "scheduleNcontent": row[35],
+                    "canTakeBunBan": row[36],
+                    "majorRecogBunBan": row[37],
+                    "canTakeOnly1year": row[38],
+                    "canTakeOnly2year": row[39],
+                    "canTakeOnly3year": row[40],
+                    "canTakeOnly4year": row[41],
+                    "canTakeOnly5year": row[42],
+                    "canTakeForeignPeople": row[43],
+                    "canTakeMultipleMajor": row[44],
+                    "canTakeOnlyAthlete": row[45],
+                    "canTakeOnlyChambit": row[46],
+                    "requirementClass": row[47],
+                    "lecLinkedMajorDifficulty": row[48],
                 }
                 lectures.append(lecture)
 
@@ -139,6 +137,9 @@ async def edit_lecture(lecture_id: int, request: AdminLectureEdit):
     if admin_password != request.password:
         return "32자리랜덤숫자+영어+기호"
 
+    print(request.year)
+    print(request.semester)
+
     update_queries = {
         "LectureList": {
             "fields": [],
@@ -151,8 +152,25 @@ async def edit_lecture(lecture_id: int, request: AdminLectureEdit):
         "LectureConditions": {
             "fields": [],
             "params": []
+        },
+    }
+    update_queries_user_lised_lecture = {
+        "UserListedLecture": {
+            "fields": [],
+            "params": []
         }
     }
+
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
+    print(request.lecNumber)
 
     if request.lecNumber is not None:
         update_queries["LectureList"]["fields"].append("lecNumber = ?")
@@ -173,6 +191,12 @@ async def edit_lecture(lecture_id: int, request: AdminLectureEdit):
     if request.lecCredit is not None:
         update_queries["LectureList"]["fields"].append("lecCredit = ?")
         update_queries["LectureList"]["params"].append(request.lecCredit)
+    if request.year is not None:
+        update_queries["LectureList"]["fields"].append("year = ?")
+        update_queries["LectureList"]["params"].append(request.year)
+    if request.semester is not None:
+        update_queries["LectureList"]["fields"].append("semester = ?")
+        update_queries["LectureList"]["params"].append(request.semester)
     if request.lecTime is not None:
         update_queries["LectureList"]["fields"].append("lecTime = ?")
         update_queries["LectureList"]["params"].append(request.lecTime)
@@ -185,6 +209,27 @@ async def edit_lecture(lecture_id: int, request: AdminLectureEdit):
     if request.isLecClose is not None:
         update_queries["LectureList"]["fields"].append("isLecClose = ?")
         update_queries["LectureList"]["params"].append(request.isLecClose)
+        update_queries_user_lised_lecture["UserListedLecture"]["fields"].append(
+            "isLecClose = ?")
+        update_queries_user_lised_lecture["UserListedLecture"]["params"].append(
+            request.isLecClose)
+
+    print("====================", request.lecNumber, "===============")
+
+    if update_queries_user_lised_lecture["UserListedLecture"]["fields"]:
+        print("=================================\n=================================\n=================================\n=================================\n")
+        user_lecture_update_query = f"""
+        UPDATE UserListedLecture
+        SET {', '.join(update_queries_user_lised_lecture["UserListedLecture"]["fields"])}
+        WHERE lecNumber = ? AND year = ? AND semester = ?
+        """
+        update_queries_user_lised_lecture["UserListedLecture"]["params"].extend(
+            [request.lecNumber, request.year, request.semester])
+        cursor.execute(user_lecture_update_query,
+                       update_queries_user_lised_lecture["UserListedLecture"]["params"])
+        print(user_lecture_update_query)
+        print(update_queries_user_lised_lecture["UserListedLecture"]["params"])
+        print("================")
 
     if request.takenPeople1yearsAgo is not None:
         update_queries["LectureDetailData"]["fields"].append(
@@ -359,33 +404,27 @@ async def edit_lecture(lecture_id: int, request: AdminLectureEdit):
         update_queries["LectureConditions"]["params"].append(
             request.lecLinkedMajorDifficulty)
 
+    print(update_queries)
+
     if not any(len(query["fields"]) > 0 for query in update_queries.values()):
         raise HTTPException(status_code=400, detail="업데이트할 필드가 없습니다.")
 
     try:
         for table, query in update_queries.items():
-            if query["fields"]:
-                update_query = f"""
+
+            update_query = f"""
                 UPDATE {table}
                 SET {', '.join(query["fields"])}
                 WHERE lectureID = ?
                 """
-                query["params"].append(lecture_id)
-                cursor.execute(update_query, query["params"])
+            query["params"].append(lecture_id)
 
-                print(update_query)
-                print(query["params"])
-                conn.commit()
-
-        if cursor.rowcount == 0:
-            raise HTTPException(status_code=404, detail="강의를 찾을 수 없어요..")
-
-        return {"detail": "lecture edited"}
+            cursor.execute(update_query, query["params"])
+            conn.commit()
 
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail=str(e))
-
+        print(f"Error occurred: {e}")
+        conn.rollback()
     finally:
         cursor.close()
         conn.close()

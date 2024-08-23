@@ -114,9 +114,9 @@ const ListedLectureList = ({
             {lecture.year}년 {lecture.semester}학기
           </small>
           <p>
-            {lecture.lecNumber} | {lecture.priority} | {lecture.classroom} |{" "}
-            {lecture.memo} | {lecture.lecTime} | {lecture.lecTheme} |{" "}
-            {lecture.lecClassification} | {lecture.star} |{" "}
+            {lecture.isLecClose} {lecture.lecNumber} | {lecture.priority} |{" "}
+            {lecture.classroom} | {lecture.memo} | {lecture.lecTime} |{" "}
+            {lecture.lecTheme} | {lecture.lecClassification} | {lecture.star} |{" "}
             {lecture.assignmentAmount} | {lecture.teamPlayAmount} |{" "}
             {lecture.gradeAmount} | {lecture.reviewSummary} |{" "}
             {lecture.lecCredit}

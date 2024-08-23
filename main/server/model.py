@@ -202,6 +202,8 @@ class AdminLectureEdit(BaseModel):
     requirementClass: Optional[str] = None
     lecLinkedMajorDifficulty: Optional[str] = None
     password: str
+    year: int
+    semester: str
 
 
 class AdminEditTime(BaseModel):
