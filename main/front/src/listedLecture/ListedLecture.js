@@ -110,9 +110,12 @@ const ListedLecture = () => {
   const getCheckedLectures = useCallback(() => {
     return lectures.filter(
       (lecture) =>
-        lecture.priority && lecture.priority.split(" ").includes(priority)
+        lecture.priority &&
+        lecture.priority.split(" ").includes(priority) &&
+        lecture.year === year &&
+        lecture.semester === semester
     );
-  }, [lectures, priority]);
+  }, [lectures, priority, year, semester]);
 
   const unselectLecture = async (lecNumber, year, semester) => {
     try {
@@ -224,7 +227,7 @@ const ListedLecture = () => {
     setMajorCredits(major);
     setGyoYangCredits(gyoYang);
     setOtherCredits(other);
-  }, [filteredLectures, priority, getCheckedLectures]);
+  }, [filteredLectures, year, semester, priority, getCheckedLectures]);
 
   useEffect(() => {
     if (user) {
