@@ -144,6 +144,8 @@ class ManuallyAddListedLecture(BaseModel):
     memo: Optional[str] = None
     lecName: str
     lecTime: Optional[str] = None
+    lecCredit: Optional[int] = None
+    lecClassification: Optional[str] = None
 
 
 class AdminLectureSearch(BaseModel):
