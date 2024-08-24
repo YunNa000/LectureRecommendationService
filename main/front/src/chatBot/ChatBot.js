@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import TopBarBack from '../CommonPart/TopBarBack';
+import "./ChatBot.css";
 
 function ChatBot() {
-  const [files, setFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState("");
-  const [question, setQuestion] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState("");
+  const [inputText, setInputText] = useState("");
   const [chatLog, setChatLog] = useState([]);
   const [user, setUser] = useState(null);
+
+  const themes = ["수강신청", "재수강", "졸업"];
+  // 강의계획서와 에브리타임 강의평 
+  // -> 애초에 메인페이지 강의선택할때 다 볼 수 있기 때문에 
+  // 따라서, 수강신청 자료집에서만 테마를 나누어서 진행
+
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -17,9 +24,7 @@ function ChatBot() {
           method: "GET",
           credentials: "include",
         });
-
         const data = await response.json();
-
         if (response.ok && data.user_id) {
           setUser(data.user_id);
         }
@@ -37,102 +42,72 @@ function ChatBot() {
     checkLoginStatus();
   }, []);
 
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/files/");
-        setFiles(response.data.files);
-      } catch (error) {
-        console.error("error fetching files");
-      }
-    };
-    fetchFiles();
-  }, []);
-
-  const handleFileChange = async (event) => {
-    const fileName = event.target.value;
-    const filePath =
-      "/home/ga111o/document/VSCode/kwu-lecture-recommendation-service/api-test/server/.cache/files/" +
-      fileName;
-    setSelectedFile(fileName);
-
-    if (filePath) {
-      try {
-        const response = await axios.post("http://127.0.0.1:8000/selectfile/", {
-          file_name: filePath,
-        });
-      } catch (error) {
-        console.error("error selecting file");
-      }
-    }
+  const handleThemeSelection = (theme) => {
+    setSelectedTheme(theme);
+    setChatLog([...chatLog, { type: "system", text: `'${theme}'을 선택하셨군요! 어떤 점이 궁금하세요?` }]);
   };
 
-  const handleQuestionChange = (event) => {
-    setQuestion(event.target.value);
+  const handleInputChange = (event) => {
+    setInputText(event.target.value);
   };
 
-  const handleAskQuestion = async () => {
-    if (question.trim() === "") return;
-
-    setChatLog((prevLog) => [...prevLog, { type: "question", text: question }]);
-
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/ask/", {
-        question,
-      });
-      const formattedAnswer = response.data.answer.replace(/\n/g, "<br>");
-
-      setChatLog((prevLog) => [
-        ...prevLog,
-        { type: "answer", text: formattedAnswer },
-      ]);
-    } catch (error) {
-      console.error("Error asking question");
+  const handleSendMessage = () => {
+    if (inputText.trim() === "") return;
+    
+    if (inputText.toLowerCase() === '/홈') {
+      setSelectedTheme("");
+      setChatLog([]);
+      setInputText("");
+      return;
     }
 
-    setQuestion("");
+    setChatLog([...chatLog, { type: "user", text: inputText }]);
+    // Here you would typically send the message to your backend and get a response
+    // For now, we'll just echo the message
+    setChatLog(prevLog => [...prevLog, { type: "system", text: `You said: ${inputText}` }]);
+    setInputText("");
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      handleAskQuestion();
+      handleSendMessage();
     }
   };
 
   return (
-    <div>
-      <label>저는 "</label>
-      <select onChange={handleFileChange} value={selectedFile}>
-        <option value=""></option>
-        {files.map((file) => {
-          const displayFileName = file.split(".")[0];
-          return (
-            <option key={file} value={file}>
-              {displayFileName}
-            </option>
-          );
-        })}
-      </select>
-      <label>" 에 대해 물어보고 싶어요.</label>
-      <input
-        type="text"
-        value={question}
-        onChange={handleQuestionChange}
-        onKeyDown={handleKeyDown}
-        placeholder="질문을 입력하세요"
-      />
-      <button onClick={handleAskQuestion}>질문하기</button>
-      <div>
-        {chatLog.map((entry, index) => (
-          <div
-            key={index}
-            className={
-              entry.type === "question" ? "chat-question" : "chat-answer"
-            }
-          >
-            <p dangerouslySetInnerHTML={{ __html: entry.text }}></p>
-          </div>
-        ))}
+    <div className="chatbot-container">
+      <TopBarBack />
+      <div className="intro-message">
+        수강신청자료집과 강의계획서, 에브리타임 강의평 등을 알고 있어요😏
+        궁금한 테마를 선택해주세요.
+        '/홈' 이라고 입력하시면 아래와 같이 테마를 선택지로 올 수 있습니다.
+      </div>
+      {!selectedTheme ? (
+        <div className="theme-buttons">
+          {themes.map((theme) => (
+            <button key={theme} onClick={() => handleThemeSelection(theme)}>
+              {theme}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="chat-log">
+          {chatLog.map((entry, index) => (
+            <div key={index} className={`chat-message ${entry.type}`}>
+              {entry.text}
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="input-area">
+        <input
+          type="text"
+          value={inputText}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="메시지를 입력하세요..."
+        />
+        <button onClick={handleSendMessage}>전송</button>
       </div>
     </div>
   );
