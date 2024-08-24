@@ -14,13 +14,13 @@ async def user_listed_lecture(request: userID):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose FROM UserListedLecture WHERE user_id = ?", (request.user_id,))
+        "SELECT year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose, lecClassification, lecCredit FROM UserListedLecture WHERE user_id = ?", (request.user_id,))
     user_lectures = cursor.fetchall()
 
     results = []
 
     for lecture in user_lectures:
-        year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose = lecture
+        year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose, lecClassification, lecCredit = lecture
         print("is lec close?", isLecClose)
 
         if lecNumber.startswith("user"):
@@ -41,6 +41,8 @@ async def user_listed_lecture(request: userID):
                 "teamPlayAmount": "",
                 "gradeAmount": "",
                 "reviewSummary": "",
+                "lecClassification": lecClassification,
+                "lecCredit": lecCredit
             })
         else:
             cursor.execute(
