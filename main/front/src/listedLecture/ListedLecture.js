@@ -75,6 +75,7 @@ const ListedLecture = () => {
         { user_id: userID }
       );
       setLectures(response.data);
+      console.log(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -252,8 +253,10 @@ const ListedLecture = () => {
         setSemester={setSemester}
         priority={priority}
         setPriority={setPriority}
+        user={user}
+        fetchLectures={fetchLectures}
       />
-      <AddListedLectureManaully user={user} fetchLectures={fetchLectures} />
+
       <ShowCheckedLectureCredit
         totalCredits={totalCredits}
         majorCredits={majorCredits}
