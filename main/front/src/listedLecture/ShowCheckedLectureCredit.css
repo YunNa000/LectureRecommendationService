@@ -1,0 +1,14 @@
+.showCheckedLectureCredit {
+  display: flex;
+  flex-direction: row;
+  margin: 0 20px 0 20px;
+  justify-content: space-evenly;
+  height: 30px;
+  align-items: center;
+  border: 1px solid #999;
+  border-radius: 30px;
+}
+
+.showCheckedLectureCredit p {
+  margin: 0;
+}
