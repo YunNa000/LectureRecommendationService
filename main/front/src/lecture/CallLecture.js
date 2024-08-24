@@ -5,6 +5,7 @@ import GyoYangLectureSearch from "./GyoYangLectureSearch";
 import JunGongLectureSearch from "./JunGongLectureSearch.js";
 import TotalLectureSearch from "./TotalLectureSearch.js";
 import LectureList from "./LectureList";
+import "./CallLecture-CircleList.css";
 
 const CallLecture = () => {
   const [lectures, setLectures] = useState([]);
@@ -131,18 +132,28 @@ const CallLecture = () => {
 
   return (
     <div>
-      <div>
+      <div className="CircleList">
         <button
+          className="circle"
           onClick={() =>
             (window.location.href = "http://localhost:3000/mypage")
           }
         >
           my page
         </button>
-        <button onClick={handleGyoYangClick}>교양 강의 검색</button>
-        <button onClick={handleJunGongClick}>전공 강의 검색</button>
-        <button onClick={handleTotalClick}>전체 강의 검색</button>
+
+        <button onClick={handleGyoYangClick} className="circle">
+          교양 강의
+        </button>
+        <button onClick={handleJunGongClick} className="circle">
+          전공 강의
+        </button>
+
+        <button onClick={handleTotalClick} className="circle">
+          전체 강의
+        </button>
       </div>
+
       {activeComponent === "GyoYang" && (
         <GyoYangLectureSearch
           lecClassification={lecClassification}
@@ -215,7 +226,7 @@ const CallLecture = () => {
           setlecTimeTable={setlecTimeTable}
         />
       )}
-      {activeComponent && <LectureList lectures={lectures} />}{" "}
+      {activeComponent && <LectureList lectures={lectures} />}
     </div>
   );
 };
