@@ -1,0 +1,20 @@
+.topbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.topbar-container h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.topbar-container svg {
+  cursor: pointer;
+}
+
+.goback {
+  border: none;
+  background: none;
+}
