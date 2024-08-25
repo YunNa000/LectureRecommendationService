@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./ListedLectureTimeTable.css";
 
 const ListedLectureTimeTable = ({
   lectures,
@@ -44,7 +45,7 @@ const ListedLectureTimeTable = ({
     setEditingLectureIndex(null);
   };
 
-  const daysOfWeek = ["시간/요일", "월", "화", "수", "목", "금"];
+  const daysOfWeek = ["", "월", "화", "수", "목", "금"];
   const hasSaturday = lectures.some((lecture) => {
     const times = lecture.lecTime ? lecture.lecTime.split(",") : [];
     return times.some((time) => {
@@ -91,60 +92,74 @@ const ListedLectureTimeTable = ({
   });
 
   return (
-    <div>
-      <table>
+    <div className="timetable-box">
+      <table className="user-timetable">
         <thead>
           <tr>
             {daysOfWeek.map((day, index) => (
-              <th key={index}>{day}</th>
+              <th key={index} className="day-header">
+                {day}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {timetable.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              <td>{rowIndex}교시</td>
+            <tr key={rowIndex} className="timetable-row">
+              <td className="period-cell">{rowIndex}</td>
               {row.map((cell, cellIndex) => (
-                <td key={cellIndex}>
+                <td key={cellIndex} className="lecture-cell">
                   {cell.length > 0 ? (
                     cell.map((lecture, index) => (
                       <div
                         key={index}
+                        className="lecture-item"
                         onClick={() =>
                           handleEditClick(lecture, rowIndex, cellIndex, index)
                         }
                       >
-                        <p>{lecture.lecName}</p>
-                        <p>{lecture.lecProfessor}</p>
+                        <p className="lecture-name">{lecture.lecName}</p>
+                        <p className="lecture-professor">
+                          {lecture.lecProfessor}
+                        </p>
                         {editingLectureIndex ===
                           `${rowIndex}-${cellIndex}-${index}` && (
-                          <div>
-                            <input
-                              type="checkbox"
-                              checked={
-                                lecture.priority &&
-                                lecture.priority.split(" ").includes(priority)
-                              }
-                              onChange={() =>
-                                updateLecturePriority(
-                                  lecture.lecNumber,
-                                  priority
-                                )
-                              }
-                            />
+                          <div className="edit-lecture">
+                            <label className="edit-lecture-unckeck">
+                              <input
+                                type="checkbox"
+                                checked={
+                                  lecture.priority &&
+                                  lecture.priority.split(" ").includes(priority)
+                                }
+                                onChange={() =>
+                                  updateLecturePriority(
+                                    lecture.lecNumber,
+                                    priority
+                                  )
+                                }
+                              />
+                              체크해제
+                            </label>
+
                             <input
                               type="text"
                               value={memo}
                               onChange={(e) => setMemo(e.target.value)}
                               placeholder="메모"
+                              className="input-memo"
                             />
                             <input
                               type="text"
                               value={classroom}
                               onChange={(e) => setClassroom(e.target.value)}
                               placeholder="강의실"
+                              className="input-classroom"
                             />
-                            <button onClick={() => handleUpdate(lecture)}>
+                            <button
+                              onClick={() => handleUpdate(lecture)}
+                              className="update-button"
+                            >
                               완료
                             </button>
                           </div>
@@ -152,7 +167,7 @@ const ListedLectureTimeTable = ({
                       </div>
                     ))
                   ) : (
-                    <div></div>
+                    <div className="empty-cell"></div>
                   )}
                 </td>
               ))}
@@ -161,9 +176,9 @@ const ListedLectureTimeTable = ({
         </tbody>
       </table>
       {noTimeLectures.length > 0 && (
-        <div>
+        <div className="no-time-lectures">
           {noTimeLectures.map((lecture, index) => (
-            <p key={index}>
+            <p key={index} className="no-time-lecture-item">
               {lecture.lecName} | {lecture.lecProfessor}
             </p>
           ))}
