@@ -8,7 +8,6 @@ const ListedLectureTimeTable = ({
 }) => {
   let maxDay = 0;
   let maxHour = 0;
-  let hasZeroHour = false;
 
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -21,15 +20,11 @@ const ListedLectureTimeTable = ({
         const [day, hour] = time.replace(/[()]/g, "").split(":").map(Number);
         if (day > maxDay) maxDay = day;
         if (hour > maxHour) maxHour = hour;
-
-        if (hour === 0) {
-          hasZeroHour = true;
-        }
       });
     }
   });
 
-  maxHour = Math.max(maxHour, 6);
+  maxHour = Math.max(maxHour + 1, 6);
 
   const handleEditClick = (lecture, rowIndex, cellIndex, index) => {
     setEditingLectureIndex(`${rowIndex}-${cellIndex}-${index}`);
@@ -73,12 +68,10 @@ const ListedLectureTimeTable = ({
     daysOfWeek.push("일");
   }
 
-  const timetable = Array.from(
-    { length: hasZeroHour ? maxHour + 1 : maxHour },
-    () =>
-      Array(daysOfWeek.length - 1)
-        .fill(null)
-        .map(() => [])
+  const timetable = Array.from({ length: maxHour }, () =>
+    Array(daysOfWeek.length - 1)
+      .fill(null)
+      .map(() => [])
   );
 
   const noTimeLectures = [];
@@ -108,68 +101,9 @@ const ListedLectureTimeTable = ({
           </tr>
         </thead>
         <tbody>
-          {hasZeroHour && (
-            <tr>
-              <td>0교시</td>
-              {Array(maxDay)
-                .fill(null)
-                .map((_, cellIndex) => (
-                  <td key={cellIndex}>
-                    {timetable[0][cellIndex].length > 0 ? (
-                      timetable[0][cellIndex].map((lecture, index) => (
-                        <div
-                          key={index}
-                          onClick={() =>
-                            handleEditClick(lecture, 0, cellIndex, index)
-                          }
-                        >
-                          <p>{lecture.lecName}</p>
-                          <p>{lecture.lecProfessor}</p>
-                          {editingLectureIndex ===
-                            `0-${cellIndex}-${index}` && (
-                            <div>
-                              <input
-                                type="checkbox"
-                                checked={
-                                  lecture.priority &&
-                                  lecture.priority.split(" ").includes(priority)
-                                }
-                                onChange={() =>
-                                  updateLecturePriority(
-                                    lecture.lecNumber,
-                                    priority
-                                  )
-                                }
-                              />
-                              <input
-                                type="text"
-                                value={memo}
-                                onChange={(e) => setMemo(e.target.value)}
-                                placeholder="메모"
-                              />
-                              <input
-                                type="text"
-                                value={classroom}
-                                onChange={(e) => setClassroom(e.target.value)}
-                                placeholder="강의실"
-                              />
-                              <button onClick={() => handleUpdate(lecture)}>
-                                완료
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div></div>
-                    )}
-                  </td>
-                ))}
-            </tr>
-          )}
-          {timetable.slice(hasZeroHour ? 1 : 0).map((row, rowIndex) => (
-            <tr key={rowIndex + (hasZeroHour ? 1 : 0)}>
-              <td>{rowIndex + (hasZeroHour ? 1 : 0)}교시</td>
+          {timetable.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              <td>{rowIndex}교시</td>
               {row.map((cell, cellIndex) => (
                 <td key={cellIndex}>
                   {cell.length > 0 ? (
@@ -177,20 +111,13 @@ const ListedLectureTimeTable = ({
                       <div
                         key={index}
                         onClick={() =>
-                          handleEditClick(
-                            lecture,
-                            rowIndex + (hasZeroHour ? 1 : 0),
-                            cellIndex,
-                            index
-                          )
+                          handleEditClick(lecture, rowIndex, cellIndex, index)
                         }
                       >
                         <p>{lecture.lecName}</p>
                         <p>{lecture.lecProfessor}</p>
                         {editingLectureIndex ===
-                          `${
-                            rowIndex + (hasZeroHour ? 1 : 0)
-                          }-${cellIndex}-${index}` && (
+                          `${rowIndex}-${cellIndex}-${index}` && (
                           <div>
                             <input
                               type="checkbox"
