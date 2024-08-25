@@ -1,11 +1,12 @@
 .showCheckedLectureCredit {
   display: flex;
   flex-direction: row;
-  margin: 0 20px 0 20px;
+  margin: 0 10px;
   justify-content: space-evenly;
   height: 30px;
   align-items: center;
-  border: 1px solid #999;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+
   border-radius: 30px;
 }
 
