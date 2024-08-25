@@ -9,6 +9,18 @@
   white-space: nowrap;
 }
 
+.CircleList::-webkit-scrollbar {
+  display: none;
+}
+
+.CircleList {
+  scrollbar-width: none;
+}
+
+.CircleList {
+  -ms-overflow-style: none;
+}
+
 .CircleList .circle {
   width: 90px;
   height: 90px;
@@ -21,10 +33,17 @@
   margin-right: 10px;
   flex-shrink: 0;
   font-size: 14px;
+  transition: 0.2s;
 }
 
 .CircleList button {
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+.circle.active {
+  background-color: #fff0a0;
+  transition: 0.2s;
+  color: black;
 }
