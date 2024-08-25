@@ -108,21 +108,39 @@ const CallLecture = () => {
   }, [user]);
 
   const handleGyoYangClick = () => {
-    setLecClassification("교양");
-    setActiveComponent("GyoYang");
-    setActiveButton("GyoYang");
+    if (activeButton === "GyoYang") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("교양");
+      setActiveComponent("GyoYang");
+      setActiveButton("GyoYang");
+    }
   };
 
   const handleJunGongClick = () => {
-    setLecClassification("전공");
-    setActiveComponent("JunGong");
-    setActiveButton("JunGong");
+    if (activeButton === "JunGong") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("전공");
+      setActiveComponent("JunGong");
+      setActiveButton("JunGong");
+    }
   };
 
   const handleTotalClick = () => {
-    setLecClassification("전체");
-    setActiveComponent("Total");
-    setActiveButton("Total");
+    if (activeButton === "Total") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("전체");
+      setActiveComponent("Total");
+      setActiveButton("Total");
+    }
   };
 
   useEffect(() => {
