@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
+import "./Login.css";
 
 const Login = () => {
   const [user, setUser] = useState(null);
@@ -28,6 +28,7 @@ const Login = () => {
     } catch (err) {
       console.log("Login.js - checkLoginStatus");
       console.error(err);
+      setError(err);
     }
   };
 
@@ -45,15 +46,23 @@ const Login = () => {
   }, []);
 
   return (
-    <div>
+    <div className="login-box">
       {user ? (
-        <div>
-          <button onClick={handleLogout}>Logout</button>
+        <div className="logged-in">
+          <p className="logout-text">
+            아래 버튼을 통해 로그아웃을 할 수 있어요
+          </p>
+          <button className="logout-button" onClick={handleLogout}>
+            로그아웃
+          </button>
         </div>
       ) : (
-        <div>
-          <button onClick={handleLogin}>log in</button>
-          {error && <p>{error}</p>}
+        <div className="logged-out">
+          <p className="login-text">로그인을 하면 서비스를 이용할 수 있어요.</p>
+          <button className="login-button" onClick={handleLogin}>
+            구글로 로그인
+          </button>
+          {error && <p className="error-message">{error}</p>}
         </div>
       )}
     </div>
