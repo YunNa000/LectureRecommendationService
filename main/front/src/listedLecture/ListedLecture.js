@@ -263,6 +263,12 @@ const ListedLecture = () => {
         gyoYangCredits={gyoYangCredits}
         otherCredits={otherCredits}
       />
+      <ListedLectureTimeTable
+        lectures={getCheckedLectures()}
+        priority={priority}
+        updateLecturePriority={updateLecturePriority}
+        updateLectureInfo={updateLectureInfo}
+      />
       <ListedLectureList
         filteredLectures={filteredLectures}
         updateLecturePriority={updateLecturePriority}
@@ -273,12 +279,6 @@ const ListedLecture = () => {
         totalCredits={totalCredits}
         markLectureAsCompleted={markLectureAsCompleted}
         takenLectures={takenLectures}
-      />
-      <ListedLectureTimeTable
-        lectures={getCheckedLectures()}
-        priority={priority}
-        updateLecturePriority={updateLecturePriority}
-        updateLectureInfo={updateLectureInfo}
       />
     </div>
   );
