@@ -49,6 +49,11 @@
   text-align: center;
   margin: 0;
 }
+.listed-lec-timetable-isLecClose {
+  text-align: center;
+  color: red;
+  font-size: 12px;
+}
 
 .no-time-lectures {
   margin-top: 20px;

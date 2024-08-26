@@ -122,6 +122,13 @@ const ListedLectureTimeTable = ({
                         <p className="lecture-professor">
                           {lecture.lecProfessor}
                         </p>
+                        {lecture.isLecClose === 1 ? (
+                          <>
+                            <p className="listed-lec-timetable-isLecClose">
+                              폐강된 강의
+                            </p>
+                          </>
+                        ) : null}
                         {editingLectureIndex ===
                           `${rowIndex}-${cellIndex}-${index}` && (
                           <div className="edit-lecture">
