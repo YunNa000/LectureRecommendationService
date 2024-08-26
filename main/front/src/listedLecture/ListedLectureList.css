@@ -46,7 +46,7 @@
   margin: 7px 0;
   box-shadow: 0 2px 5px rgb(230, 230, 230);
   background-color: white;
-  padding: 10px 10px 12px 10px;
+  padding: 10px;
 }
 .lsited-lecture-checkNnameNprof {
   display: flex;
@@ -136,4 +136,42 @@
   font-weight: 400;
   margin: 0 5px 0 0;
   color: #333;
+}
+
+.listed-lec-completed-button,
+.listed-lec-remove-bucket,
+.listed-lec-edit-button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  margin: 7px 5px 0 0;
+}
+
+.listed-lec-more-info-button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  margin: 7px 5px 0 0;
+  float: right;
+}
+
+.listed-lec-edit-memo,
+.listed-lec-edit-classroom {
+  width: calc(80%);
+  height: 25px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.listed-lec-edit-memo-text,
+.listed-lec-edit-classroom-text {
+  margin: 0 5px 0 0;
+  font-size: 16px;
+}
+
+.listed-lec-edit-memo-label,
+.listed-lec-edit-classroom-label {
+  display: flex;
+  align-items: center;
 }
