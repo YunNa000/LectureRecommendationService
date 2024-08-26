@@ -98,6 +98,56 @@ const ListedLectureList = ({
     setIsListVisible(!isListVisible);
   };
 
+  const formatLectureTime = (lecTime) => {
+    const dayMapping = {
+      1: "월",
+      2: "화",
+      3: "수",
+      4: "목",
+      5: "금",
+      6: "토",
+      7: "일",
+    };
+
+    const dayPeriods = {};
+
+    lecTime.split(",").forEach((slot) => {
+      const [day, period] = slot.replace(/[()]/g, "").split(":");
+      const dayName = dayMapping[day];
+
+      if (!dayPeriods[dayName]) {
+        dayPeriods[dayName] = [];
+      }
+      dayPeriods[dayName].push(period);
+    });
+
+    const timeSlots = Object.entries(dayPeriods).map(([day, periods]) => {
+      const uniquePeriods = [...new Set(periods)].sort();
+      return `${day}${uniquePeriods.join(",")}`;
+    });
+
+    return timeSlots.join(", ");
+  };
+
+  const renderStarRatingImages = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push("★");
+    }
+    if (halfStar === 1) {
+      stars.push("✮");
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push("☆");
+    }
+
+    return <p className="listed-lec-star">{stars}</p>;
+  };
+
   return (
     <div className="list-view-box">
       {warningMessage}
@@ -105,77 +155,136 @@ const ListedLectureList = ({
         className={`toggle-bar ${isListVisible ? "active" : ""}`}
         onClick={toggleListVisibility}
       >
-        {isListVisible ? "강의 리스트 닫기" : "담은 강의 보기"}
+        {isListVisible ? "▼ 강의 바구니 닫기" : "▲ 강의 바구니 보기"}
       </div>
       {isListVisible && (
         <div className="lecture-list">
-          {filteredLectures.map((lecture, index) => (
-            <div key={index}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={
-                    lecture.priority &&
-                    lecture.priority.split(" ").includes(priority)
-                  }
-                  onChange={() =>
-                    updateLecturePriority(lecture.lecNumber, priority)
-                  }
-                />
-                <span>{lecture.lecName}</span>
-              </label>
-              <small>
-                {lecture.year}년 {lecture.semester}학기
-              </small>
-              <p>
-                {lecture.isLecClose} {lecture.lecNumber} | {lecture.priority} |{" "}
-                {lecture.classroom} | {lecture.memo} | {lecture.lecTime} |{" "}
-                {lecture.lecTheme} | {lecture.lecClassification} |{" "}
-                {lecture.star} | {lecture.assignmentAmount} |{" "}
-                {lecture.teamPlayAmount} | {lecture.gradeAmount} |{" "}
-                {lecture.reviewSummary} | {lecture.lecCredit}
-              </p>
-              {editingLectureIndex === index ? (
+          <div className="lecture-list-inner">
+            {filteredLectures.map((lecture, index) => (
+              <div key={index} className="listed-lecture-box">
+                <div className="lsited-lecture-checkNnameNprof-box">
+                  <label className="lsited-lecture-checkNnameNprof">
+                    <div className="listed-lecture-left">
+                      <input
+                        className=""
+                        type="checkbox"
+                        checked={
+                          lecture.priority &&
+                          lecture.priority.split(" ").includes(priority)
+                        }
+                        onChange={() =>
+                          updateLecturePriority(lecture.lecNumber, priority)
+                        }
+                      />
+                      <p className="listed-lec-lecName">{lecture.lecName}</p>
+                      <p className="listed-lec-lecProfessor">
+                        {lecture.lecProfessor}
+                      </p>
+                    </div>
+                    <div className="listed-lec-right">
+                      <div className="listed-lec-star-box">
+                        {renderStarRatingImages(lecture.star)}
+                      </div>
+                    </div>
+                  </label>
+                </div>
                 <div>
-                  <input
-                    type="text"
-                    value={memo}
-                    onChange={(e) => setMemo(e.target.value)}
-                    placeholder="메모"
-                  />
-                  <input
-                    type="text"
-                    value={classroom}
-                    onChange={(e) => setClassroom(e.target.value)}
-                    placeholder="강의실"
-                  />
-                  <button onClick={() => handleUpdate(lecture)}>저장</button>
-                  {!isLectureCompleted(lecture) ? (
-                    <button onClick={() => handleMarkComplete(lecture)}>
-                      수강 완료 처리
-                    </button>
+                  {lecture.isLecClose === 1 ? (
+                    <>
+                      <p className="listed-lec-isLecClose">폐강되었어요.</p>
+                      <p className="listed-lec-isLecClose-info">
+                        {lecture.lecNumber}는 폐강되었어요. 정정기간까지 다른
+                        강의를 선택해야 해요.
+                      </p>
+                    </>
                   ) : (
-                    <p>수강 완료했어요!</p>
+                    <>
+                      <p className="listed-lec-lecNumber">
+                        {lecture.lecNumber}
+                        {" | "} {formatLectureTime(lecture.lecTime)}
+                      </p>
+                      <div className="listed-lec-info-second">
+                        <p className="listed-lec-lecClassification">
+                          {lecture.lecClassification}
+                        </p>
+
+                        {lecture.lecTheme && lecture.lecTheme.trim() !== "" && (
+                          <p className="listed-lec-lecTheme">
+                            ({lecture.lecTheme})
+                          </p>
+                        )}
+                        <p className="listed-lec-lecCredit">
+                          {lecture.lecCredit}학점
+                        </p>
+                      </div>
+                      {!isLectureCompleted(lecture) &&
+                        editingLectureIndex !== index && (
+                          <div className="listed-lec-more-info">
+                            {lecture.classroom &&
+                              lecture.classroom.trim() !== "" && (
+                                <p className="listed-lec-classroom">
+                                  {lecture.classroom.length > 10
+                                    ? `${lecture.classroom.slice(0, 10)}...`
+                                    : lecture.classroom}
+                                </p>
+                              )}
+
+                            {lecture.memo && lecture.memo.trim() !== "" && (
+                              <p className="listed-lec-memo">
+                                {lecture.memo.length > 20
+                                  ? `${lecture.memo.slice(0, 20)}...`
+                                  : lecture.memo}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                    </>
                   )}
                 </div>
-              ) : (
-                <button onClick={() => handleEditClick(lecture, index)}>
-                  수정
-                </button>
-              )}
-              <button
-                onClick={() =>
-                  handleUnselect(
-                    lecture.lecNumber,
-                    lecture.year,
-                    lecture.semester
-                  )
-                }
-              >
-                unselect
-              </button>
-            </div>
-          ))}
+                {editingLectureIndex === index ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={memo}
+                      onChange={(e) => setMemo(e.target.value)}
+                      placeholder="메모"
+                    />
+                    <input
+                      type="text"
+                      value={classroom}
+                      onChange={(e) => setClassroom(e.target.value)}
+                      placeholder="강의실"
+                    />
+                    <button onClick={() => handleUpdate(lecture)}>저장</button>
+                    <button
+                      onClick={() =>
+                        handleUnselect(
+                          lecture.lecNumber,
+                          lecture.year,
+                          lecture.semester
+                        )
+                      }
+                    >
+                      강의 바구니에서 제외
+                    </button>
+                    {!isLectureCompleted(lecture) ? (
+                      <button onClick={() => handleMarkComplete(lecture)}>
+                        수강 완료 처리
+                      </button>
+                    ) : (
+                      <p>수강 완료했어요!</p>
+                    )}
+                  </div>
+                ) : (
+                  <button onClick={() => handleEditClick(lecture, index)}>
+                    수정
+                  </button>
+                )}
+
+                <button>강의 자세히 보기</button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

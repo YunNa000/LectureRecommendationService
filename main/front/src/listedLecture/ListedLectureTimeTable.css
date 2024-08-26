@@ -5,6 +5,7 @@
 .user-timetable {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 50vh;
 }
 
 .day-header {
@@ -53,6 +54,7 @@
   text-align: center;
   color: red;
   font-size: 12px;
+  margin: 5px 0 3px 0;
 }
 
 .no-time-lectures {

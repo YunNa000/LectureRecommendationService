@@ -122,6 +122,7 @@ const ListedLectureTimeTable = ({
                         <p className="lecture-professor">
                           {lecture.lecProfessor}
                         </p>
+                        <p className="lecture-professor">{lecture.classroom}</p>
                         {lecture.isLecClose === 1 ? (
                           <>
                             <p className="listed-lec-timetable-isLecClose">

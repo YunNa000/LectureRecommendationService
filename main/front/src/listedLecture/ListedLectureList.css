@@ -10,7 +10,7 @@
   color: #333;
   background-color: white;
   padding: 10px;
-  height: 30px;
+  height: 20px;
   text-align: center;
   cursor: pointer;
   z-index: 1000;
@@ -21,14 +21,119 @@
 
 .lecture-list {
   position: fixed;
-  bottom: 50px;
+  bottom: 40px;
   left: 0;
   right: 0;
-  max-height: calc(50vh - 30px);
-  overflow-y: auto;
+  max-height: calc(50vh);
   background-color: #fafafa;
-  padding: 10px;
+  border-radius: 7px 7px 0 0;
   z-index: 999;
   transition: transform 0.3s ease;
+  padding: 5px 0 0 0;
   width: 100%;
+}
+
+.lecture-list-inner {
+  max-height: calc(50vh);
+  overflow-y: auto;
+  padding: 3px 0 0 0;
+  margin: 0 5px;
+  border-radius: 5px;
+}
+
+.listed-lecture-box {
+  border-radius: 8px;
+  margin: 7px 0;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  background-color: white;
+  padding: 10px 10px 12px 10px;
+}
+.lsited-lecture-checkNnameNprof {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lsited-lecture-checkNnameNprof input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+}
+
+.listed-lec-lecName {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 5px 0 0;
+}
+
+.listed-lec-lecProfessor {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0;
+  color: #777;
+  margin-right: 5px;
+}
+
+.listed-lec-isLecClose {
+  color: red;
+  margin: 12px 0 7px 0;
+}
+
+.listed-lec-isLecClose-info {
+  margin: 7px 0 15px 0;
+  columns: #333;
+  font-size: 14px;
+}
+
+.listed-lec-memo {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0;
+  color: #777;
+}
+
+.listed-lec-lecNumber {
+  margin: 7px 0 5px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.listed-lec-star {
+  margin: 0;
+  font-size: 14px;
+}
+
+.listed-lecture-left {
+  display: flex;
+}
+.listed-lec-info-second {
+  display: flex;
+  margin: 0 0 5px 0;
+}
+
+.listed-lec-lecClassification {
+  font-size: 14px;
+  color: #333;
+  margin: 0 5px 0 0;
+}
+
+.listed-lec-lecTheme {
+  margin: 0 5px 0 0;
+  font-size: 14px;
+  color: #333;
+}
+.listed-lec-lecCredit {
+  margin: 0 0 0 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.listed-lec-more-info {
+  display: flex;
+}
+
+.listed-lec-classroom {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0 5px 0 0;
+  color: #333;
 }
