@@ -175,3 +175,16 @@
   display: flex;
   align-items: center;
 }
+
+.show-buttons {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+  opacity: 0;
+}
+
+.show-buttons.expanded {
+  max-height: 100px;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+  opacity: 1;
+}

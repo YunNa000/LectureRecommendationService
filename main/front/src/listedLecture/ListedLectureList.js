@@ -16,6 +16,9 @@ const ListedLectureList = ({
   const [memo, setMemo] = useState("");
   const [classroom, setClassroom] = useState("");
   const [isListVisible, setIsListVisible] = useState(false);
+  const [showButtons, setShowButtons] = useState(
+    Array(filteredLectures.length).fill(false)
+  );
 
   if (filteredLectures.length === 0) {
     return <p>강의를 추가해주세요.</p>;
@@ -148,6 +151,12 @@ const ListedLectureList = ({
     return <p className="listed-lec-star">{stars}</p>;
   };
 
+  const handleShowButtons = (index) => {
+    const updatedShowButtons = [...showButtons];
+    updatedShowButtons[index] = !updatedShowButtons[index];
+    setShowButtons(updatedShowButtons);
+  };
+
   return (
     <div className="list-view-box">
       {warningMessage}
@@ -161,12 +170,15 @@ const ListedLectureList = ({
         <div className="lecture-list">
           <div className="lecture-list-inner">
             {filteredLectures.map((lecture, index) => (
-              <div key={index} className="listed-lecture-box">
+              <div
+                key={index}
+                className="listed-lecture-box"
+                onClick={() => handleShowButtons(index)}
+              >
                 <div className="lsited-lecture-checkNnameNprof-box">
                   <label className="lsited-lecture-checkNnameNprof">
                     <div className="listed-lecture-left">
                       <input
-                        className=""
                         type="checkbox"
                         checked={
                           lecture.priority &&
@@ -251,82 +263,90 @@ const ListedLectureList = ({
                             )}
                           </div>
                         )}
-
-                      {editingLectureIndex === index ? (
-                        <div>
-                          <label className="listed-lec-edit-classroom-label">
-                            <p className="listed-lec-edit-classroom-text">
-                              강의실:
-                            </p>
-                            <input
-                              className="listed-lec-edit-classroom"
-                              type="text"
-                              value={classroom}
-                              onChange={(e) => setClassroom(e.target.value)}
-                              placeholder="강의실"
-                            />
-                          </label>
-                          <label className="listed-lec-edit-memo-label">
-                            <p className="listed-lec-edit-memo-text">메모:</p>
-                            <input
-                              className="listed-lec-edit-memo"
-                              type="text"
-                              value={memo}
-                              onChange={(e) => setMemo(e.target.value)}
-                              placeholder="메모"
-                            />
-                          </label>
-                          <button
-                            className="listed-lec-edit-button"
-                            onClick={() => handleUpdate(lecture)}
-                          >
-                            저장
-                          </button>
-
-                          <button
-                            className="listed-lec-remove-bucket"
-                            onClick={() =>
-                              handleUnselect(
-                                lecture.lecNumber,
-                                lecture.year,
-                                lecture.semester
-                              )
-                            }
-                          >
-                            강의 바구니에서 빼기
-                          </button>
-                          {!isLectureCompleted(lecture) ? (
+                      <div
+                        className={`show-buttons ${
+                          showButtons[index] ? "expanded" : ""
+                        }`}
+                      >
+                        {showButtons[index] && editingLectureIndex !== index ? (
+                          <div>
                             <button
-                              className="listed-lec-completed-button"
-                              onClick={() => {
-                                const isConfirmed = window.confirm(
-                                  "해당 강의를 수강 완료하셨나요? 수강 완료 취소는 mypage에서 가능해요."
-                                );
-                                if (isConfirmed) {
-                                  handleMarkComplete(lecture);
-                                }
-                              }}
+                              className="listed-lec-edit-button"
+                              onClick={() => handleEditClick(lecture, index)}
                             >
-                              수강 완료 처리
+                              수정
                             </button>
-                          ) : (
-                            <p>수강 완료했어요!</p>
-                          )}
-                        </div>
-                      ) : (
-                        <>
-                          <button
-                            className="listed-lec-edit-button"
-                            onClick={() => handleEditClick(lecture, index)}
-                          >
-                            수정
-                          </button>
-                          <button className="listed-lec-more-info-button">
-                            강의 자세히 보기
-                          </button>
-                        </>
-                      )}
-                      {/* 이미 선정한 강의들 중 시간 괜찮은 강의를 고르는 것이기 때문에 굳이 해당 화면에서 강의 요약이나 그런 거 보여줄 필요가 없다고 판단했어요. */}
+                            <button className="listed-lec-more-info-button">
+                              강의 자세히 보기
+                            </button>
+                          </div>
+                        ) : (
+                          editingLectureIndex === index && (
+                            <div>
+                              <label className="listed-lec-edit-classroom-label">
+                                <p className="listed-lec-edit-classroom-text">
+                                  강의실:
+                                </p>
+                                <input
+                                  className="listed-lec-edit-classroom"
+                                  type="text"
+                                  value={classroom}
+                                  onChange={(e) => setClassroom(e.target.value)}
+                                  placeholder="강의실"
+                                />
+                              </label>
+                              <label className="listed-lec-edit-memo-label">
+                                <p className="listed-lec-edit-memo-text">
+                                  메모:
+                                </p>
+                                <input
+                                  className="listed-lec-edit-memo"
+                                  type="text"
+                                  value={memo}
+                                  onChange={(e) => setMemo(e.target.value)}
+                                  placeholder="메모"
+                                />
+                              </label>
+                              <button
+                                className="listed-lec-edit-button"
+                                onClick={() => handleUpdate(lecture)}
+                              >
+                                저장
+                              </button>
+
+                              <button
+                                className="listed-lec-remove-bucket"
+                                onClick={() =>
+                                  handleUnselect(
+                                    lecture.lecNumber,
+                                    lecture.year,
+                                    lecture.semester
+                                  )
+                                }
+                              >
+                                강의 바구니에서 빼기
+                              </button>
+                              {!isLectureCompleted(lecture) ? (
+                                <button
+                                  className="listed-lec-completed-button"
+                                  onClick={() => {
+                                    const isConfirmed = window.confirm(
+                                      "해당 강의를 수강 완료하셨나요? 수강 완료 취소는 mypage에서 가능해요."
+                                    );
+                                    if (isConfirmed) {
+                                      handleMarkComplete(lecture);
+                                    }
+                                  }}
+                                >
+                                  수강 완료 처리
+                                </button>
+                              ) : (
+                                <p>수강 완료했어요!</p>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
                     </>
                   )}
                 </div>
