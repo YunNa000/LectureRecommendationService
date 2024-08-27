@@ -6,6 +6,7 @@ import ListedLectureFilter from "./ListedLectureFilter";
 import AddListedLectureManaully from "./AddListedLectureManually";
 import ListedLectureTimeTable from "./ListedLectureTimeTable";
 import ShowCheckedLectureCredit from "./ShowCheckedLectureCredit";
+import "./ListedLecture.css";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -75,6 +76,7 @@ const ListedLecture = () => {
         { user_id: userID }
       );
       setLectures(response.data);
+      console.log(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -245,20 +247,29 @@ const ListedLecture = () => {
 
   return (
     <div>
-      <ListedLectureFilter
-        year={year}
-        setYear={setYear}
-        semester={semester}
-        setSemester={setSemester}
+      <div className="lecturefilterNshowCreditBorder">
+        <ListedLectureFilter
+          year={year}
+          setYear={setYear}
+          semester={semester}
+          setSemester={setSemester}
+          priority={priority}
+          setPriority={setPriority}
+          user={user}
+          fetchLectures={fetchLectures}
+        />
+        <ShowCheckedLectureCredit
+          totalCredits={totalCredits}
+          majorCredits={majorCredits}
+          gyoYangCredits={gyoYangCredits}
+          otherCredits={otherCredits}
+        />
+      </div>
+      <ListedLectureTimeTable
+        lectures={getCheckedLectures()}
         priority={priority}
-        setPriority={setPriority}
-      />
-      <AddListedLectureManaully user={user} fetchLectures={fetchLectures} />
-      <ShowCheckedLectureCredit
-        totalCredits={totalCredits}
-        majorCredits={majorCredits}
-        gyoYangCredits={gyoYangCredits}
-        otherCredits={otherCredits}
+        updateLecturePriority={updateLecturePriority}
+        updateLectureInfo={updateLectureInfo}
       />
       <ListedLectureList
         filteredLectures={filteredLectures}
@@ -270,12 +281,6 @@ const ListedLecture = () => {
         totalCredits={totalCredits}
         markLectureAsCompleted={markLectureAsCompleted}
         takenLectures={takenLectures}
-      />
-      <ListedLectureTimeTable
-        lectures={getCheckedLectures()}
-        priority={priority}
-        updateLecturePriority={updateLecturePriority}
-        updateLectureInfo={updateLectureInfo}
       />
     </div>
   );
