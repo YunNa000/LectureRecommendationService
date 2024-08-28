@@ -173,7 +173,15 @@ const ListedLectureList = ({
               <div
                 key={index}
                 className="listed-lecture-box"
-                onClick={() => handleShowButtons(index)}
+                onClick={(event) => {
+                  if (
+                    !event.target.closest("button") &&
+                    !event.target.closest("input") &&
+                    !event.target.closest("label")
+                  ) {
+                    handleShowButtons(index);
+                  }
+                }}
               >
                 <div className="lsited-lecture-checkNnameNprof-box">
                   <label className="lsited-lecture-checkNnameNprof">
