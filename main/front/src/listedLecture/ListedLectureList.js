@@ -233,9 +233,18 @@ const ListedLectureList = ({
                   ) : (
                     <>
                       <p className="listed-lec-lecNumber">
-                        {lecture.lecNumber}
-                        {" | "} {formatLectureTime(lecture.lecTime)}
+                        {lecture.lecNumber &&
+                        !lecture.lecNumber.startsWith("user") &&
+                        lecture.lecTime !== undefined ? (
+                          <>{lecture.lecNumber}</>
+                        ) : null}
+                        {lecture.lecTime &&
+                        !lecture.lecTime !== "undefined" &&
+                        lecture.lecTime !== undefined ? (
+                          <>{formatLectureTime(lecture.lecTime)}</>
+                        ) : null}
                       </p>
+
                       <div className="listed-lec-info-second">
                         <p className="listed-lec-lecClassification">
                           {lecture.lecClassification}
