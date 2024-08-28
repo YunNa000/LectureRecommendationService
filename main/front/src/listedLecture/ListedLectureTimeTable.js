@@ -93,6 +93,32 @@ const ListedLectureTimeTable = ({
 
   return (
     <div className="timetable-box">
+      {noTimeLectures.length > 0 && (
+        <div className="no-time-lecture-box">
+          {noTimeLectures.map((lecture, index) => (
+            <div key={index} className="no-time-lecture">
+              <p className="no-time-lecture-lecName">{lecture.lecName}</p>
+              <p className="no-time-lecture-lecProfessor">
+                {lecture.lecProfessor}
+              </p>
+              {lecture.classroom && lecture.classroom.trim() !== "" && (
+                <p className="no-time-lecture-classroom">
+                  {lecture.classroom.length > 8
+                    ? `${lecture.classroom.slice(0, 8)}...`
+                    : lecture.classroom}
+                </p>
+              )}
+              {lecture.memo && lecture.memo.trim() !== "" && (
+                <p className="no-time-lecture-memo">
+                  {lecture.memo.length > 10
+                    ? `${lecture.memo.slice(0, 10)}...`
+                    : lecture.memo}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
       <table className="user-timetable">
         <thead>
           <tr>
@@ -122,7 +148,14 @@ const ListedLectureTimeTable = ({
                         <p className="lecture-professor">
                           {lecture.lecProfessor}
                         </p>
-                        <p className="lecture-professor">{lecture.classroom}</p>
+                        {lecture.classroom &&
+                          lecture.classroom.trim() !== "" && (
+                            <p className="lecture-professor">
+                              {lecture.classroom.length > 8
+                                ? `${lecture.classroom.slice(0, 8)}...`
+                                : lecture.classroom}
+                            </p>
+                          )}
                         {lecture.isLecClose === 1 ? (
                           <>
                             <p className="listed-lec-timetable-isLecClose">
@@ -183,15 +216,6 @@ const ListedLectureTimeTable = ({
           ))}
         </tbody>
       </table>
-      {noTimeLectures.length > 0 && (
-        <div className="no-time-lectures">
-          {noTimeLectures.map((lecture, index) => (
-            <p key={index} className="no-time-lecture-item">
-              {lecture.lecName} | {lecture.lecProfessor}
-            </p>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

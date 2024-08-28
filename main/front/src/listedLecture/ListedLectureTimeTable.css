@@ -1,11 +1,10 @@
 .timetable-box {
-  margin: 10px;
+  margin: 10px 0 55vh 0;
 }
 
 .user-timetable {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 50vh;
 }
 
 .day-header {
@@ -57,12 +56,40 @@
   margin: 5px 0 3px 0;
 }
 
-.no-time-lectures {
-  margin-top: 20px;
+.no-time-lecture-box {
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  padding: 10px 10px 5px 10px;
 }
 
-.no-time-lecture-item {
-  color: #d9534f;
+.no-time-lecture {
+  font-size: 14px;
+  display: flex;
+  margin: 0 0 5px 0;
+}
+
+.no-time-lecture-lecName {
+  color: #333;
+  margin: 0 5px 0 0;
+  font-weight: bold;
+}
+
+.no-time-lecture-lecProfessor {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
+}
+
+.no-time-lecture-classroom {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
+}
+
+.no-time-lecture-memo {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
 }
 
 .edit-lecture {
