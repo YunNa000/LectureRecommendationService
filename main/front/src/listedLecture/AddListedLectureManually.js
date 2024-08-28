@@ -9,7 +9,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
   const [memo, setMemo] = useState("");
   const [lecName, setLecName] = useState("");
   const [lecTime, setLecTime] = useState("");
-  const [lecCredit, setLecCredit] = useState("");
+  const [lecCredit, setLecCredit] = useState(0);
   const [lecClassification, setLecClassification] = useState("");
   const [day, setDay] = useState("");
   const [startPeriod, setStartPeriod] = useState("");
@@ -32,9 +32,9 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
 
   const calculateLectime = (day, startPeriod, endPeriod) => {
     if (
-      day !== null &&
-      startPeriod !== null &&
-      endPeriod !== null &&
+      day !== "" &&
+      startPeriod !== "" &&
+      endPeriod !== "" &&
       startPeriod <= endPeriod
     ) {
       const lecTimes = [];
@@ -158,7 +158,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
                   value={lecCredit}
                   onChange={(e) => setLecCredit(e.target.value)}
                 >
-                  <option value={null}>없음</option>
+                  <option value={0}>없음</option>
                   <option value={1}>1학점</option>
                   <option value={2}>2학점</option>
                   <option value={3}>3학점</option>
@@ -175,7 +175,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
                   value={lecClassification}
                   onChange={(e) => setLecClassification(e.target.value)}
                 >
-                  <option value={null}>없음</option>
+                  <option value="">없음</option>
                   <option value="전선">전공</option>
                   <option value="교선">교양</option>
                   <option value="일선">일반</option>
@@ -193,7 +193,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
                 value={day}
                 onChange={(e) => setDay(e.target.value)}
               >
-                <option value={null}>없음</option>
+                <option value="">없음</option>
                 <option value={1}>월요일</option>
                 <option value={2}>화요일</option>
                 <option value={3}>수요일</option>
@@ -209,7 +209,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
                   value={startPeriod}
                   onChange={(e) => setStartPeriod(e.target.value)}
                 >
-                  <option value={null}>없음</option>
+                  <option value="">없음</option>
                   <option value={1}>1교시</option>
                   <option value={2}>2교시</option>
                   <option value={3}>3교시</option>
@@ -227,7 +227,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
                   value={endPeriod}
                   onChange={(e) => setEndPeriod(e.target.value)}
                 >
-                  <option value={null}>없음</option>
+                  <option value="">없음</option>
                   <option value={1}>1교시</option>
                   <option value={2}>2교시</option>
                   <option value={3}>3교시</option>
