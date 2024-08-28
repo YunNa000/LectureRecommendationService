@@ -17,7 +17,7 @@ async def get_lectures(request: LectureSelect):
     get_semester = request.semester
 
     cursor.execute(
-        "SELECT year, semester, lecNumber, lecName, lecTime, lecClassroom FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
+        "SELECT year, semester, lecNumber, lecName, lecTime, lecClassroom, isLecClose FROM LectureList WHERE year = ? AND semester = ? AND lecNumber = ?",
         (get_year, get_semester, get_lecNumber)
     )
     lecture = cursor.fetchone()
@@ -25,15 +25,16 @@ async def get_lectures(request: LectureSelect):
     if not lecture:
         raise HTTPException(status_code=434, detail="if not lecture")
 
-    year, semester, lecNumber, lecName, lecTime, lecClassroom = lecture
+    year, semester, lecNumber, lecName, lecTime, lecClassroom, isLecClose = lecture
 
     try:
         cursor.execute(
             """
-            INSERT INTO UserListedLecture (user_id, year, semester, lecNumber, lecName, lecTime, classroom)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO UserListedLecture (user_id, year, semester, lecNumber, lecName, lecTime, classroom, isLecClose)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (user_info, year, semester, lecNumber, lecName, lecTime, lecClassroom)
+            (user_info, year, semester, lecNumber,
+             lecName, lecTime, lecClassroom, isLecClose)
         )
         conn.commit()
     except Exception as e:

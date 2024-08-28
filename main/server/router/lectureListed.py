@@ -14,13 +14,13 @@ async def user_listed_lecture(request: userID):
     cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT year, semester, lecNumber, priority, classroom, memo, lecName, lecTime FROM UserListedLecture WHERE user_id = ?", (request.user_id,))
+        "SELECT year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose, lecClassification, lecCredit FROM UserListedLecture WHERE user_id = ?", (request.user_id,))
     user_lectures = cursor.fetchall()
 
     results = []
 
     for lecture in user_lectures:
-        year, semester, lecNumber, priority, classroom, memo, lecName, lecTime = lecture
+        year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose, lecClassification, lecCredit = lecture
 
         if lecNumber.startswith("user"):
             results.append({
@@ -40,6 +40,8 @@ async def user_listed_lecture(request: userID):
                 "teamPlayAmount": "",
                 "gradeAmount": "",
                 "reviewSummary": "",
+                "lecClassification": lecClassification,
+                "lecCredit": lecCredit
             })
         else:
             cursor.execute(
@@ -57,6 +59,13 @@ async def user_listed_lecture(request: userID):
 
                 if everytime_data:
                     star, assignmentAmount, teamPlayAmount, gradeAmount, reviewSummary = everytime_data
+
+                    cursor.execute(
+                        "UPDATE UserListedLecture SET lecCredit = ?, lecClassification = ? WHERE user_id = ? AND year = ? AND semester = ? AND lecNumber = ?",
+                        (lecCredit, lecClassification,
+                         request.user_id, year, semester, lecNumber)
+                    )
+                    conn.commit()
 
                     results.append({
                         "year": year,
@@ -76,6 +85,7 @@ async def user_listed_lecture(request: userID):
                         "gradeAmount": gradeAmount,
                         "reviewSummary": reviewSummary,
                         "lecProfessor": lecProfessor,
+                        "isLecClose": isLecClose,
                     })
 
     conn.close()
@@ -152,8 +162,8 @@ async def add_user_listed_lecture_manually(request: ManuallyAddListedLecture):
     lecNumber = f"user-{request.year}-{request.semester}-{random_string}"
 
     insert_query = """
-    INSERT INTO UserListedLecture (user_id, year, semester, priority, classroom, memo, lecName, lecTime, lecNumber)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO UserListedLecture (user_id, year, semester, priority, classroom, memo, lecName, lecTime, lecNumber, lecClassification, lecCredit)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     try:
@@ -166,7 +176,9 @@ async def add_user_listed_lecture_manually(request: ManuallyAddListedLecture):
             request.memo,
             request.lecName,
             request.lecTime,
-            lecNumber
+            lecNumber,
+            request.lecClassification,
+            request.lecCredit,
         ))
         conn.commit()
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import ListedLectureList from "./ListedLectureList";
@@ -6,6 +6,7 @@ import ListedLectureFilter from "./ListedLectureFilter";
 import AddListedLectureManaully from "./AddListedLectureManually";
 import ListedLectureTimeTable from "./ListedLectureTimeTable";
 import ShowCheckedLectureCredit from "./ShowCheckedLectureCredit";
+import "./ListedLecture.css";
 
 const ListedLecture = () => {
   const [user, setUser] = useState(null);
@@ -23,7 +24,7 @@ const ListedLecture = () => {
   const [otherCredits, setOtherCredits] = useState(0);
   const [takenLectures, setTakenLectures] = useState(null);
 
-  const checkLoginStatus = async () => {
+  const checkLoginStatus = useCallback(async () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
@@ -48,7 +49,11 @@ const ListedLecture = () => {
       console.log("ListedLecture.js - checkLogin");
       console.error(err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
 
   const fetchYearAndSemester = async () => {
     try {
@@ -71,6 +76,7 @@ const ListedLecture = () => {
         { user_id: userID }
       );
       setLectures(response.data);
+      console.log(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -78,16 +84,16 @@ const ListedLecture = () => {
     }
   };
 
-  const filterLectures = () => {
+  const filterLectures = useCallback(() => {
     const filtered = lectures.filter((lecture) => {
       return lecture.year === year && lecture.semester === semester;
     });
     setFilteredLectures(filtered);
-  };
+  }, [year, semester, lectures]);
 
   const updateLecturePriority = async (lecNumber, newPriority) => {
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/update_listed_lecture_priority",
         {
           user_id: user,
@@ -103,24 +109,24 @@ const ListedLecture = () => {
     }
   };
 
-  const getCheckedLectures = () => {
+  const getCheckedLectures = useCallback(() => {
     return lectures.filter(
       (lecture) =>
-        lecture.priority && lecture.priority.split(" ").includes(priority)
+        lecture.priority &&
+        lecture.priority.split(" ").includes(priority) &&
+        lecture.year === year &&
+        lecture.semester === semester
     );
-  };
+  }, [lectures, priority, year, semester]);
 
   const unselectLecture = async (lecNumber, year, semester) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/lecture_unselect",
-        {
-          user_id: user,
-          lecNumber: lecNumber,
-          year: year,
-          semester: semester,
-        }
-      );
+      await axios.post("http://localhost:8000/lecture_unselect", {
+        user_id: user,
+        lecNumber: lecNumber,
+        year: year,
+        semester: semester,
+      });
       fetchLectures(user);
     } catch (error) {
       console.error("err unlist lecture", error);
@@ -130,7 +136,7 @@ const ListedLecture = () => {
   const updateLectureInfo = async (lectureData) => {
     try {
       lectureData.user_id = user;
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/update_user_listed_lecture_info",
         lectureData
       );
@@ -171,7 +177,7 @@ const ListedLecture = () => {
   const markLectureAsCompleted = async (lectureData) => {
     try {
       lectureData.user_id = user;
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/user/add_taken_lecture_auto",
         lectureData
       );
@@ -223,11 +229,7 @@ const ListedLecture = () => {
     setMajorCredits(major);
     setGyoYangCredits(gyoYang);
     setOtherCredits(other);
-  }, [filteredLectures, priority]);
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
+  }, [filteredLectures, year, semester, priority, getCheckedLectures]);
 
   useEffect(() => {
     if (user) {
@@ -238,27 +240,36 @@ const ListedLecture = () => {
 
   useEffect(() => {
     filterLectures();
-  }, [year, semester, lectures]);
+  }, [year, semester, lectures, filterLectures]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
 
   return (
     <div>
-      <ListedLectureFilter
-        year={year}
-        setYear={setYear}
-        semester={semester}
-        setSemester={setSemester}
+      <div className="lecturefilterNshowCreditBorder">
+        <ListedLectureFilter
+          year={year}
+          setYear={setYear}
+          semester={semester}
+          setSemester={setSemester}
+          priority={priority}
+          setPriority={setPriority}
+          user={user}
+          fetchLectures={fetchLectures}
+        />
+        <ShowCheckedLectureCredit
+          totalCredits={totalCredits}
+          majorCredits={majorCredits}
+          gyoYangCredits={gyoYangCredits}
+          otherCredits={otherCredits}
+        />
+      </div>
+      <ListedLectureTimeTable
+        lectures={getCheckedLectures()}
         priority={priority}
-        setPriority={setPriority}
-      />
-      <AddListedLectureManaully user={user} fetchLectures={fetchLectures} />
-      <ShowCheckedLectureCredit
-        totalCredits={totalCredits}
-        majorCredits={majorCredits}
-        gyoYangCredits={gyoYangCredits}
-        otherCredits={otherCredits}
+        updateLecturePriority={updateLecturePriority}
+        updateLectureInfo={updateLectureInfo}
       />
       <ListedLectureList
         filteredLectures={filteredLectures}
@@ -270,12 +281,6 @@ const ListedLecture = () => {
         totalCredits={totalCredits}
         markLectureAsCompleted={markLectureAsCompleted}
         takenLectures={takenLectures}
-      />
-      <ListedLectureTimeTable
-        lectures={getCheckedLectures()}
-        priority={priority}
-        updateLecturePriority={updateLecturePriority}
-        updateLectureInfo={updateLectureInfo}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import "./ShowCheckedLectureCredit.css";
 
 const ShowCheckedLectureCredit = ({
   totalCredits,
@@ -7,7 +8,7 @@ const ShowCheckedLectureCredit = ({
   otherCredits,
 }) => {
   return (
-    <div>
+    <div className="showCheckedLectureCredit">
       <p>전체: {totalCredits}</p>
       <p>전공: {majorCredits}</p>
       <p>교양: {gyoYangCredits}</p>

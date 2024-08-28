@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./ListedLectureTimeTable.css";
 
 const ListedLectureTimeTable = ({
   lectures,
@@ -8,7 +9,6 @@ const ListedLectureTimeTable = ({
 }) => {
   let maxDay = 0;
   let maxHour = 0;
-  let hasZeroHour = false;
 
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -21,15 +21,11 @@ const ListedLectureTimeTable = ({
         const [day, hour] = time.replace(/[()]/g, "").split(":").map(Number);
         if (day > maxDay) maxDay = day;
         if (hour > maxHour) maxHour = hour;
-
-        if (hour === 0) {
-          hasZeroHour = true;
-        }
       });
     }
   });
 
-  maxHour = Math.max(maxHour, 6);
+  maxHour = Math.max(maxHour + 1, 6);
 
   const handleEditClick = (lecture, rowIndex, cellIndex, index) => {
     setEditingLectureIndex(`${rowIndex}-${cellIndex}-${index}`);
@@ -49,7 +45,7 @@ const ListedLectureTimeTable = ({
     setEditingLectureIndex(null);
   };
 
-  const daysOfWeek = ["시간/요일", "월", "화", "수", "목", "금"];
+  const daysOfWeek = ["", "월", "화", "수", "목", "금"];
   const hasSaturday = lectures.some((lecture) => {
     const times = lecture.lecTime ? lecture.lecTime.split(",") : [];
     return times.some((time) => {
@@ -73,12 +69,10 @@ const ListedLectureTimeTable = ({
     daysOfWeek.push("일");
   }
 
-  const timetable = Array.from(
-    { length: hasZeroHour ? maxHour + 1 : maxHour },
-    () =>
-      Array(daysOfWeek.length - 1)
-        .fill(null)
-        .map(() => [])
+  const timetable = Array.from({ length: maxHour }, () =>
+    Array(daysOfWeek.length - 1)
+      .fill(null)
+      .map(() => [])
   );
 
   const noTimeLectures = [];
@@ -98,36 +92,81 @@ const ListedLectureTimeTable = ({
   });
 
   return (
-    <div>
-      <table>
+    <div className="timetable-box">
+      {noTimeLectures.length > 0 && (
+        <div className="no-time-lecture-box">
+          {noTimeLectures.map((lecture, index) => (
+            <div key={index} className="no-time-lecture">
+              <p className="no-time-lecture-lecName">{lecture.lecName}</p>
+              <p className="no-time-lecture-lecProfessor">
+                {lecture.lecProfessor}
+              </p>
+              {lecture.classroom && lecture.classroom.trim() !== "" && (
+                <p className="no-time-lecture-classroom">
+                  {lecture.classroom.length > 8
+                    ? `${lecture.classroom.slice(0, 8)}...`
+                    : lecture.classroom}
+                </p>
+              )}
+              {lecture.memo && lecture.memo.trim() !== "" && (
+                <p className="no-time-lecture-memo">
+                  {lecture.memo.length > 10
+                    ? `${lecture.memo.slice(0, 10)}...`
+                    : lecture.memo}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      <table className="user-timetable">
         <thead>
           <tr>
             {daysOfWeek.map((day, index) => (
-              <th key={index}>{day}</th>
+              <th key={index} className="day-header">
+                {day}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {hasZeroHour && (
-            <tr>
-              <td>0교시</td>
-              {Array(maxDay)
-                .fill(null)
-                .map((_, cellIndex) => (
-                  <td key={cellIndex}>
-                    {timetable[0][cellIndex].length > 0 ? (
-                      timetable[0][cellIndex].map((lecture, index) => (
-                        <div
-                          key={index}
-                          onClick={() =>
-                            handleEditClick(lecture, 0, cellIndex, index)
-                          }
-                        >
-                          <p>{lecture.lecName}</p>
-                          <p>{lecture.lecProfessor}</p>
-                          {editingLectureIndex ===
-                            `0-${cellIndex}-${index}` && (
-                            <div>
+          {timetable.map((row, rowIndex) => (
+            <tr key={rowIndex} className="timetable-row">
+              <td className="period-cell">{rowIndex}</td>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} className="lecture-cell">
+                  {cell.length > 0 ? (
+                    cell.map((lecture, index) => (
+                      <div
+                        key={index}
+                        className="lecture-item"
+                        onClick={() =>
+                          handleEditClick(lecture, rowIndex, cellIndex, index)
+                        }
+                      >
+                        <p className="lecture-name">{lecture.lecName}</p>
+                        <p className="lecture-professor">
+                          {lecture.lecProfessor}
+                        </p>
+                        {lecture.classroom &&
+                          lecture.classroom.trim() !== "" && (
+                            <p className="lecture-professor">
+                              {lecture.classroom.length > 8
+                                ? `${lecture.classroom.slice(0, 8)}...`
+                                : lecture.classroom}
+                            </p>
+                          )}
+                        {lecture.isLecClose === 1 ? (
+                          <>
+                            <p className="listed-lec-timetable-isLecClose">
+                              폐강된 강의
+                            </p>
+                          </>
+                        ) : null}
+                        {editingLectureIndex ===
+                          `${rowIndex}-${cellIndex}-${index}` && (
+                          <div className="edit-lecture">
+                            <label className="edit-lecture-unckeck">
                               <input
                                 type="checkbox"
                                 checked={
@@ -141,83 +180,27 @@ const ListedLectureTimeTable = ({
                                   )
                                 }
                               />
-                              <input
-                                type="text"
-                                value={memo}
-                                onChange={(e) => setMemo(e.target.value)}
-                                placeholder="메모"
-                              />
-                              <input
-                                type="text"
-                                value={classroom}
-                                onChange={(e) => setClassroom(e.target.value)}
-                                placeholder="강의실"
-                              />
-                              <button onClick={() => handleUpdate(lecture)}>
-                                완료
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div></div>
-                    )}
-                  </td>
-                ))}
-            </tr>
-          )}
-          {timetable.slice(hasZeroHour ? 1 : 0).map((row, rowIndex) => (
-            <tr key={rowIndex + (hasZeroHour ? 1 : 0)}>
-              <td>{rowIndex + (hasZeroHour ? 1 : 0)}교시</td>
-              {row.map((cell, cellIndex) => (
-                <td key={cellIndex}>
-                  {cell.length > 0 ? (
-                    cell.map((lecture, index) => (
-                      <div
-                        key={index}
-                        onClick={() =>
-                          handleEditClick(
-                            lecture,
-                            rowIndex + (hasZeroHour ? 1 : 0),
-                            cellIndex,
-                            index
-                          )
-                        }
-                      >
-                        <p>{lecture.lecName}</p>
-                        <p>{lecture.lecProfessor}</p>
-                        {editingLectureIndex ===
-                          `${
-                            rowIndex + (hasZeroHour ? 1 : 0)
-                          }-${cellIndex}-${index}` && (
-                          <div>
-                            <input
-                              type="checkbox"
-                              checked={
-                                lecture.priority &&
-                                lecture.priority.split(" ").includes(priority)
-                              }
-                              onChange={() =>
-                                updateLecturePriority(
-                                  lecture.lecNumber,
-                                  priority
-                                )
-                              }
-                            />
+                              체크해제
+                            </label>
+
                             <input
                               type="text"
                               value={memo}
                               onChange={(e) => setMemo(e.target.value)}
                               placeholder="메모"
+                              className="input-memo"
                             />
                             <input
                               type="text"
                               value={classroom}
                               onChange={(e) => setClassroom(e.target.value)}
                               placeholder="강의실"
+                              className="input-classroom"
                             />
-                            <button onClick={() => handleUpdate(lecture)}>
+                            <button
+                              onClick={() => handleUpdate(lecture)}
+                              className="update-button"
+                            >
                               완료
                             </button>
                           </div>
@@ -225,7 +208,7 @@ const ListedLectureTimeTable = ({
                       </div>
                     ))
                   ) : (
-                    <div></div>
+                    <div className="empty-cell"></div>
                   )}
                 </td>
               ))}
@@ -233,15 +216,6 @@ const ListedLectureTimeTable = ({
           ))}
         </tbody>
       </table>
-      {noTimeLectures.length > 0 && (
-        <div>
-          {noTimeLectures.map((lecture, index) => (
-            <p key={index}>
-              {lecture.lecName} | {lecture.lecProfessor}
-            </p>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

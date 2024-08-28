@@ -5,6 +5,7 @@ import GyoYangLectureSearch from "./GyoYangLectureSearch";
 import JunGongLectureSearch from "./JunGongLectureSearch.js";
 import TotalLectureSearch from "./TotalLectureSearch.js";
 import LectureList from "./LectureList";
+import "./CallLecture-CircleList.css";
 
 const CallLecture = () => {
   const [lectures, setLectures] = useState([]);
@@ -24,6 +25,7 @@ const CallLecture = () => {
   const [semester, setSemester] = useState("1학기");
   const [lecCredit, setLecCredit] = useState(0);
   const [lecTimeTable, setlecTimeTable] = useState([]);
+  const [activeButton, setActiveButton] = useState("");
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -106,18 +108,39 @@ const CallLecture = () => {
   }, [user]);
 
   const handleGyoYangClick = () => {
-    setLecClassification("교양");
-    setActiveComponent("GyoYang");
+    if (activeButton === "GyoYang") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("교양");
+      setActiveComponent("GyoYang");
+      setActiveButton("GyoYang");
+    }
   };
 
   const handleJunGongClick = () => {
-    setLecClassification("전공");
-    setActiveComponent("JunGong");
+    if (activeButton === "JunGong") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("전공");
+      setActiveComponent("JunGong");
+      setActiveButton("JunGong");
+    }
   };
 
   const handleTotalClick = () => {
-    setLecClassification("전체");
-    setActiveComponent("Total");
+    if (activeButton === "Total") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("전체");
+      setActiveComponent("Total");
+      setActiveButton("Total");
+    }
   };
 
   useEffect(() => {
@@ -131,18 +154,36 @@ const CallLecture = () => {
 
   return (
     <div>
-      <div>
+      <div className="CircleList">
         <button
+          className="circle"
           onClick={() =>
             (window.location.href = "http://localhost:3000/mypage")
           }
         >
           my page
         </button>
-        <button onClick={handleGyoYangClick}>교양 강의 검색</button>
-        <button onClick={handleJunGongClick}>전공 강의 검색</button>
-        <button onClick={handleTotalClick}>전체 강의 검색</button>
+
+        <button
+          onClick={handleGyoYangClick}
+          className={`circle ${activeButton === "GyoYang" ? "active" : ""}`}
+        >
+          교양 강의
+        </button>
+        <button
+          onClick={handleJunGongClick}
+          className={`circle ${activeButton === "JunGong" ? "active" : ""}`}
+        >
+          전공 강의
+        </button>
+        <button
+          onClick={handleTotalClick}
+          className={`circle ${activeButton === "Total" ? "active" : ""}`}
+        >
+          전체 강의
+        </button>
       </div>
+
       {activeComponent === "GyoYang" && (
         <GyoYangLectureSearch
           lecClassification={lecClassification}
@@ -215,7 +256,7 @@ const CallLecture = () => {
           setlecTimeTable={setlecTimeTable}
         />
       )}
-      {activeComponent && <LectureList lectures={lectures} />}{" "}
+      {activeComponent && <LectureList lectures={lectures} />}
     </div>
   );
 };

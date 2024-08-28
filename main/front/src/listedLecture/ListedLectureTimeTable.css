@@ -1,0 +1,130 @@
+.timetable-box {
+  margin: 10px 0 55vh 0;
+}
+
+.user-timetable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.day-header {
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+}
+
+.timetable-row {
+  border: 1px solid #ddd;
+}
+
+.lecture-cell {
+  border: 1px solid #ddd;
+  width: 300px;
+  height: 100px;
+  padding: 1px;
+}
+
+.period-cell {
+  width: 20px;
+  text-align: center;
+  color: #777;
+  padding: 0px;
+  font-size: 10px;
+}
+
+.lecture-item {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.lecture-name {
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+}
+
+.lecture-professor {
+  color: #777;
+  font-size: 12px;
+  text-align: center;
+  margin: 0;
+}
+.listed-lec-timetable-isLecClose {
+  text-align: center;
+  color: red;
+  font-size: 12px;
+  margin: 5px 0 3px 0;
+}
+
+.no-time-lecture-box {
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  padding: 10px 10px 5px 10px;
+}
+
+.no-time-lecture {
+  font-size: 14px;
+  display: flex;
+  margin: 0 0 5px 0;
+}
+
+.no-time-lecture-lecName {
+  color: #333;
+  margin: 0 5px 0 0;
+  font-weight: bold;
+}
+
+.no-time-lecture-lecProfessor {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
+}
+
+.no-time-lecture-classroom {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
+}
+
+.no-time-lecture-memo {
+  color: #777;
+  margin-left: 5px;
+  margin: 0 5px 0 0;
+}
+
+.edit-lecture {
+  align-items: center;
+  margin-top: 5px;
+}
+
+.edit-lecture-unckeck {
+  align-items: center;
+  margin-right: 10px;
+  font-size: 12px;
+}
+
+.edit-lecture-unckeck input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+}
+
+.input-memo,
+.input-classroom {
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: calc(100% - 12px);
+}
+
+.update-button {
+  background-color: #fff0a0;
+  color: #333;
+  border: none;
+  padding: 7px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  float: right;
+}

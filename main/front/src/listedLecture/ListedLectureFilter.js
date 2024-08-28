@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import "./ListedLectureFilter.css";
+import AddListedLectureManually from "./AddListedLectureManually";
 
 const ListedLectureFilter = ({
   year,
@@ -7,34 +9,57 @@ const ListedLectureFilter = ({
   setSemester,
   priority,
   setPriority,
+  user,
+  fetchLectures,
 }) => {
+  const [isAddLectureOpen, setIsAddLectureOpen] = useState(false);
+
+  const toggleAddLecture = () => {
+    setIsAddLectureOpen(!isAddLectureOpen);
+  };
+
   return (
     <div>
-      <label>
-        연도:
-        <input
-          type="number"
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-        />
-      </label>
-      <label>
-        학기:
-        <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+      <div className="FilterBar">
+        <label className="year">
+          <input
+            type="number"
+            value={year}
+            onChange={(e) => setYear(Number(e.target.value))}
+          />
+          년도
+        </label>
+        <select
+          className="semester"
+          value={semester}
+          onChange={(e) => setSemester(e.target.value)}
+        >
           <option value="1학기">1학기</option>
           <option value="여름학기">여름학기</option>
           <option value="2학기">2학기</option>
           <option value="겨울학기">겨울학기</option>
         </select>
-      </label>
-      <label>
-        우선 순위:
-        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+
+        <select
+          className="priority"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
           <option value="1순위">1순위</option>
           <option value="2순위">2순위</option>
           <option value="3순위">3순위</option>
         </select>
-      </label>
+
+        <button className="manuallyAddbutton" onClick={toggleAddLecture}>
+          {isAddLectureOpen ? "추가 취소" : "수동 추가"}
+        </button>
+      </div>
+
+      {isAddLectureOpen && (
+        <div className="manually">
+          <AddListedLectureManually user={user} fetchLectures={fetchLectures} />
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ from typing import List
 from fastapi import HTTPException, APIRouter
 from db import db_connect
 from model import LectureCallResponse, LectureCallInput
+from typing import List, Optional
 
 router = APIRouter()
 
@@ -123,7 +124,7 @@ def check_multi_major(bunban):
         return None
 
 
-def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: List[str] | None, whatMultipleMajor: str, whatMultipleMajorDepartment: str):
+def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
     print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
@@ -134,11 +135,10 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     WHERE user_id = ? AND userCredit IS NOT 'F'
     """
     cursor.execute(user_taken_query, (user_id,))
-    user_taken_courses = {row['lecName']
-                          for row in cursor.fetchall()}
+    user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -194,7 +194,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         print("user_plused_bunban:", user_plused_bunban)
         print("user_plused_bunban type:", type(user_plused_bunban))
 
-        if user_plused_bunban != None:
+        if user_plused_bunban is not None:
             base_query += " AND (lc.majorRecogBunban LIKE ? OR lc.majorRecogBunban LIKE ?)"
             query_params.append(f'%{bunBan}%')
             query_params.append(f'%{user_plused_bunban}%')
@@ -226,15 +226,13 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
             base_query += " AND ll.lecCredit = ?"
             query_params.append(lecCredit)
 
+    base_query += " AND (lc.requirementClass IS NULL OR lc.requirementClass = '' OR EXISTS (SELECT 1 FROM userTakenLecture utl WHERE utl.lecName LIKE '%' || lc.requirementClass || '%'))"
+
     base_query = base_query.replace("{userYear}", str(userYear))
 
     cursor.execute(base_query, query_params)
     lectures = cursor.fetchall()
     conn.close()
-
-    print(base_query)
-    print("print_JunGong_n_GyoYang")
-    print(query_params)
 
     response = []
     seen_lecture_ids = set()
@@ -270,7 +268,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     return response
 
 
-def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: list[str] | None, whatMultipleMajor: str, whatMultipleMajorDepartment: str):
+def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
 
     conn = db_connect()
     cursor = conn.cursor()
