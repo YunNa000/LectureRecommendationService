@@ -139,7 +139,7 @@ const ListedLectureTimeTable = ({
                     cell.map((lecture, index) => (
                       <div
                         key={index}
-                        className="lecture-item"
+                        className="lecture-clickable"
                         onClick={() =>
                           handleEditClick(lecture, rowIndex, cellIndex, index)
                         }

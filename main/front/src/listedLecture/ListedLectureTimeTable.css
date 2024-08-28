@@ -1,5 +1,5 @@
 .timetable-box {
-  margin: 10px 0 55vh 0;
+  margin: 10px 10px 55vh 10px;
 }
 
 .user-timetable {
@@ -31,7 +31,7 @@
   font-size: 10px;
 }
 
-.lecture-item {
+.lecture-clickable {
   cursor: pointer;
   margin-bottom: 5px;
 }
