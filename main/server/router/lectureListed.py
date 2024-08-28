@@ -21,7 +21,6 @@ async def user_listed_lecture(request: userID):
 
     for lecture in user_lectures:
         year, semester, lecNumber, priority, classroom, memo, lecName, lecTime, isLecClose, lecClassification, lecCredit = lecture
-        print("is lec close?", isLecClose)
 
         if lecNumber.startswith("user"):
             results.append({
