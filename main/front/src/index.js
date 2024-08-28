@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./index.css";
@@ -97,10 +98,10 @@ function LectureDetailPage() {
   return (
     <div>
       <TopBarBack title="강의세부사항" />
-      <LectureDetail 
-        year={year} 
-        semester={semester} 
-        lectureNumber={lectureNumber} 
+      <LectureDetail
+        year={year}
+        semester={semester}
+        lectureNumber={lectureNumber}
       />
     </div>
   );
@@ -120,7 +121,10 @@ root.render(
             <Route path="/users" element={<SocialFeatures2 />} />
             <Route path="/chat" element={<ChatBotPage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/lecture/:year/:semester/:lectureNumber" element={<LectureDetailPage />} />
+            <Route
+              path="/lecture/:year/:semester/:lectureNumber"
+              element={<LectureDetailPage />}
+            />
           </Routes>
         </div>
       </div>
