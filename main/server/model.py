@@ -23,6 +23,9 @@ class LectureCallResponse(BaseModel):
     moreInfo: str
     semester: str
     year: int
+    lecClassification: str
+    lecTheme: str
+    lecWeekTime: str
 
 
 class LectureCallInput(BaseModel):
