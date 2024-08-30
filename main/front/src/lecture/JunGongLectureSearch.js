@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import UserTimeTable from "./UserTimeTable";
+import "./JunGongLectureSearch.css";
 const JunGongLectureSearch = ({
   lecClassification,
   isPillSu,
@@ -22,9 +23,15 @@ const JunGongLectureSearch = ({
   lecTimeTable,
   setlecTimeTable,
 }) => {
+  const [isTimeTableVisible, setIsTimeTableVisible] = useState(false);
+
+  const toggleTimeTable = () => {
+    setIsTimeTableVisible((prev) => !prev);
+  };
+
   return (
-    <div>
-      <div>
+    <div className="jungong-search-box">
+      <div className="jungong-search-view-only-require">
         <label>
           <input
             type="checkbox"
@@ -34,109 +41,96 @@ const JunGongLectureSearch = ({
           필수 과목만 보기
         </label>
       </div>
-
-      {lecClassification === "교양" && !isPillSu && (
+      <div className="jungong-search-conditions-bar">
         <div>
-          <label>주제:</label>
+          <input
+            value={lectureName}
+            onChange={(e) => setLectureName(e.target.value)} //백엔드에서 강의명, 학정번호, 교수명으로 동시에 검색할 수 있도록 하는 것이 필요해요
+            placeholder="강의명/학정번호/교수명"
+            className="jungong-search-lecturename"
+          />
+        </div>
+        <div className="jungong-search-conditions-credit">
+          <label>학점:</label>
           <select
-            value={lecTheme}
-            onChange={(e) => setLecTheme(e.target.value)}
+            value={lecCredit}
+            onChange={(e) => setLecCredit(e.target.value)}
+            className="jungong-search-conditions-credit-select"
           >
-            <option value="">전체</option>
-            <option value="과학과기술">과학과기술</option>
-            <option value="인간과철학">인간과철학</option>
-            <option value="사회와경제">사회와경제</option>
-            <option value="글로벌문화와제2외국어">글로벌문화와제2외국어</option>
-            <option value="예술과체육">예술과체육</option>
-            <option value="수리와자연">수리와자연</option>
+            <option value={0}>상관없음</option>
+            <option value={1}>1학점</option>
+            <option value={2}>2학점</option>
+            <option value={3}>3학점</option>
+            <option value={4}>4학점 이상</option>
           </select>
         </div>
-      )}
-
-      {lecClassification === "교양" && isPillSu && (
-        <div>
-          <label>주제:</label>
+        <div className="jungong-search-conditions-credit">
+          <label>별점:</label>
           <select
-            value={lecTheme}
-            onChange={(e) => setLecTheme(e.target.value)}
+            value={star}
+            onChange={(e) => setStar(e.target.value)}
+            className="jungong-search-conditions-credit-select"
           >
-            <option value="">전체</option>
-            <option value="광운인되기">광운인되기</option>
-            <option value="대학영어">대학영어</option>
-            <option value="정보">정보</option>
-            <option value="융합적사고와글쓰기">융합적사고와글쓰기</option>
+            <option value={0}>상관없음</option>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
           </select>
         </div>
-      )}
+        <div className="jungong-search-conditions-credit">
+          <label>팀플 양:</label>
+          <select
+            value={teamplayAmount}
+            onChange={(e) => setTeamplayAmount(e.target.value)}
+            className="jungong-search-conditions-credit-select"
+          >
+            <option value="상관없음">상관없음</option>
+            <option value="적음">적음</option>
+          </select>
+        </div>
 
-      <div>
-        <label>별점</label>
-        <select value={star} onChange={(e) => setStar(e.target.value)}>
-          <option value={0}>상관없음</option>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={3}>3</option>
-          <option value={4}>4</option>
-        </select>
-      </div>
-      <div>
-        <label>팀플 양:</label>
-        <select
-          value={teamplayAmount}
-          onChange={(e) => setTeamplayAmount(e.target.value)}
+        <div className="jungong-search-conditions-credit">
+          <label>성적 양:</label>
+          <select
+            value={gradeAmount}
+            onChange={(e) => setGradeAmount(e.target.value)}
+            className="jungong-search-conditions-credit-select"
+          >
+            <option value="상관없음">상관없음</option>
+            <option value="너그러움">너그러움</option>
+          </select>
+        </div>
+        <div className="jungong-search-conditions-credit">
+          <label>과제 양:</label>
+          <select
+            value={assignmentAmount}
+            onChange={(e) => setAssignmentAmount(e.target.value)}
+            className="jungong-search-conditions-credit-select"
+          >
+            <option value="상관없음">상관없음</option>
+            <option value="적음">적음</option>
+          </select>
+        </div>
+        <button
+          onClick={toggleTimeTable}
+          className="jungong-search-user-can-time-button"
         >
-          <option value="상관없음">상관없음</option>
-          <option value="적음">적음</option>
-        </select>
+          {isTimeTableVisible ? "시간 선택 숨기기" : "가능한 시간 선택"}
+        </button>
       </div>
 
-      <div>
-        <label>성적 양:</label>
-        <select
-          value={gradeAmount}
-          onChange={(e) => setGradeAmount(e.target.value)}
-        >
-          <option value="상관없음">상관없음</option>
-          <option value="너그러움">너그러움</option>
-        </select>
-      </div>
-
-      <div>
-        <label>과제 양:</label>
-        <select
-          value={assignmentAmount}
-          onChange={(e) => setAssignmentAmount(e.target.value)}
-        >
-          <option value="상관없음">상관없음</option>
-          <option value="적음">적음</option>
-        </select>
-      </div>
-      <div>
-        <label>학점</label>
-        <select
-          value={lecCredit}
-          onChange={(e) => setLecCredit(e.target.value)}
-        >
-          <option value={0}>상관없음</option>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={3}>3</option>
-          <option value={4}>4 이상</option>
-        </select>
-      </div>
-      <hr />
-      <div>
-        <label>강의명</label>
-        <input
-          value={lectureName}
-          onChange={(e) => setLectureName(e.target.value)}
+      {isTimeTableVisible && (
+        <UserTimeTable
+          coordinates={lecTimeTable}
+          setCoordinates={setlecTimeTable}
         />
+      )}
+      <div className="jungong-search-button-box">
+        <button onClick={fetchLectures} className="jungong-search-button">
+          강의 검색
+        </button>
       </div>
-      <UserTimeTable 
-        coordinates={lecTimeTable}
-        setCoordinates={setlecTimeTable}
-      />
-      <button onClick={fetchLectures}>강의 검색</button>
     </div>
   );
 };
