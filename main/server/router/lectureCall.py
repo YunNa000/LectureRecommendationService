@@ -252,6 +252,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         if user_plused_bunban and user_plused_bunban in row[9]:
             multi_major = check_multi_major(user_plused_bunban)
             more_info += f"{multi_major} 전공 과목 "
+
         try:
             lec_week_time = str(int(row[13]))
         except (ValueError, TypeError):
@@ -432,6 +433,11 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         elif isForeign == 1 and can_take_foreign_people == "2":
             more_info += "유학생은 들을 수 없어요. "
 
+        try:
+            lec_week_time = str(int(row[22]))
+        except (ValueError, TypeError):
+            lec_week_time = '0'
+
         response.append(LectureCallResponse(
             lectureID=lecture_id,
             lecNumber=row[1],
@@ -445,7 +451,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             year=row[19],
             lecTheme=row[20],
             lecClassification=row[21],
-            lecWeekTime=row[22]
+            lecWeekTime=lec_week_time
         ))
 
         seen_lecture_ids.add(lecture_id)
