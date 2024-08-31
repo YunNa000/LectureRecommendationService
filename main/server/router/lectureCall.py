@@ -208,7 +208,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         query_params.append(f'%{lecTheme}%')
 
     if lectureName != "":
-        base_query += " AND ll.lecName LIKE ?"
+        base_query += " AND (ll.lecName LIKE ? OR ll.lecProfessor LIKE ? OR ll.lecNumber LIKE ?)"
         query_params.append(f'%{lectureName}%')
 
     if lecTimeTable and len(lecTimeTable) > 0:
@@ -307,7 +307,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     ]
 
     if lectureName != "":
-        base_query += " AND ll.lecName LIKE ?"
+        base_query += " AND (ll.lecName LIKE ? OR ll.lecProfessor LIKE ? OR ll.lecNumber LIKE ?)"
         query_params.append(f'%{lectureName}%')
 
     if assignmentAmount != "상관없음":
