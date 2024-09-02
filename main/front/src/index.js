@@ -6,13 +6,14 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 import Login from "./Login/Login";
-import CallLecture from "./lecture/CallLecture";
+import CallLecture from "./LectureManage/lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
-import ListedLecture from "./listedLecture/ListedLecture";
+import ListedLecture from "./LectureManage/listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
 import ChatBot from "./chatBot/ChatBot";
 import CallLectureForAdmin from "./admin/CallLectureForAdmin";
+import LectureManage from "./LectureManage/LectureManage";
 
 import FriendRequest from "./Friend/FriendRequest";
 import UserList from "./Friend/UserList";
@@ -38,8 +39,7 @@ function MainPage() {
   return (
     <div>
       <TopBar title="앱 이름 " />
-      <CallLecture />
-      <ListedLecture />
+      <LectureManage />
     </div>
   );
 }
