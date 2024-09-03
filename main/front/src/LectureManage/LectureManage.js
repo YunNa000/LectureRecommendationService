@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CallLecture from "./lecture/CallLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
+import Cookies from "js-cookie";
 
 const LectureManage = () => {
   const [user, setUser] = useState(null);
@@ -16,13 +17,26 @@ const LectureManage = () => {
         { user_id: userID }
       );
       setListedLectures(response.data);
-      console.log(response.data);
+      console.log("Lecture data:", response.data);
     } catch (err) {
       setError(err);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const userId = Cookies.get("user_id");
+    if (userId) {
+      fetchListedLectures(userId);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
