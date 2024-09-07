@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const LectureList = ({ lectures }) => {
+const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const [user, setUser] = useState(null);
-  const [selectedLectures, setSelectedLectures] = useState({});
   const [expandedLectures, setExpandedLectures] = useState({});
 
   const checkLoginStatus = async () => {
@@ -38,6 +37,7 @@ const LectureList = ({ lectures }) => {
     const isSelected = !!selectedLectures[lectureKey];
 
     if (isSelected) {
+      // Unselect logic
       try {
         await axios.post("http://localhost:8000/lecture_unselect", {
           user_id: user,

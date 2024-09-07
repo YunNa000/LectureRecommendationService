@@ -7,7 +7,7 @@ import TotalLectureSearch from "./TotalLectureSearch.js";
 import LectureList from "./LectureList";
 import "./CallLecture-CircleList.css";
 
-const CallLecture = () => {
+const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const [lectures, setLectures] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -256,7 +256,13 @@ const CallLecture = () => {
           setlecTimeTable={setlecTimeTable}
         />
       )}
-      {activeComponent && <LectureList lectures={lectures} />}
+      {activeComponent && (
+        <LectureList
+          lectures={lectures}
+          selectedLectures={selectedLectures}
+          setSelectedLectures={setSelectedLectures}
+        />
+      )}
     </div>
   );
 };

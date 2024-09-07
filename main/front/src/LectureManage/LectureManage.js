@@ -1,53 +1,22 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import CallLecture from "./lecture/CallLecture";
 import ListedLecture from "./listedLecture/ListedLecture";
-import Cookies from "js-cookie";
 
 const LectureManage = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [listedLectures, setListedLectures] = useState([]);
-
-  const fetchListedLectures = async (userID) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/user/listed_lecture",
-        { user_id: userID }
-      );
-      setListedLectures(response.data);
-      console.log("Lecture data:", response.data);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedLectures, setSelectedLectures] = useState({});
+  const [triggerRender, setTriggerRender] = useState(0);
 
   useEffect(() => {
-    const userId = Cookies.get("user_id");
-    if (userId) {
-      fetchListedLectures(userId);
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    setTriggerRender((prev) => prev + 1);
+  }, [selectedLectures]);
 
   return (
     <div>
       <CallLecture
-        fetchListedLectures={fetchListedLectures}
-        listedLectures={listedLectures}
+        selectedLectures={selectedLectures}
+        setSelectedLectures={setSelectedLectures}
       />
-      <ListedLecture
-        fetchListedLectures={fetchListedLectures}
-        listedLectures={listedLectures}
-      />
+      <ListedLecture key={triggerRender} />
     </div>
   );
 };
