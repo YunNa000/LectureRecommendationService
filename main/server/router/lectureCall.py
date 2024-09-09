@@ -125,7 +125,6 @@ def check_multi_major(bunban):
 
 
 def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
-    print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -276,7 +275,6 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
 
         ))
         seen_lecture_ids.add(lecture_id)
-    print(response)
 
     return response
 
@@ -335,7 +333,6 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             query_params.append(f'%{time}%')
         base_query += f" AND ({' OR '.join(time_conditions)})"
 
-    print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:
             base_query += " AND ll.lecCredit >= ?"
@@ -490,5 +487,4 @@ async def get_lectures(input_data: LectureCallInput):
         response = print_JunGong_n_GyoYang(
             year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable, whatMultipleMajor=whatMultipleMajor, whatMultipleMajorDepartment=whatMultipleMajorDepartment)
 
-    print(response)
     return response

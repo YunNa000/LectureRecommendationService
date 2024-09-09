@@ -92,6 +92,7 @@ const CallLecture = () => {
         inputData
       );
       setLectures(response.data);
+      console.log(response.data);
     } catch (err) {
       setError(err);
     }

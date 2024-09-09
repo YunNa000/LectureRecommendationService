@@ -1,0 +1,83 @@
+.lecturelist {
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background-color: #fbfbfb;
+  margin: 5px 10px;
+}
+.lecturelist-no-lecture {
+  padding: 10px;
+  margin: 15px 10px;
+}
+.lecturelist-no-lecture-text {
+  margin: 0;
+}
+.lecturelist-lecture {
+  border-radius: 5px;
+  margin: 0 10px;
+  padding: 10px 10px;
+}
+
+.lecturelist-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lecture-list-button-getlecture {
+  padding: 5px 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  margin-top: 5px;
+  background-color: #fff0a0;
+}
+
+.lecture-list-button-godetail {
+  padding: 5px 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.lecturelist-lecture-moreinfo {
+  margin: 0;
+}
+.lecturelist-samename-lectures {
+  margin: 13px 0 15px 13px;
+}
+.lectureslist-samename-lectures-toggle {
+  margin: 0;
+}
+.lecturelist-lecNameNstar-box {
+  display: flex;
+  justify-content: space-between;
+}
+.lecturelist-lecName-box {
+  display: flex;
+  font-size: 14px;
+}
+.lecturelist-lecName {
+  font-weight: bold;
+  margin-right: 5px;
+  margin: 0 5px 3px 0;
+}
+.lecturelist-lecProfessor {
+  color: #333;
+  margin: 0 0 3px 0;
+}
+.lecturelist-lec-detail {
+  font-size: 14px;
+  display: flex;
+}
+.lecturelist-lecClassification {
+  margin: 0 5px 3px 0;
+}
+.lecturelist-lecCredit {
+  margin: 0 10px 3px 0;
+}
+.lecturelist-lecTime {
+  margin: 0 5px 3px 0;
+}
+.lecturelist-lecClassroom {
+  margin: 0 5px 3px 0;
+}
