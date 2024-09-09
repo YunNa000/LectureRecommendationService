@@ -8,7 +8,7 @@ import ListedLectureTimeTable from "./ListedLectureTimeTable";
 import ShowCheckedLectureCredit from "./ShowCheckedLectureCredit";
 import "./ListedLecture.css";
 
-const ListedLecture = () => {
+const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

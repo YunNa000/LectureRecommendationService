@@ -3,9 +3,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import "./LectureList.css";
 
-const LectureList = ({ lectures }) => {
+const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const [user, setUser] = useState(null);
-  const [selectedLectures, setSelectedLectures] = useState({});
   const [expandedLectures, setExpandedLectures] = useState({});
   const [visibleButtons, setVisibleButtons] = useState({}); // 새로운 상태 변수 추가
 
