@@ -168,7 +168,43 @@ const ListedLectureTimeTable = ({
                         {editingLectureIndex ===
                           `${rowIndex}-${cellIndex}-${index}` && (
                           <div className="edit-lecture">
-                            {/* (기존 코드 유지) */}
+                            <label className="edit-lecture-unckeck">
+                              <input
+                                type="checkbox"
+                                checked={
+                                  lecture.priority &&
+                                  lecture.priority.split(" ").includes(priority)
+                                }
+                                onChange={() =>
+                                  updateLecturePriority(
+                                    lecture.lecNumber,
+                                    priority
+                                  )
+                                }
+                              />
+                              체크해제
+                            </label>
+
+                            <input
+                              type="text"
+                              value={memo}
+                              onChange={(e) => setMemo(e.target.value)}
+                              placeholder="메모"
+                              className="input-memo"
+                            />
+                            <input
+                              type="text"
+                              value={classroom}
+                              onChange={(e) => setClassroom(e.target.value)}
+                              placeholder="강의실"
+                              className="input-classroom"
+                            />
+                            <button
+                              onClick={() => handleUpdate(lecture)}
+                              className="update-button"
+                            >
+                              완료
+                            </button>
                           </div>
                         )}
                       </div>
