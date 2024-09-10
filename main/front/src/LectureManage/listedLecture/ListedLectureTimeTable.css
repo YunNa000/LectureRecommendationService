@@ -128,3 +128,10 @@
   font-size: 12px;
   float: right;
 }
+
+.conflict-message {
+  font-size: 12px;
+  text-align: center;
+  color: #8a1601;
+  font-weight: bold;
+}
