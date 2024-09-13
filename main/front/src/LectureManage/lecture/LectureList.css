@@ -81,3 +81,14 @@
 .lecturelist-lecClassroom {
   margin: 0 5px 3px 0;
 }
+
+.lecturelist-lecName-selected {
+  font-weight: bold;
+  margin-right: 5px;
+  margin: 0 5px 3px 0;
+  /* color: #898154; */
+}
+
+.lecturelist-lecture-check-box {
+  display: flex;
+}
