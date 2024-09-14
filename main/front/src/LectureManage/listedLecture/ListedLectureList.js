@@ -173,7 +173,6 @@ const ListedLectureList = ({
             : `▲ ${year}년 ${semester} 강의 바구니 보기`}
         </div>
       </div>
-
       {isListVisible && (
         <div className="lecture-list">
           <div className="lecture-list-inner">
