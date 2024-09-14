@@ -6,10 +6,8 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 import Login from "./Login/Login";
-import CallLecture from "./LectureManage/lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
-import ListedLecture from "./LectureManage/listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
 import ChatBot from "./chatBot/ChatBot";
 import CallLectureForAdmin from "./admin/CallLectureForAdmin";
@@ -68,6 +66,7 @@ function SocialFeatures2() {
 function UserPage() {
   return (
     <div>
+      <TopBarBack title="마이페이지" />
       <UpdateUserInfo />
       <UpdateTakenLecture />
       <GraduationRequirements />
