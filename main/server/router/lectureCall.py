@@ -296,7 +296,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     user_taken_courses = [row['lecName'] for row in cursor.fetchall()]
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year, ll.lecTheme, ll.lecClassification, ll.lecWeekTime
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -451,7 +451,12 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             year=row[19],
             lecTheme=row[20],
             lecClassification=row[21],
-            lecWeekTime=lec_week_time
+            lecWeekTime=lec_week_time,
+            star=row[23],
+            assignmentAmount=row[24],
+            teamPlayAmount=row[25],
+            gradeAmount=row[26],
+            reviewSummary=row[27]
         ))
 
         seen_lecture_ids.add(lecture_id)

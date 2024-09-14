@@ -16,6 +16,48 @@
   margin: 0 10px;
   padding: 10px 10px;
 }
+.lecturelist-lecNumber {
+  margin: 0 5px 0 0;
+}
+.lecturelist-lecTheme {
+  margin: 0 5px 0 0;
+}
+
+.lecture-list-star {
+  margin: 0;
+}
+
+.lecturelist-amount {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.lecturelist-bar {
+  display: flex;
+  align-items: center;
+  margin: 1px 0;
+  width: 100%;
+  background-color: rgb(220, 220, 220);
+  border-radius: 10px;
+}
+
+.lecturelist-expanded {
+  display: flex;
+  justify-content: space-between;
+}
+
+.lecturelist-bar-fill {
+  height: 7px;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+span {
+  margin-left: 10px; /* 숫자와 막대 간의 간격 */
+  font-weight: bold; /* 숫자 강조 */
+}
 
 .lecturelist-buttons {
   display: flex;
@@ -51,7 +93,9 @@
 .lecturelist-lecNameNstar-box {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
+
 .lecturelist-lecName-box {
   display: flex;
   font-size: 14px;
@@ -70,7 +114,7 @@
   display: flex;
 }
 .lecturelist-lecClassification {
-  margin: 0 5px 3px 0;
+  margin: 0 0 3px 0;
 }
 .lecturelist-lecCredit {
   margin: 0 10px 3px 0;
