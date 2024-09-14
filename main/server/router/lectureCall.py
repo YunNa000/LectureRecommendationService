@@ -137,7 +137,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -270,9 +270,12 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
             moreInfo=more_info,
             lecTheme=row[11],
             lecClassification=row[12],
-            lecWeekTime=lec_week_time
-
-
+            lecWeekTime=lec_week_time,
+            star=row[14],
+            assignmentAmount=row[15],
+            teamPlayAmount=row[16],
+            gradeAmount=row[17],
+            reviewSummary=row[18]
         ))
         seen_lecture_ids.add(lecture_id)
 
