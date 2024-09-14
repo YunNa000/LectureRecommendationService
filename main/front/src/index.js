@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
@@ -67,6 +68,7 @@ function SocialFeatures2() {
 function UserPage() {
   return (
     <div>
+      <TopBarBack title="마이페이지" />
       <UpdateUserInfo />
       <UpdateTakenLecture />
       <GraduationRequirements />
@@ -121,6 +123,7 @@ root.render(
             <Route path="/chat" element={<ChatBotPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/lecture/:year/:semester/:lectureNumber" element={<LectureDetailPage />} />
+            <Route path="/lecture/:lectureNumber" element={<LectureDetailPage />} />
           </Routes>
         </div>
       </div>
