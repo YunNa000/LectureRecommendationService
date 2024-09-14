@@ -58,7 +58,15 @@ const Login = () => {
         </div>
       ) : (
         <div className="logged-out">
-          <p className="login-text">로그인을 하면 서비스를 이용할 수 있어요.</p>
+          <p className="login-text">맞춤형 추천을 위해선 로그인이 필요해요.</p>
+          <p className="login-text-detail">
+            사용자 식별을 위해 구글에서 제공하는 난수 외에 어떠한 값도 요구하지
+            않아요.
+          </p>
+          <p className="login-text-detail">
+            서비스마다 구글에서 제공하는 난수가 달라지기에 해당 난수로 사용자를
+            유추하는 것 또한 불가능해요.
+          </p>
           <button className="login-button" onClick={handleLogin}>
             구글로 로그인
           </button>

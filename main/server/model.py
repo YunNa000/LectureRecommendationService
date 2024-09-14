@@ -23,6 +23,14 @@ class LectureCallResponse(BaseModel):
     moreInfo: str
     semester: str
     year: int
+    lecClassification: str
+    lecTheme: str
+    lecWeekTime: str
+    star: Optional[float] = None
+    assignmentAmount: Optional[float] = None
+    teamPlayAmount: Optional[float] = None
+    gradeAmount: Optional[float] = None
+    reviewSummary: Optional[str] = None
 
 
 class LectureCallInput(BaseModel):

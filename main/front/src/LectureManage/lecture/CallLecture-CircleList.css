@@ -1,0 +1,49 @@
+.CircleList {
+  height: 110px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 10px;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.CircleList::-webkit-scrollbar {
+  display: none;
+}
+
+.CircleList {
+  scrollbar-width: none;
+}
+
+.CircleList {
+  -ms-overflow-style: none;
+}
+
+.CircleList .circle {
+  width: 90px;
+  height: 90px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.CircleList button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.circle.active {
+  background-color: #fff0a0;
+  transition: 0.2s;
+  color: black;
+}

@@ -1,0 +1,92 @@
+.total-search-box {
+  margin: 0 10px;
+  padding: 7px 5px 10px 5px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #fbfbfb;
+}
+
+.total-search-button-box {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.total-search-button {
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: #fff0a0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  justify-self: end;
+  margin-right: 10px;
+}
+.total-search-conditions-bar {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0 0 12px 0;
+  margin: 10px 10px 0 10px;
+}
+
+.total-search-conditions-bar > div {
+  margin-right: 10px;
+}
+
+.total-search-conditions-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.total-search-conditions-bar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.total-search-conditions-year {
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  border-radius: 5px;
+  padding-left: 5px;
+}
+.total-search-conditions-credit-year-input {
+  height: 30px;
+  width: 20px;
+  border: none;
+  outline: none;
+  background-color: white;
+  border-radius: 5px;
+  padding: 0 0 0 5px;
+  -moz-appearance: textfield;
+}
+.total-search-conditions-credit-year-input::-webkit-inner-spin-button,
+.total-search-conditions-credit-year-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.total-search-conditions-year-label {
+  margin: 0 10px 0 0;
+}
+
+.total-search-conditions-semester {
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  border-radius: 5px;
+  padding-left: 5px;
+}
+
+.total-search-lecturename {
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  border-radius: 5px;
+  padding-left: 5px;
+  width: 150px;
+}

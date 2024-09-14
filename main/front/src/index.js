@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useParams } from 'react-router-dom';
@@ -6,13 +7,12 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 import Login from "./Login/Login";
-import CallLecture from "./lecture/CallLecture";
 import UpdateUserInfo from "./user/UpdateUserInfo";
 import UpdateTakenLecture from "./user/UpdateTakenLecture";
-import ListedLecture from "./listedLecture/ListedLecture";
 import GraduationRequirements from "./user/GraduationRequirements";
 import ChatBot from "./chatBot/ChatBot";
 import CallLectureForAdmin from "./admin/CallLectureForAdmin";
+import LectureManage from "./LectureManage/LectureManage";
 
 import FriendRequest from "./Friend/FriendRequest";
 import UserList from "./Friend/UserList";
@@ -38,8 +38,7 @@ function MainPage() {
   return (
     <div>
       <TopBar title="앱 이름 " />
-      <CallLecture />
-      <ListedLecture />
+      <LectureManage />
     </div>
   );
 }
@@ -99,10 +98,10 @@ function LectureDetailPage() {
   return (
     <div>
       <TopBarBack title="강의세부사항" />
-      <LectureDetail 
-        year={year} 
-        semester={semester} 
-        lectureNumber={lectureNumber} 
+      <LectureDetail
+        year={year}
+        semester={semester}
+        lectureNumber={lectureNumber}
       />
     </div>
   );

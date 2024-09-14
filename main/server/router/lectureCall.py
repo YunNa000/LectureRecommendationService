@@ -125,7 +125,6 @@ def check_multi_major(bunban):
 
 
 def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
-    print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -138,11 +137,12 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
-    WHERE (ll.isLecClose IS NULL OR ll.isLecClose is 0)
+    JOIN LectureDetailData ld ON ll.LectureID = ld.LectureID
+    WHERE (ll.isLecClose IS NULL OR ll.isLecClose = 0)
     AND (lc.canTakeOnly{userYear}year = 1 OR (lc.canTakeOnly1year IS NULL AND lc.canTakeOnly2year IS NULL AND lc.canTakeOnly3year IS NULL AND lc.canTakeOnly4year IS NULL AND lc.canTakeOnly5year IS NULL))
     AND ll.year = ?
     AND ll.semester = ?
@@ -207,7 +207,9 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         query_params.append(f'%{lecTheme}%')
 
     if lectureName != "":
-        base_query += " AND ll.lecName LIKE ?"
+        base_query += " AND (ll.lecName LIKE ? OR ll.lecProfessor LIKE ? OR ll.lecNumber LIKE ?)"
+        query_params.append(f'%{lectureName}%')
+        query_params.append(f'%{lectureName}%')
         query_params.append(f'%{lectureName}%')
 
     if lecTimeTable and len(lecTimeTable) > 0:
@@ -250,6 +252,11 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
             multi_major = check_multi_major(user_plused_bunban)
             more_info += f"{multi_major} 전공 과목 "
 
+        try:
+            lec_week_time = str(int(row[13]))
+        except (ValueError, TypeError):
+            lec_week_time = '0'
+
         response.append(LectureCallResponse(
             lectureID=lecture_id,
             lecNumber=row[1],
@@ -261,8 +268,15 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
             semester=row[7],
             year=row[8],
             moreInfo=more_info,
+            lecTheme=row[11],
+            lecClassification=row[12],
+            lecWeekTime=lec_week_time,
+            star=row[14],
+            assignmentAmount=row[15],
+            teamPlayAmount=row[16],
+            gradeAmount=row[17],
+            reviewSummary=row[18]
         ))
-
         seen_lecture_ids.add(lecture_id)
 
     return response
@@ -282,10 +296,11 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     user_taken_courses = [row['lecName'] for row in cursor.fetchall()]
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
+    JOIN LectureDetailData ld ON ll.LectureID = ld.LectureID
     WHERE ll.year = ?
     AND ll.semester = ?
     """
@@ -296,7 +311,9 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     ]
 
     if lectureName != "":
-        base_query += " AND ll.lecName LIKE ?"
+        base_query += " AND (ll.lecName LIKE ? OR ll.lecProfessor LIKE ? OR ll.lecNumber LIKE ?)"
+        query_params.append(f'%{lectureName}%')
+        query_params.append(f'%{lectureName}%')
         query_params.append(f'%{lectureName}%')
 
     if assignmentAmount != "상관없음":
@@ -319,7 +336,6 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             query_params.append(f'%{time}%')
         base_query += f" AND ({' OR '.join(time_conditions)})"
 
-    print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:
             base_query += " AND ll.lecCredit >= ?"
@@ -380,7 +396,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         more_info = ""
 
         if row[2] in user_taken_courses:
-            more_info += "이미 수강한 강의에요. "
+            more_info += "수강한 강의예요. "
 
         can_take_bunban = [b.strip().lower() for b in row[9].split(',')]
         bunBan_lower = bunBan.lower()
@@ -417,6 +433,11 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         elif isForeign == 1 and can_take_foreign_people == "2":
             more_info += "유학생은 들을 수 없어요. "
 
+        try:
+            lec_week_time = str(int(row[22]))
+        except (ValueError, TypeError):
+            lec_week_time = '0'
+
         response.append(LectureCallResponse(
             lectureID=lecture_id,
             lecNumber=row[1],
@@ -428,6 +449,14 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             moreInfo=more_info.strip(),
             semester=row[18],
             year=row[19],
+            lecTheme=row[20],
+            lecClassification=row[21],
+            lecWeekTime=lec_week_time,
+            star=row[23],
+            assignmentAmount=row[24],
+            teamPlayAmount=row[25],
+            gradeAmount=row[26],
+            reviewSummary=row[27]
         ))
 
         seen_lecture_ids.add(lecture_id)
