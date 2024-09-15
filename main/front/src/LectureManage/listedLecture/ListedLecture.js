@@ -281,6 +281,8 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
         totalCredits={totalCredits}
         markLectureAsCompleted={markLectureAsCompleted}
         takenLectures={takenLectures}
+        year={year}
+        semester={semester}
       />
     </div>
   );

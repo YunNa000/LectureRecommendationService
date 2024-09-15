@@ -69,13 +69,13 @@ const ListedLectureTimeTable = ({
     daysOfWeek.push("일");
   }
 
+  const noTimeLectures = [];
+
   const timetable = Array.from({ length: maxHour }, () =>
     Array(daysOfWeek.length - 1)
       .fill(null)
-      .map(() => [])
+      .map(() => ({ lectures: [], conflict: false }))
   );
-
-  const noTimeLectures = [];
 
   lectures.forEach((lecture) => {
     if (lecture.lecTime && lecture.lecTime !== "0" && lecture.lectime == null) {
@@ -83,7 +83,11 @@ const ListedLectureTimeTable = ({
       times.forEach((time) => {
         const [day, hour] = time.replace(/[()]/g, "").split(":").map(Number);
         if (hour >= 0 && hour < timetable.length) {
-          timetable[hour][day - 1].push(lecture);
+          const cell = timetable[hour][day - 1];
+          if (cell.lectures.length > 0) {
+            cell.conflict = true;
+          }
+          cell.lectures.push(lecture);
         }
       });
     } else {
@@ -135,8 +139,8 @@ const ListedLectureTimeTable = ({
               <td className="period-cell">{rowIndex}</td>
               {row.map((cell, cellIndex) => (
                 <td key={cellIndex} className="lecture-cell">
-                  {cell.length > 0 ? (
-                    cell.map((lecture, index) => (
+                  {cell.lectures.length > 0 ? (
+                    cell.lectures.map((lecture, index) => (
                       <div
                         key={index}
                         className="lecture-clickable"
@@ -157,11 +161,9 @@ const ListedLectureTimeTable = ({
                             </p>
                           )}
                         {lecture.isLecClose === 1 ? (
-                          <>
-                            <p className="listed-lec-timetable-isLecClose">
-                              폐강된 강의
-                            </p>
-                          </>
+                          <p className="listed-lec-timetable-isLecClose">
+                            폐강된 강의
+                          </p>
                         ) : null}
                         {editingLectureIndex ===
                           `${rowIndex}-${cellIndex}-${index}` && (
@@ -209,6 +211,9 @@ const ListedLectureTimeTable = ({
                     ))
                   ) : (
                     <div className="empty-cell"></div>
+                  )}
+                  {cell.conflict && (
+                    <p className="conflict-message">시간이 겹쳐요!</p>
                   )}
                 </td>
               ))}

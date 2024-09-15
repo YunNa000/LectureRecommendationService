@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import "./LectureList.css";
 
 const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const [user, setUser] = useState(null);
   const [expandedLectures, setExpandedLectures] = useState({});
+  const [visibleButtons, setVisibleButtons] = useState({});
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -29,16 +31,15 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
     }
   };
 
-  const handleCheckboxChange = async (lecture) => {
+  const handleLectureSelect = async (lecture) => {
     const lecNumber = lecture.lecNumber;
     const year = lecture.year;
     const semester = lecture.semester;
     const lectureKey = `${lecNumber}-${year}-${semester}`;
     const isSelected = !!selectedLectures[lectureKey];
 
-    if (isSelected) {
-      // Unselect logic
-      try {
+    try {
+      if (isSelected) {
         await axios.post("http://localhost:8000/lecture_unselect", {
           user_id: user,
           lecNumber: lecNumber,
@@ -50,11 +51,7 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
           delete newSelected[lectureKey];
           return newSelected;
         });
-      } catch (error) {
-        console.error("LectureList.js when unselecting lecture:", error);
-      }
-    } else {
-      try {
+      } else {
         await axios.post("http://localhost:8000/lecture_select", {
           user_id: user,
           lecNumber: lecNumber,
@@ -65,9 +62,9 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
           ...prev,
           [lectureKey]: true,
         }));
-      } catch (error) {
-        console.error("LectureList.js when selecting lecture:", error);
       }
+    } catch (error) {
+      console.error("LectureList.js - lecture select/unselect error:", error);
     }
   };
 
@@ -110,6 +107,69 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
     }));
   };
 
+  const handleButtonVisibilityToggle = (lectureKey) => {
+    setVisibleButtons((prev) => ({
+      ...prev,
+      [lectureKey]: !prev[lectureKey],
+    }));
+  };
+
+  const renderStarRatingImages = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push("★");
+    }
+    if (halfStar === 1) {
+      stars.push("✮");
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push("☆");
+    }
+
+    return <p className="lecture-list-star">{stars}</p>;
+  };
+
+  const formatLectureTime = (lecTime) => {
+    const dayMapping = {
+      1: "월",
+      2: "화",
+      3: "수",
+      4: "목",
+      5: "금",
+      6: "토",
+      7: "일",
+    };
+
+    const dayPeriods = {};
+
+    lecTime.split(",").forEach((slot) => {
+      const [day, period] = slot.replace(/[()]/g, "").split(":");
+      const dayName = dayMapping[day];
+
+      if (!dayPeriods[dayName]) {
+        dayPeriods[dayName] = [];
+      }
+      dayPeriods[dayName].push(period);
+    });
+
+    const timeSlots = Object.entries(dayPeriods).map(([day, periods]) => {
+      const uniquePeriods = [...new Set(periods)].sort();
+      return `${day}${uniquePeriods.join("")}`;
+    });
+
+    return timeSlots.join(", ");
+  };
+
+  const getColor = (value) => {
+    const red = Math.max(50, 255 - value * 2.55);
+    const green = Math.max(0, value * 2.3 + 25);
+    return `rgb(${red}, ${green}, 0)`;
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -121,32 +181,125 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const groupedLectures = groupLecturesByName(lectures);
 
   return (
-    <div>
+    <div className="lecturelist">
       {lectures.length === 0 ? (
-        <p>조건에 맞는 강의가 없어요😥</p>
+        <div className="lecturelist-no-lecture">
+          <p className="lecturelist-no-lecture-text">
+            조건에 맞는 강의가 없어요😥
+          </p>
+        </div>
       ) : (
         Object.entries(groupedLectures).map(([lecName, lectureGroup]) => {
           const isSoloLecture = lectureGroup.length === 1;
           return (
-            <div key={lecName}>
+            <div key={lecName} className="lecturelist-lecture">
               {isSoloLecture ? (
                 lectureGroup.map((lecture, index) => {
                   const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
+                  const isSelected = !!selectedLectures[lectureKey];
                   return (
-                    <div key={`${lecture.lectureID}-${index}`}>
-                      <input
-                        type="checkbox"
-                        checked={!!selectedLectures[lectureKey]}
-                        onChange={() => handleCheckboxChange(lecture)}
-                      />
-                      <label>
-                        {lecture.moreInfo}
-                        {lecture.lecName} | {lecture.lecProfessor} |{" "}
-                        {lecture.lecCredit} | {lecture.lecTime} |{" "}
-                        {lecture.lecClassroom} | {lecture.year}년{" "}
-                        {lecture.semester}
+                    <div
+                      key={`${lecture.lectureID}-${index}`}
+                      onClick={() => handleButtonVisibilityToggle(lectureKey)}
+                    >
+                      <label className="lecturelist-lecture-check-box">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleLectureSelect(lecture)}
+                        />
+                        <p className="lecturelist-lecture-moreinfo">
+                          {lecture.moreInfo}
+                        </p>
+                        <div className="lecturelist-lecNameNstar-box">
+                          <div className="lecturelist-lecName-box">
+                            <p className="lecturelist-lecName">
+                              {lecture.lecName}
+                            </p>
+                            <p className="lecturelist-lecProfessor">
+                              {lecture.lecProfessor}
+                            </p>
+                          </div>
+                          <div className="lecturelist-lecStar-box">
+                            {renderStarRatingImages(lecture.star)}
+                          </div>
+                        </div>
                       </label>
-                      <hr />
+                      <div className="lecturelist-lec-detail">
+                        <p className="lecturelist-lecNumber">
+                          {lecture.lecNumber}
+                        </p>
+                        <p className="lecturelist-lecTime">
+                          {lecture.lecTime &&
+                          lecture.lecTime !== "undefined" &&
+                          lecture.lecTime !== undefined ? (
+                            <>{formatLectureTime(lecture.lecTime)}</>
+                          ) : null}
+                        </p>
+                      </div>
+                      <div className="lecturelist-lec-detail">
+                        <p className="lecturelist-lecClassification">
+                          {lecture.lecClassification}
+                        </p>
+                        {lecture.lecTheme && lecture.lecTheme.trim() !== "" && (
+                          <p className="lecturelist-lecTheme">
+                            ({lecture.lecTheme})
+                          </p>
+                        )}
+                        <p className="lecturelist-lecCredit">
+                          {lecture.lecCredit}학점
+                        </p>
+                        <p className="lecturelist-lecClassroom">
+                          {lecture.lecClassroom}
+                        </p>
+                      </div>
+                      {visibleButtons[lectureKey] && (
+                        <div className="lecturelist-expanded">
+                          <div className="lecturelist-amount">
+                            <div className="lecturelist-bar">
+                              <div
+                                className="lecturelist-bar-fill"
+                                style={{
+                                  width: `${lecture.assignmentAmount}%`,
+                                  backgroundColor: getColor(
+                                    lecture.assignmentAmount
+                                  ),
+                                }}
+                              />
+                            </div>
+                            <div className="lecturelist-bar">
+                              <div
+                                className="lecturelist-bar-fill"
+                                style={{
+                                  width: `${lecture.gradeAmount}%`,
+                                  backgroundColor: getColor(
+                                    lecture.gradeAmount
+                                  ),
+                                }}
+                              />
+                            </div>
+                            <div className="lecturelist-bar">
+                              <div
+                                className="lecturelist-bar-fill"
+                                style={{
+                                  width: `${lecture.teamPlayAmount}%`,
+                                  backgroundColor: getColor(
+                                    lecture.gradeAmount
+                                  ),
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="lecturelist-reviewSummary">
+                            {lecture.reviewSummary}
+                          </div>
+                          <div className="lecturelist-buttons">
+                            <button className="lecture-list-button-godetail">
+                              강의 자세히 보기
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -155,6 +308,7 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                   <p
                     onClick={() => handleToggle(lecName)}
                     style={{ cursor: "pointer" }}
+                    className="lectureslist-samename-lectures-toggle"
                   >
                     {expandedLectures[lecName] ? "▼" : "▲"} {lecName} (
                     {lectureGroup.length})
@@ -162,21 +316,109 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                   {expandedLectures[lecName] &&
                     lectureGroup.map((lecture, index) => {
                       const lectureKey = `${lecture.lecNumber}-${lecture.year}-${lecture.semester}`;
+                      const isSelected = !!selectedLectures[lectureKey];
                       return (
-                        <div key={`${lecture.lectureID}-${index}`}>
-                          <input
-                            type="checkbox"
-                            checked={!!selectedLectures[lectureKey]}
-                            onChange={() => handleCheckboxChange(lecture)}
-                          />
-                          <label>
-                            {lecture.moreInfo}
-                            {lecture.lecName} | {lecture.lecProfessor} |{" "}
-                            {lecture.lecCredit} | {lecture.lecTime} |{" "}
-                            {lecture.lecClassroom} | {lecture.year}년{" "}
-                            {lecture.semester}
+                        <div
+                          key={`${lecture.lectureID}-${index}`}
+                          className="lecturelist-samename-lectures"
+                          onClick={() =>
+                            handleButtonVisibilityToggle(lectureKey)
+                          }
+                        >
+                          <label className="lecturelist-lecture-check-box">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleLectureSelect(lecture)}
+                            />
+                            <p className="lecturelist-lecture-moreinfo">
+                              {lecture.moreInfo}
+                            </p>
+                            <div className="lecturelist-lecNameNstar-box">
+                              <div className="lecturelist-lecName-box">
+                                <p
+                                  className={
+                                    isSelected
+                                      ? "lecturelist-lecName-selected"
+                                      : "lecturelist-lecName"
+                                  }
+                                >
+                                  {lecture.lecName}
+                                </p>
+                                <p className="lecturelist-lecProfessor">
+                                  {lecture.lecProfessor}
+                                </p>
+                              </div>
+                              <div className="lecturelist-lecStar-box">
+                                {renderStarRatingImages(lecture.star)}
+                              </div>
+                            </div>
                           </label>
-                          <hr />
+                          <div className="lecturelist-lec-detail">
+                            <p className="lecturelist-lecClassification">
+                              {lecture.lecClassification}
+                            </p>
+                            <p className="lecturelist-lecCredit">
+                              {lecture.lecCredit}학점
+                            </p>
+                            <p className="lecturelist-lecTime">
+                              {lecture.lecTime &&
+                              lecture.lecTime !== "undefined" &&
+                              lecture.lecTime !== undefined ? (
+                                <>{formatLectureTime(lecture.lecTime)}</>
+                              ) : null}
+                            </p>
+                            <p className="lecturelist-lecClassroom">
+                              {lecture.lecClassroom}
+                            </p>
+                          </div>
+                          {visibleButtons[lectureKey] && (
+                            <div className="lecturelist-expanded">
+                              <div className="lecturelist-amount">
+                                <div className="lecturelist-bar">
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.assignmentAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.assignmentAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                                <div className="lecturelist-bar">
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.gradeAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.gradeAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                                <div className="lecturelist-bar">
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.teamPlayAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.gradeAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="lecturelist-reviewSummary">
+                                {lecture.reviewSummary}
+                              </div>
+                              <div className="lecturelist-buttons">
+                                <button className="lecture-list-button-godetail">
+                                  강의 자세히 보기
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}

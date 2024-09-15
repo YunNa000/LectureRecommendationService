@@ -125,7 +125,6 @@ def check_multi_major(bunban):
 
 
 def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassification: str, isPillSu: bool, assignmentAmount: str, gradeAmount: str, teamplayAmount: str, star: float, lecTheme: str, lectureName: str, userYear: int, user_id: str, isForeign: bool, lecCredit: int, lecTimeTable: Optional[List[str]], whatMultipleMajor: str, whatMultipleMajorDepartment: str):
-    print(f"lecTimeTable: {lecTimeTable}")
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -138,7 +137,7 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -271,12 +270,14 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
             moreInfo=more_info,
             lecTheme=row[11],
             lecClassification=row[12],
-            lecWeekTime=lec_week_time
-
-
+            lecWeekTime=lec_week_time,
+            star=row[14],
+            assignmentAmount=row[15],
+            teamPlayAmount=row[16],
+            gradeAmount=row[17],
+            reviewSummary=row[18]
         ))
         seen_lecture_ids.add(lecture_id)
-    print(response)
 
     return response
 
@@ -295,7 +296,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     user_taken_courses = [row['lecName'] for row in cursor.fetchall()]
 
     base_query = """
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year, ll.lecTheme, ll.lecClassification, ll.lecWeekTime
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.lecTheme, ll.lecClassification, lc.canTakeBunBan, lc.majorRecogBunBan, lc.canTakeOnly1year, lc.canTakeOnly2year, lc.canTakeOnly3year, lc.canTakeOnly4year, lc.canTakeOnly5year, lc.canTakeForeignPeople, lc.canTakeMultipleMajor, ll.semester, ll.year, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -335,7 +336,6 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             query_params.append(f'%{time}%')
         base_query += f" AND ({' OR '.join(time_conditions)})"
 
-    print(lecCredit)
     if lecCredit != 0:
         if lecCredit == 4:
             base_query += " AND ll.lecCredit >= ?"
@@ -451,7 +451,12 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
             year=row[19],
             lecTheme=row[20],
             lecClassification=row[21],
-            lecWeekTime=lec_week_time
+            lecWeekTime=lec_week_time,
+            star=row[23],
+            assignmentAmount=row[24],
+            teamPlayAmount=row[25],
+            gradeAmount=row[26],
+            reviewSummary=row[27]
         ))
 
         seen_lecture_ids.add(lecture_id)
@@ -490,5 +495,4 @@ async def get_lectures(input_data: LectureCallInput):
         response = print_JunGong_n_GyoYang(
             year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable, whatMultipleMajor=whatMultipleMajor, whatMultipleMajorDepartment=whatMultipleMajorDepartment)
 
-    print(response)
     return response

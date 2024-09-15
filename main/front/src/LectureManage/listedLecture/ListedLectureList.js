@@ -11,6 +11,8 @@ const ListedLectureList = ({
   totalCredits,
   markLectureAsCompleted,
   takenLectures,
+  year,
+  semester,
 }) => {
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
@@ -20,9 +22,9 @@ const ListedLectureList = ({
     Array(filteredLectures.length).fill(false)
   );
 
-  if (filteredLectures.length === 0) {
-    return <p>강의를 추가해주세요.</p>;
-  }
+  // if (filteredLectures.length === 0) {
+  //   return <p>강의를 추가해주세요.</p>;
+  // }
 
   const checkedLectures = filteredLectures.filter(
     (lecture) =>
@@ -160,11 +162,16 @@ const ListedLectureList = ({
   return (
     <div className="list-view-box">
       {warningMessage}
-      <div
-        className={`toggle-bar ${isListVisible ? "active" : ""}`}
-        onClick={toggleListVisibility}
-      >
-        {isListVisible ? "▼ 강의 바구니 닫기" : "▲ 강의 바구니 보기"}
+      <div className="list-view-box">
+        {warningMessage}
+        <div
+          className={`toggle-bar ${isListVisible ? "active" : ""}`}
+          onClick={toggleListVisibility}
+        >
+          {isListVisible
+            ? `▼ ${year}년 ${semester} 강의 바구니 닫기`
+            : `▲ ${year}년 ${semester} 강의 바구니 보기`}
+        </div>
       </div>
       {isListVisible && (
         <div className="lecture-list">

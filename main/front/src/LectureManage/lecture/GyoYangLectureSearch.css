@@ -10,8 +10,12 @@
 .gyoyang-search-classification {
   display: flex;
   margin: 0 10px;
-  justify-content: space-evenly;
+  justify-content: space-between;
   padding: 5px 0 12px 0;
+}
+
+.gyoyang-search-classification label {
+  align-content: center;
 }
 
 .gyoyang-search-classification-select {
