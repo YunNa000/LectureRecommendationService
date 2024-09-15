@@ -87,6 +87,7 @@ async def return_basic_user_data(request: userID):
         )
 
     except Exception as e:
+        print("Error occurred:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
