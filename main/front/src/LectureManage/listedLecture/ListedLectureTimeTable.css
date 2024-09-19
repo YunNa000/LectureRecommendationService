@@ -10,6 +10,7 @@
 .day-header {
   background-color: #f2f2f2;
   border: 1px solid #ddd;
+  font-size: 12px;
 }
 
 .timetable-row {
@@ -20,7 +21,7 @@
   border: 1px solid #ddd;
   width: 300px;
   height: 100px;
-  padding: 1px;
+  padding: 0;
 }
 
 .period-cell {
@@ -33,26 +34,26 @@
 
 .lecture-clickable {
   cursor: pointer;
-  margin-bottom: 5px;
+  height: 100%;
 }
 
 .lecture-name {
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   margin: 0;
   text-align: center;
 }
 
 .lecture-professor {
   color: #777;
-  font-size: 12px;
+  font-size: 10px;
   text-align: center;
   margin: 0;
 }
 .listed-lec-timetable-isLecClose {
   text-align: center;
   color: red;
-  font-size: 12px;
+  font-size: 10px;
   margin: 5px 0 3px 0;
 }
 
@@ -63,7 +64,7 @@
 }
 
 .no-time-lecture {
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   margin: 0 0 5px 0;
 }
@@ -98,9 +99,9 @@
 }
 
 .edit-lecture-unckeck {
-  align-items: center;
+  /* align-items: center; */
   margin-right: 10px;
-  font-size: 12px;
+  display: flex;
 }
 
 .edit-lecture-unckeck input[type="checkbox"] {
@@ -116,6 +117,7 @@
   border-radius: 4px;
   font-size: 14px;
   width: calc(100% - 12px);
+  outline: none;
 }
 
 .update-button {
@@ -134,4 +136,9 @@
   text-align: center;
   color: #8a1601;
   font-weight: bold;
+}
+
+.edit-lecture-uncheck-text {
+  font-size: 10px;
+  margin: 0;
 }
