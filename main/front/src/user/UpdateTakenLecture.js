@@ -206,7 +206,7 @@ const UpdateTakenLecture = () => {
       <div className="mypage-user-already-taken-lectures">
         {Object.entries(
           lectures.reduce((acc, lecture) => {
-            const year = lecture.year || "수동으로 추가한 강의";
+            const year = lecture.year || "직접 추가한 강의";
             const semester = lecture.semester || "";
             const key = year + (semester ? ` - ${semester}` : "");
 
