@@ -13,14 +13,16 @@
   justify-content: flex-end;
 }
 .total-search-button {
-  height: 30px;
+  height: 32px;
   border: none;
   outline: none;
   background-color: #fff0a0;
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 8px 10px;
   justify-self: end;
-  margin-right: 10px;
+  flex: 1;
+  margin-left: 5px;
+  box-shadow: 0 2px 5px #988f5d42;
 }
 .total-search-conditions-bar {
   display: flex;
@@ -28,6 +30,7 @@
   white-space: nowrap;
   padding: 0 0 12px 0;
   margin: 10px 10px 0 10px;
+  justify-content: space-between;
 }
 
 .total-search-conditions-bar > div {
@@ -88,5 +91,5 @@
   box-shadow: 0 2px 5px rgb(230, 230, 230);
   border-radius: 5px;
   padding-left: 5px;
-  width: 150px;
+  flex: 4;
 }

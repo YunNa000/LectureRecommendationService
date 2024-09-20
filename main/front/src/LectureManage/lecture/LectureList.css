@@ -14,7 +14,7 @@
 .lecturelist-lecture {
   border-radius: 5px;
   margin: 0 10px;
-  padding: 10px 10px;
+  padding: 10px 10px 12px 10px;
 }
 .lecturelist-lecNumber {
   margin: 0 5px 0 0;
@@ -30,7 +30,7 @@
 .lecturelist-amount {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 55%;
 }
 
 .lecturelist-bar {
@@ -40,11 +40,13 @@
   width: 100%;
   background-color: rgb(220, 220, 220);
   border-radius: 10px;
+  height: 8px;
 }
 
 .lecturelist-expanded {
   display: flex;
   justify-content: space-between;
+  margin-top: 3px;
 }
 
 .lecturelist-bar-fill {
@@ -52,11 +54,7 @@
   background-color: #4caf50;
   transition: width 0.3s ease;
   border-radius: 10px;
-}
-
-span {
-  margin-left: 10px; /* 숫자와 막대 간의 간격 */
-  font-weight: bold; /* 숫자 강조 */
+  height: 8px;
 }
 
 .lecturelist-buttons {
@@ -83,6 +81,8 @@ span {
 
 .lecturelist-lecture-moreinfo {
   margin: 0;
+  font-size: 12px;
+  color: rgb(230, 20, 20);
 }
 .lecturelist-samename-lectures {
   margin: 13px 0 15px 13px;
@@ -109,8 +109,14 @@ span {
   color: #333;
   margin: 0 0 3px 0;
 }
+
+.lecturelist-reviewSummary-text {
+  font-size: 12px;
+  color: #333;
+  margin: 5px 0 9px 0;
+}
 .lecturelist-lec-detail {
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
 }
 .lecturelist-lecClassification {
@@ -135,4 +141,16 @@ span {
 
 .lecturelist-lecture-check-box {
   display: flex;
+}
+
+.lecturelist-amount-infoNbar {
+  display: flex;
+  font-size: 10px;
+  align-items: center;
+}
+
+.lecturelist-amount-info-text {
+  margin: 0;
+  white-space: nowrap;
+  color: #999;
 }

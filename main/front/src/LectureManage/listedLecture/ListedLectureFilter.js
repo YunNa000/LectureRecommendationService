@@ -25,10 +25,18 @@ const ListedLectureFilter = ({
           <input
             type="number"
             value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              if (value >= 0 && value <= 50) {
+                setYear(value);
+              } else {
+                setYear(10);
+              }
+            }}
           />
           년도
         </label>
+
         <select
           className="semester"
           value={semester}

@@ -4,8 +4,9 @@
   justify-content: space-between;
   padding: 8px 20px 6px 20px;
   background-color: white;
-  box-shadow: 0 2px 5px rgb(230, 230, 230);
-  position: sticky;
+  /* box-shadow: 0 2px 5px rgb(230, 230, 230); */
+  position: fixed;
+  width: 360px;
   top: 0;
   z-index: 1000;
 }
@@ -22,4 +23,10 @@
 .goback {
   border: none;
   background: none;
+}
+
+@media (max-width: 400px) {
+  .topbar-container {
+    width: calc(100% - 40px);
+  }
 }

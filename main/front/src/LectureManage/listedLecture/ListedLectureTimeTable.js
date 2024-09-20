@@ -95,6 +95,19 @@ const ListedLectureTimeTable = ({
     }
   });
 
+  function stringToRGB(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const r = (((hash & 0xff0000) >> 16) % 86) + 170;
+    const g = (((hash & 0x00ff00) >> 8) % 86) + 170;
+    const b = ((hash & 0x0000ff) % 86) + 170;
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
   return (
     <div className="timetable-box">
       {noTimeLectures.length > 0 && (
@@ -147,6 +160,9 @@ const ListedLectureTimeTable = ({
                         onClick={() =>
                           handleEditClick(lecture, rowIndex, cellIndex, index)
                         }
+                        style={{
+                          backgroundColor: `${stringToRGB(lecture.lecName)}`,
+                        }}
                       >
                         <p className="lecture-name">{lecture.lecName}</p>
                         <p className="lecture-professor">
@@ -182,7 +198,9 @@ const ListedLectureTimeTable = ({
                                   )
                                 }
                               />
-                              체크해제
+                              <p className="edit-lecture-uncheck-text">
+                                시간표에서 제외
+                              </p>
                             </label>
 
                             <input
