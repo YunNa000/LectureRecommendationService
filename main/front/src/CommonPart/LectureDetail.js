@@ -66,52 +66,6 @@ const StarRating = ({ count = 0 }) => {
   );
 };
 
-// const Tag = ({ text, description }) => {
-//   const [showDescription, setShowDescription] = useState(false);
-
-//   const tagStyle = {
-//     display: 'inline-block',
-//     padding: '5px 10px',
-//     margin: '4px',
-//     borderRadius: '16px',
-//     fontSize: '12px',
-//     color: 'gray',
-//     textAlign: 'center',
-//     border: '1px solid',
-//     cursor: 'pointer',
-//     position: 'relative',
-//   };
-
-//   const descriptionStyle = {
-//     position: 'absolute',
-//     top: '100%',
-//     left: '50%',
-//     transform: 'translateX(-50%)',
-//     backgroundColor: 'white',
-//     border: '1px solid gray',
-//     borderRadius: '4px',
-//     padding: '8px',
-//     zIndex: 1000,
-//     width: '200px',
-//     boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-//   };
-
-//   return (
-//     <div 
-//       style={tagStyle}
-//       onClick={() => setShowDescription(!showDescription)}
-//       onMouseEnter={() => setShowDescription(true)}
-//       onMouseLeave={() => setShowDescription(false)}
-//     >
-//       {text}
-//       {showDescription && (
-//         <div style={descriptionStyle}>
-//           {description}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
 
 const Tag = ({ text, description }) => {
   const [showModal, setShowModal] = useState(false);
@@ -193,11 +147,10 @@ const Tag = ({ text, description }) => {
 };
 
 const TagList = ({ tags }) => {
-  // tags가 undefined이거나 빈 객체인 경우를 처리
-  if (!tags || Object.keys(tags).length === 0) {
-    return <div>No tags available</div>;
-  }
-
+  // // tags가 undefined이거나 빈 객체인 경우를 처리
+  // if (!tags || Object.keys(tags).length === 0) {
+  //   return <div>No tags available</div>;
+  // }
   return (
     <div>
       {Object.entries(tags).map(([key, value]) => (
@@ -207,6 +160,7 @@ const TagList = ({ tags }) => {
   );
 };
 
+
 const EvaluationRatioTable = ({ ratioString }) => {
   const categories = ['출석', '중간고사', '기말고사', '과제보고서', '수업태도', 'Quiz', '기타'];
   const ratios = ratioString.split(',').map(Number);
@@ -215,7 +169,6 @@ const EvaluationRatioTable = ({ ratioString }) => {
     <table className="w-full border-collapse">
       <thead>
         <tr>
-          <th className="border p-2">평가 항목</th>
           {categories.map(category => (
             <th key={category} className="border p-2">{category}</th>
           ))}
@@ -224,7 +177,6 @@ const EvaluationRatioTable = ({ ratioString }) => {
       </thead>
       <tbody>
         <tr>
-          <td className="border p-2 font-bold">비율 (%)</td>
           {ratios.map((ratio, index) => (
             <td key={index} className="border p-2 text-center">{ratio || 0}</td>
           ))}
@@ -319,9 +271,9 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
   };
 
   if (loading) return <div>로딩 중...</div>;
+  //if (error) return <div>강의 정보가 없습니다.</div>; 
 
-
-  const data = [15, 22, 18, 25];
+  const data = [0, 22, 0, 25];
   //const data = [lecture.takenPeople3yearsAgo,lecture.takenPeople2yearsAgo,lecture.takenPeople1yearsAgo];
   return (
     <div className="lecture-detail">
@@ -394,6 +346,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
       </table>
       </div>
       {lecture.scheduleNcontent}
+      <div className="lecture-code">평가 항목</div>
       <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
     </div>
   );
