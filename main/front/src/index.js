@@ -120,10 +120,8 @@ root.render(
             <Route path="/users" element={<SocialFeatures2 />} />
             <Route path="/chat" element={<ChatBotPage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route
-              path="/lecture/:year/:semester/:lectureNumber"
-              element={<LectureDetailPage />}
-            />
+            <Route path="/lecture/:year/:semester/:lectureNumber" element={<LectureDetailPage />} />
+            <Route path="/lecture/:lectureNumber" element={<LectureDetailPage />} />
           </Routes>
         </div>
       </div>
