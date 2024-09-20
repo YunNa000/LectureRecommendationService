@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Tesseract from "tesseract.js";
+import "./UpdateTakenLecture.css";
 
 const UpdateTakenLecture = () => {
   const [user, setUser] = useState(null);
@@ -12,6 +13,7 @@ const UpdateTakenLecture = () => {
   const [userCredit, setUserCredit] = useState("");
   const [images, setImages] = useState([]);
   const [ocrResults, setOcrResults] = useState([]);
+  const [progress, setProgress] = useState(0);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -145,26 +147,33 @@ const UpdateTakenLecture = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
+    performOCR(files);
   };
 
   const performOCR = async () => {
     const results = [];
 
     for (const image of images) {
-      const result = await Tesseract.recognize(
-        URL.createObjectURL(image),
-        "kor",
-        {
-          logger: (m) => console.log(m),
-        }
-      );
-      results.push(result.data.text);
-      console.log("result.data.text: ", result.data.text);
+      await Tesseract.recognize(URL.createObjectURL(image), "kor", {
+        logger: (m) => {
+          console.log(m);
+          if (m.status === "recognizing text") {
+            setProgress(m.progress);
+          }
+        },
+      }).then((result) => {
+        results.push(result.data.text);
+        console.log("result.data.text: ", result.data.text);
+      });
     }
 
     setOcrResults(results);
-
     getLectureDataByOCR(results);
+    setProgress(1);
+
+    setTimeout(() => {
+      setProgress(0);
+    }, 500);
   };
 
   const getLectureDataByOCR = async (ocrResults) => {
@@ -194,15 +203,10 @@ const UpdateTakenLecture = () => {
 
   return (
     <div>
-      <div>
-        <input type="file" multiple onChange={handleImageChange} />
-        <button onClick={performOCR}>OCR</button>
-      </div>
-      <p>수강한 강의</p>
-      <div>
+      <div className="mypage-user-already-taken-lectures">
         {Object.entries(
           lectures.reduce((acc, lecture) => {
-            const year = lecture.year || "수동 추가";
+            const year = lecture.year || "수동으로 추가한 강의";
             const semester = lecture.semester || "";
             const key = year + (semester ? ` - ${semester}` : "");
 
@@ -215,9 +219,9 @@ const UpdateTakenLecture = () => {
           }, {})
         ).map(([key, group]) => (
           <div key={key}>
-            <h3>{key}</h3>
+            <p className="mypage-taken-lec-year-semester">{key}</p>
             {group.map((lecture) => (
-              <div key={lecture.id}>
+              <div key={lecture.id} className="mypage-taken-lec">
                 <input
                   type="text"
                   value={lecture.lecName || ""}
@@ -231,6 +235,7 @@ const UpdateTakenLecture = () => {
                     handleUpdateLecture(updatedLectures[index]);
                   }}
                   placeholder="강의 이름"
+                  className="mypage-taken-lec-name"
                 />
                 <select
                   value={lecture.Classification || ""}
@@ -243,8 +248,11 @@ const UpdateTakenLecture = () => {
                     setLectures(updatedLectures);
                     handleUpdateLecture(updatedLectures[index]);
                   }}
+                  className="mypage-taken-lec-classification"
                 >
-                  <option value="">분류 선택</option>
+                  <option value="" disabled>
+                    분류
+                  </option>
                   <option value="전필">전필</option>
                   <option value="전선">전선</option>
                   <option value="교필">교필</option>
@@ -264,18 +272,20 @@ const UpdateTakenLecture = () => {
                     setLectures(updatedLectures);
                     handleUpdateLecture(updatedLectures[index]);
                   }}
+                  className="mypage-taken-lec-credit"
                 >
-                  <option value="">학점 선택</option>
-                  <option value={0}>0학점</option>
-                  <option value={1}>1학점</option>
-                  <option value={2}>2학점</option>
-                  <option value={3}>3학점</option>
-                  <option value={4}>4학점</option>
+                  <option value="" disabled>
+                    학점
+                  </option>
+                  <option value={0}>0</option>
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value={4}>4</option>
                 </select>
                 <select
                   type="text"
                   value={lecture.userCredit || ""}
-                  placeholder="받은 점수"
                   onChange={(e) => {
                     const updatedLectures = [...lectures];
                     const index = updatedLectures.findIndex(
@@ -285,8 +295,9 @@ const UpdateTakenLecture = () => {
                     setLectures(updatedLectures);
                     handleUpdateLecture(updatedLectures[index]);
                   }}
+                  className="mypage-taken-lec-userCredit"
                 >
-                  <option value="">받은 점수</option>
+                  <option value="">성적</option>
                   <option value="A+">A+</option>
                   <option value="A">A</option>
                   <option value="B+">B+</option>
@@ -297,7 +308,14 @@ const UpdateTakenLecture = () => {
                   <option value="P">P</option>
                   <option value="NP">NP</option>
                 </select>
-                <button onClick={() => handleDeleteLecture(lecture)}>
+                <button
+                  onClick={() => {
+                    if (window.confirm("정말 삭제할까요?")) {
+                      handleDeleteLecture(lecture);
+                    }
+                  }}
+                  className="mypage-taken-lec-delete-button"
+                >
                   삭제
                 </button>
               </div>
@@ -305,58 +323,51 @@ const UpdateTakenLecture = () => {
           </div>
         ))}
       </div>
-
-      <h2>강의 추가</h2>
-      <input
-        type="text"
-        placeholder="강의명"
-        value={lecName}
-        onChange={(e) => setLecName(e.target.value)}
-      />
-      <select
-        value={classification || ""}
-        onChange={(e) => setClassification(e.target.value)}
-      >
-        <option value="">분류 선택</option>
-        <option value="전필">전필</option>
-        <option value="전선">전선</option>
-        <option value="교필">교필</option>
-        <option value="교선">교선</option>
-        <option value="일선">일선</option>
-        <option value="기타">기타</option>
-      </select>
-      <select
-        type="number"
-        placeholder="학점"
-        value={lecCredit || ""}
-        onChange={(e) => setLecCredit(e.target.value)}
-      >
-        <option value="">학점 선택</option>
-        <option value={0}>0학점</option>
-        <option value={1}>1학점</option>
-        <option value={2}>2학점</option>
-        <option value={3}>3학점</option>
-        <option value={4}>4학점</option>
-      </select>
-      <select
-        type="text"
-        placeholder="받은 점수"
-        value={userCredit}
-        onChange={(e) => setUserCredit(e.target.value)}
-      >
-        <option value="">받은 점수</option>
-        <option value="A+">A+</option>
-        <option value="A">A</option>
-        <option value="B+">B+</option>
-        <option value="B">B</option>
-        <option value="B+">B+</option>
-        <option value="C+">C+</option>
-        <option value="C">C</option>
-        <option value="F">F</option>
-        <option value="P">P</option>
-        <option value="NP">NP</option>
-      </select>
-      <button onClick={handleAddLecture}>강의 추가</button>
+      <div className="mypage-taken-lec-manually-add-box"></div>
+      <div className="update-taken-lec-upload-btn-line">
+        <div className="taken-lec-progress-bar">
+          {progress !== 0 ? (
+            <>
+              <div
+                style={{
+                  width: "calc(100% - 20px)",
+                  backgroundColor: "#e0e0e0",
+                  borderRadius: "50px",
+                  margin: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${progress * 100}%`,
+                    height: "10px",
+                    backgroundColor: "#fff0a0",
+                    borderRadius: "50px",
+                    transition: "width 0.2s",
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleAddLecture}
+                className="update-taken-lec-add-btn-box"
+              >
+                강의 추가
+              </button>
+            </>
+          )}
+        </div>
+        <label className="update-taken-lec-img-upload-btn-box">
+          이미지로 강의 추가
+          <input
+            type="file"
+            className="update-taken-lec-img-upload-btn"
+            multiple
+            onChange={handleImageChange}
+          />
+        </label>
+      </div>
     </div>
   );
 };

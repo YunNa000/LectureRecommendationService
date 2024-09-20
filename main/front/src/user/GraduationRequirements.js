@@ -135,7 +135,7 @@ const GraduationRequirements = () => {
   return (
     <div>
       {user && (
-        <div>
+        <div className="graduation-requirement">
           <div className="graduation-taken-credit-box">
             <div className="graduation-taken-credit-each-box">
               <p className="graduation-taken-credit-text">전체 학점</p>

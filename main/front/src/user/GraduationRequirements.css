@@ -18,7 +18,9 @@
   margin: 3px 10px;
   padding: 10px;
 }
-
+.graduation-requirement {
+  margin-bottom: 40px;
+}
 .graduation-gyun-gyo-taken {
   display: flex;
   font-size: 12px;

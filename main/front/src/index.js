@@ -68,8 +68,8 @@ function UserPage() {
     <div>
       <TopBarBack title="마이페이지" />
       <UpdateUserInfo />
-      <UpdateTakenLecture />
       <GraduationRequirements />
+      <UpdateTakenLecture />
     </div>
   );
 }

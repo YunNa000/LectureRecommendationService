@@ -3,9 +3,9 @@
   margin: 50px 10px 0 10px;
 
   border: 1px solid rgb(230, 230, 230);
-  border-radius: 9px;
+  border-radius: 10px;
   background-color: rgb(253, 253, 253);
-  padding: 13px 15px;
+  padding: 8px 13px;
 }
 .userinfo-edit-form {
   margin-top: 15px;
