@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import "./GraduationRequirements.css";
 
 const GraduationRequirements = () => {
   const [user, setUser] = useState(null);
@@ -22,6 +23,8 @@ const GraduationRequirements = () => {
     what_multiple_major_department: "",
     what_multiple_major: "",
   });
+  const [majorGpa, setMajorGpa] = useState(0);
+  const [totalGpa, setTotalGpa] = useState(0);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -37,6 +40,8 @@ const GraduationRequirements = () => {
         if (response.ok && data.user_id) {
           setUser(data.user_id);
           getUserGraduationReqInfo(data.user_id);
+          getUserMajorGPA(data.user_id);
+          getUserTotalGPA(data.user_id);
         }
       } else {
         window.location.href = "http://127.0.0.1:3000/login";
@@ -85,6 +90,44 @@ const GraduationRequirements = () => {
     }
   };
 
+  const getUserMajorGPA = async (userId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/data/majorgpa",
+        { user_id: userId },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setMajorGpa(data);
+
+        console.log("major gpa", data);
+      }
+    } catch (error) {
+      console.error("Error fetching user data", error);
+    }
+  };
+
+  const getUserTotalGPA = async (userId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/user/data/totalgpa",
+        { user_id: userId },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setTotalGpa(data);
+
+        console.log("total gpa", data);
+      }
+    } catch (error) {
+      console.error("Error fetching user data", error);
+    }
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -93,60 +136,101 @@ const GraduationRequirements = () => {
     <div>
       {user && (
         <div>
-          <hr />
-          <div>
-            <p>
-              전체 학점: {formData.taken_total_credit} /{" "}
-              {formData.user_require_requirementTotalCredit} | 전공 학점:{" "}
-              {formData.taken_major_credit} /{" "}
-              {formData.user_require_major_credit} | 교양 학점:{" "}
-              {formData.taken_gyoyang_credit} /{" "}
-              {formData.user_require_gyoGyunCredit +
-                formData.user_require_gyoPillCredit}{" "}
-              | 기타 학점: {formData.taken_other_credit} |{" "}
-              {formData.what_multiple_major_department}{" "}
-              {formData.what_multiple_major} 학점:{" "}
-              {formData.user_taken_multiple_major_credit} /{" "}
-              {formData.multiple_major_credit}
-            </p>
-            <p>복수 전공 학과: {formData.what_multiple_major_department}</p>
-            <p>복수 전공: {formData.what_multiple_major}</p>
+          <div className="graduation-taken-credit-box">
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">전체 학점</p>
+              <p className="graduation-taken-credit-text">
+                {formData.taken_total_credit} /{" "}
+                {formData.user_require_requirementTotalCredit}
+              </p>
+            </div>
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">전공 학점</p>
+              <p className="graduation-taken-credit-text">
+                {formData.taken_major_credit} /{" "}
+                {formData.user_require_major_credit}
+              </p>
+            </div>
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">교양 학점</p>
+              <p className="graduation-taken-credit-text">
+                {formData.taken_gyoyang_credit} /{" "}
+                {formData.user_require_gyoGyunCredit +
+                  formData.user_require_gyoPillCredit}
+              </p>
+            </div>
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">기타 학점</p>
+              <p className="graduation-taken-credit-text">
+                {formData.taken_other_credit}
+              </p>
+            </div>
+            {(formData.what_multiple_major_department ||
+              formData.what_multiple_major_department !== "") && (
+              <div className="graduation-taken-credit-each-box">
+                <p className="graduation-taken-credit-text">
+                  {formData.what_multiple_major}
+                </p>
+                <p className="graduation-taken-credit-text">
+                  {formData.user_taken_multiple_major_credit} /{" "}
+                  {formData.multiple_major_credit}
+                </p>
+              </div>
+            )}
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">전체 평점</p>
+              <p className="graduation-taken-credit-text">{majorGpa} / 4.5</p>
+            </div>
+            <div className="graduation-taken-credit-each-box">
+              <p className="graduation-taken-credit-text">전공 평점</p>
+              <p className="graduation-taken-credit-text">{totalGpa} / 4.5</p>
+            </div>
           </div>
-          <hr />
-          <div>
-            <p>수강한 교양균형</p>
-            <p>
-              {formData.taken_gyoGyunTheme.map((theme, index) => (
-                <li key={index}>{theme}</li>
-              ))}
-            </p>
+          <div className="graduation-gyun-gyo-box">
+            <p className="graduation-gyun-gyo-text">균형 교양</p>
+            <div className="graduation-gyun-gyo-taken">
+              수강 완료:
+              <div className="graduation-gyun-gyo-text-taken-list">
+                {formData.taken_gyoGyunTheme.map((theme, index) => (
+                  <p className="graduation-gyun-gyo-text-taken" key={index}>
+                    {theme}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="graduation-gyun-gyo-taken">
+              수강 필요:
+              <div className="graduation-gyun-gyo-text-taken-list">
+                {formData.not_taken_gyoGyunTheme.map((theme, index) => (
+                  <p className="graduation-gyun-gyo-text-taken" key={index}>
+                    {theme}
+                  </p>
+                ))}
+              </div>
+            </div>
           </div>
-          <hr />
-          <div>
-            <p>미수강한 교양균형</p>
-            <p>
-              {formData.not_taken_gyoGyunTheme.map((theme, index) => (
-                <li key={index}>{theme}</li>
-              ))}
-            </p>
-          </div>
-          <hr />
-          <div>
-            <p>수강한 교필</p>
-            <p>
-              {formData.taken_gyoPillName.map((lecture, index) => (
-                <li key={index}>{lecture}</li>
-              ))}
-            </p>
-          </div>
-          <hr />
-          <div>
-            <p>미수강한 교필</p>
-            <p>
-              {formData.not_taken_gyoPillName.map((lecture, index) => (
-                <li key={index}>{lecture}</li>
-              ))}
-            </p>
+          <div className="graduation-gyun-gyo-box">
+            <p className="graduation-gyun-gyo-text">필수 교양</p>
+            <div className="graduation-gyun-gyo-taken">
+              수강 완료:
+              <div className="graduation-gyun-gyo-text-taken-list">
+                {formData.taken_gyoPillName.map((lecture, index) => (
+                  <p className="graduation-gyun-gyo-text-taken" key={index}>
+                    {lecture}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="graduation-gyun-gyo-taken">
+              수강 필요:
+              <div className="graduation-gyun-gyo-text-taken-list">
+                {formData.not_taken_gyoPillName.map((lecture, index) => (
+                  <p className="graduation-gyun-gyo-text-taken" key={index}>
+                    {lecture}
+                  </p>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
