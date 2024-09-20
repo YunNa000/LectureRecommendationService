@@ -178,6 +178,37 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
     fetchSelectedLectures();
   }, [user]);
 
+  const isItHard = (amount, what) => {
+    console.log(amount);
+    if (what === "assignment") {
+      if (amount >= 70) {
+        return "적음";
+      } else if (amount >= 50) {
+        return "보통";
+      } else if (amount > 0) {
+        return "많음";
+      }
+    } else if (what === "grade") {
+      if (amount >= 70) {
+        return "쉬움";
+      } else if (amount >= 50) {
+        return "보통";
+      } else if (amount > 0) {
+        return "힘듦";
+      }
+    } else if (what === "teamplay") {
+      if (amount >= 70) {
+        return "적음";
+      } else if (amount >= 50) {
+        return "보통";
+      } else if (amount > 0) {
+        return "많음";
+      }
+    }
+
+    return "정보 없음";
+  };
+
   const groupedLectures = groupLecturesByName(lectures);
 
   return (
@@ -208,9 +239,6 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                           checked={isSelected}
                           onChange={() => handleLectureSelect(lecture)}
                         />
-                        <p className="lecturelist-lecture-moreinfo">
-                          {lecture.moreInfo}
-                        </p>
                         <div className="lecturelist-lecNameNstar-box">
                           <div className="lecturelist-lecName-box">
                             <p className="lecturelist-lecName">
@@ -225,6 +253,9 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                           </div>
                         </div>
                       </label>
+                      <p className="lecturelist-lecture-moreinfo">
+                        {lecture.moreInfo}
+                      </p>
                       <div className="lecturelist-lec-detail">
                         <p className="lecturelist-lecNumber">
                           {lecture.lecNumber}
@@ -254,51 +285,86 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                         </p>
                       </div>
                       {visibleButtons[lectureKey] && (
-                        <div className="lecturelist-expanded">
-                          <div className="lecturelist-amount">
-                            <div className="lecturelist-bar">
-                              <div
-                                className="lecturelist-bar-fill"
-                                style={{
-                                  width: `${lecture.assignmentAmount}%`,
-                                  backgroundColor: getColor(
-                                    lecture.assignmentAmount
-                                  ),
-                                }}
-                              />
-                            </div>
-                            <div className="lecturelist-bar">
-                              <div
-                                className="lecturelist-bar-fill"
-                                style={{
-                                  width: `${lecture.gradeAmount}%`,
-                                  backgroundColor: getColor(
-                                    lecture.gradeAmount
-                                  ),
-                                }}
-                              />
-                            </div>
-                            <div className="lecturelist-bar">
-                              <div
-                                className="lecturelist-bar-fill"
-                                style={{
-                                  width: `${lecture.teamPlayAmount}%`,
-                                  backgroundColor: getColor(
-                                    lecture.gradeAmount
-                                  ),
-                                }}
-                              />
-                            </div>
-                          </div>
+                        <>
                           <div className="lecturelist-reviewSummary">
-                            {lecture.reviewSummary}
+                            <p className="lecturelist-reviewSummary-text">
+                              {lecture.reviewSummary}
+                              openai api key 받기 전까지는 요걸 강의 요약이라고
+                              할게요. 이건 강의 요약인데.. 음.. 딱 세 줄까지가
+                              괜찮을 거 같아요.
+                            </p>
                           </div>
-                          <div className="lecturelist-buttons">
-                            <button className="lecture-list-button-godetail">
-                              강의 자세히 보기
-                            </button>
+                          <div className="lecturelist-expanded">
+                            <div className="lecturelist-amount">
+                              <div className="lecturelist-amount-infoNbar">
+                                <p className="lecturelist-amount-info-text">
+                                  과제
+                                </p>
+                                <div className="lecturelist-bar">
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.assignmentAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.assignmentAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                                <p className="lecturelist-amount-info-text">
+                                  {isItHard(
+                                    lecture.assignmentAmount,
+                                    "assignment"
+                                  )}
+                                </p>
+                              </div>
+                              <div className="lecturelist-amount-infoNbar">
+                                <p className="lecturelist-amount-info-text">
+                                  성적
+                                </p>
+                                <div className="lecturelist-bar">
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.gradeAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.gradeAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                                <p className="lecturelist-amount-info-text">
+                                  {isItHard(lecture.gradeAmount, "grade")}
+                                </p>
+                              </div>
+                              <div className="lecturelist-amount-infoNbar">
+                                <p className="lecturelist-amount-info-text">
+                                  팀플
+                                </p>
+                                <div className="lecturelist-bar">
+                                  {" "}
+                                  <div
+                                    className="lecturelist-bar-fill"
+                                    style={{
+                                      width: `${lecture.teamPlayAmount}%`,
+                                      backgroundColor: getColor(
+                                        lecture.gradeAmount
+                                      ),
+                                    }}
+                                  />
+                                </div>
+                                <p className="lecturelist-amount-info-text">
+                                  {isItHard(lecture.teamPlayAmount, "teamplay")}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="lecturelist-buttons">
+                              <button className="lecture-list-button-godetail">
+                                강의 자세히 보기
+                              </button>
+                            </div>
                           </div>
-                        </div>
+                        </>
                       )}
                     </div>
                   );
@@ -331,18 +397,9 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                               checked={isSelected}
                               onChange={() => handleLectureSelect(lecture)}
                             />
-                            <p className="lecturelist-lecture-moreinfo">
-                              {lecture.moreInfo}
-                            </p>
                             <div className="lecturelist-lecNameNstar-box">
                               <div className="lecturelist-lecName-box">
-                                <p
-                                  className={
-                                    isSelected
-                                      ? "lecturelist-lecName-selected"
-                                      : "lecturelist-lecName"
-                                  }
-                                >
+                                <p className="lecturelist-lecName">
                                   {lecture.lecName}
                                 </p>
                                 <p className="lecturelist-lecProfessor">
@@ -354,12 +411,12 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                               </div>
                             </div>
                           </label>
+                          <p className="lecturelist-lecture-moreinfo">
+                            {lecture.moreInfo}
+                          </p>
                           <div className="lecturelist-lec-detail">
-                            <p className="lecturelist-lecClassification">
-                              {lecture.lecClassification}
-                            </p>
-                            <p className="lecturelist-lecCredit">
-                              {lecture.lecCredit}학점
+                            <p className="lecturelist-lecNumber">
+                              {lecture.lecNumber}
                             </p>
                             <p className="lecturelist-lecTime">
                               {lecture.lecTime &&
@@ -368,56 +425,108 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                 <>{formatLectureTime(lecture.lecTime)}</>
                               ) : null}
                             </p>
+                          </div>
+                          <div className="lecturelist-lec-detail">
+                            <p className="lecturelist-lecClassification">
+                              {lecture.lecClassification}
+                            </p>
+                            {lecture.lecTheme &&
+                              lecture.lecTheme.trim() !== "" && (
+                                <p className="lecturelist-lecTheme">
+                                  ({lecture.lecTheme})
+                                </p>
+                              )}
+                            <p className="lecturelist-lecCredit">
+                              {lecture.lecCredit}학점
+                            </p>
                             <p className="lecturelist-lecClassroom">
                               {lecture.lecClassroom}
                             </p>
                           </div>
                           {visibleButtons[lectureKey] && (
-                            <div className="lecturelist-expanded">
-                              <div className="lecturelist-amount">
-                                <div className="lecturelist-bar">
-                                  <div
-                                    className="lecturelist-bar-fill"
-                                    style={{
-                                      width: `${lecture.assignmentAmount}%`,
-                                      backgroundColor: getColor(
-                                        lecture.assignmentAmount
-                                      ),
-                                    }}
-                                  />
-                                </div>
-                                <div className="lecturelist-bar">
-                                  <div
-                                    className="lecturelist-bar-fill"
-                                    style={{
-                                      width: `${lecture.gradeAmount}%`,
-                                      backgroundColor: getColor(
-                                        lecture.gradeAmount
-                                      ),
-                                    }}
-                                  />
-                                </div>
-                                <div className="lecturelist-bar">
-                                  <div
-                                    className="lecturelist-bar-fill"
-                                    style={{
-                                      width: `${lecture.teamPlayAmount}%`,
-                                      backgroundColor: getColor(
-                                        lecture.gradeAmount
-                                      ),
-                                    }}
-                                  />
-                                </div>
-                              </div>
+                            <>
                               <div className="lecturelist-reviewSummary">
-                                {lecture.reviewSummary}
+                                <p className="lecturelist-reviewSummary-text">
+                                  {lecture.reviewSummary}
+                                  openai api key 받기 전까지는 요걸 강의
+                                  요약이라고 할게요. 이건 강의 요약인데.. 음..
+                                  딱 세 줄까지가 괜찮을 거 같아요.
+                                </p>
                               </div>
-                              <div className="lecturelist-buttons">
-                                <button className="lecture-list-button-godetail">
-                                  강의 자세히 보기
-                                </button>
+                              <div className="lecturelist-expanded">
+                                <div className="lecturelist-amount">
+                                  <div className="lecturelist-amount-infoNbar">
+                                    <p className="lecturelist-amount-info-text">
+                                      과제
+                                    </p>
+                                    <div className="lecturelist-bar">
+                                      <div
+                                        className="lecturelist-bar-fill"
+                                        style={{
+                                          width: `${lecture.assignmentAmount}%`,
+                                          backgroundColor: getColor(
+                                            lecture.assignmentAmount
+                                          ),
+                                        }}
+                                      />
+                                    </div>
+                                    <p className="lecturelist-amount-info-text">
+                                      {isItHard(
+                                        lecture.assignmentAmount,
+                                        "assignment"
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div className="lecturelist-amount-infoNbar">
+                                    <p className="lecturelist-amount-info-text">
+                                      성적
+                                    </p>
+                                    <div className="lecturelist-bar">
+                                      <div
+                                        className="lecturelist-bar-fill"
+                                        style={{
+                                          width: `${lecture.gradeAmount}%`,
+                                          backgroundColor: getColor(
+                                            lecture.gradeAmount
+                                          ),
+                                        }}
+                                      />
+                                    </div>
+                                    <p className="lecturelist-amount-info-text">
+                                      {isItHard(lecture.gradeAmount, "grade")}
+                                    </p>
+                                  </div>
+                                  <div className="lecturelist-amount-infoNbar">
+                                    <p className="lecturelist-amount-info-text">
+                                      팀플
+                                    </p>
+                                    <div className="lecturelist-bar">
+                                      {" "}
+                                      <div
+                                        className="lecturelist-bar-fill"
+                                        style={{
+                                          width: `${lecture.teamPlayAmount}%`,
+                                          backgroundColor: getColor(
+                                            lecture.gradeAmount
+                                          ),
+                                        }}
+                                      />
+                                    </div>
+                                    <p className="lecturelist-amount-info-text">
+                                      {isItHard(
+                                        lecture.teamPlayAmount,
+                                        "teamplay"
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="lecturelist-buttons">
+                                  <button className="lecture-list-button-godetail">
+                                    강의 자세히 보기
+                                  </button>
+                                </div>
                               </div>
-                            </div>
+                            </>
                           )}
                         </div>
                       );
