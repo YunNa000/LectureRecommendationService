@@ -87,6 +87,7 @@ async def return_basic_user_data(request: userID):
         )
 
     except Exception as e:
+        print("Error occurred:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
@@ -101,6 +102,34 @@ async def return_user_total_gpa(request: userID):
 
     query = """
         SELECT totalGPA
+        FROM User
+        WHERE user_id = ?
+    """
+
+    try:
+        cursor.execute(query, (request.user_id,))
+        user_data = cursor.fetchone()
+
+        if user_data is None:
+            raise HTTPException(status_code=434, detail="user not exist")
+
+        return user_data[0]
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@router.post("/user/data/majorgpa")
+async def return_user_total_gpa(request: userID):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT majorGPA
         FROM User
         WHERE user_id = ?
     """

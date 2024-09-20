@@ -26,6 +26,11 @@ class LectureCallResponse(BaseModel):
     lecClassification: str
     lecTheme: str
     lecWeekTime: str
+    star: Optional[float] = None
+    assignmentAmount: Optional[float] = None
+    teamPlayAmount: Optional[float] = None
+    gradeAmount: Optional[float] = None
+    reviewSummary: Optional[str] = None
 
 
 class LectureCallInput(BaseModel):
@@ -58,15 +63,15 @@ class userID(BaseModel):
 
 class UserBasicInfo(BaseModel):
     user_id: str
-    hakBun: int
-    bunBan: str
-    userYear: int
-    userMajor: str
-    username: str
-    isForeign: bool
-    isMultipleMajor: bool
-    whatMultipleMajor: str
-    whatMultipleMajorDepartment: str
+    hakBun: Optional[int] = None
+    bunBan: Optional[str] = None
+    userYear: Optional[int] = None
+    userMajor: Optional[str] = None
+    username: Optional[str] = None
+    isForeign: Optional[bool] = None
+    isMultipleMajor: Optional[bool] = None
+    whatMultipleMajor: Optional[str] = None
+    whatMultipleMajorDepartment: Optional[str] = None
 
 
 class OCRLectureInfo(BaseModel):

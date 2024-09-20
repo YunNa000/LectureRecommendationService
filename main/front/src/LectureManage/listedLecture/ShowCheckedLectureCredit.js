@@ -12,7 +12,7 @@ const ShowCheckedLectureCredit = ({
       <p>전체: {totalCredits}</p>
       <p>전공: {majorCredits}</p>
       <p>교양: {gyoYangCredits}</p>
-      <p>🎸: {otherCredits}</p>
+      <p>기타: {otherCredits}</p>
     </div>
   );
 };

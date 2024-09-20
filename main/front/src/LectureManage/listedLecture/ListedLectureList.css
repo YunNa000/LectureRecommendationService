@@ -5,18 +5,18 @@
 .toggle-bar {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   color: #333;
   background-color: white;
-  padding: 10px;
+  padding: 10px 0;
   height: 20px;
   text-align: center;
   cursor: pointer;
   z-index: 1000;
   transition: transform 0.3s ease;
   box-shadow: 0 -2px 5px rgb(230, 230, 230);
-  width: 100%;
+  width: 400px;
 }
 
 .lecture-list {
@@ -30,7 +30,9 @@
   z-index: 999;
   transition: transform 0.3s ease;
   padding: 5px 0 0 0;
-  width: 100%;
+  width: 400px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .lecture-list-inner {
@@ -187,4 +189,10 @@
   max-height: 100px;
   transition: max-height 0.2s ease, opacity 0.2s ease;
   opacity: 1;
+}
+
+@media (max-width: 400px) {
+  .lecture-list {
+    width: 100%;
+  }
 }

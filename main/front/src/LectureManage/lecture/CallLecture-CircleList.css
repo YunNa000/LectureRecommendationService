@@ -1,4 +1,5 @@
 .CircleList {
+  margin-top: 41px;
   height: 110px;
   display: flex;
   flex-direction: row;

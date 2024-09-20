@@ -1,0 +1,44 @@
+.graduation-taken-credit-box {
+  display: flex;
+  overflow-x: auto;
+  margin: 20px 10px;
+  white-space: nowrap;
+}
+.graduation-taken-credit-each-box {
+  text-align: center;
+  margin: 0 10px;
+}
+.graduation-taken-credit-text {
+  font-size: 12px;
+  margin: 0;
+}
+.graduation-gyun-gyo-box {
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  margin: 3px 10px;
+  padding: 10px;
+}
+.graduation-requirement {
+  margin-bottom: 40px;
+}
+.graduation-gyun-gyo-taken {
+  display: flex;
+  font-size: 12px;
+  color: #777;
+  white-space: nowrap;
+}
+.graduation-gyun-gyo-text {
+  font-size: 14px;
+  white-space: nowrap;
+  margin: 0;
+}
+.graduation-gyun-gyo-text-taken-list {
+  display: flex;
+  margin-left: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.graduation-gyun-gyo-text-taken {
+  margin: 0 5px 0 0;
+}
