@@ -90,15 +90,6 @@ const ListedLectureList = ({
     }
   };
 
-  const isLectureCompleted = (lecture) => {
-    return takenLectures.some(
-      (takenLecture) =>
-        takenLecture.lecNumber === lecture.lecNumber &&
-        takenLecture.year === lecture.year &&
-        takenLecture.semester === lecture.semester
-    );
-  };
-
   const toggleListVisibility = () => {
     setIsListVisible(!isListVisible);
   };
@@ -203,7 +194,15 @@ const ListedLectureList = ({
                           updateLecturePriority(lecture.lecNumber, priority)
                         }
                       />
-                      <p className="listed-lec-lecName">{lecture.lecName}</p>
+                      <p
+                        className={`listed-lec-lecName ${
+                          lecture.isCompleted === 1
+                            ? "listed-lec-completed"
+                            : ""
+                        }`}
+                      >
+                        {lecture.lecName}
+                      </p>
                       <p className="listed-lec-lecProfessor">
                         {lecture.lecProfessor}
                       </p>
@@ -266,7 +265,7 @@ const ListedLectureList = ({
                           {lecture.lecCredit}학점
                         </p>
                       </div>
-                      {!isLectureCompleted(lecture) &&
+                      {lecture.isCompleted !== 1 &&
                         editingLectureIndex !== index && (
                           <div className="listed-lec-more-info">
                             {lecture.classroom &&
@@ -350,7 +349,7 @@ const ListedLectureList = ({
                               >
                                 강의 바구니에서 빼기
                               </button>
-                              {!isLectureCompleted(lecture) ? (
+                              {lecture.isCompleted !== 1 ? (
                                 <button
                                   className="listed-lec-completed-button"
                                   onClick={() => {

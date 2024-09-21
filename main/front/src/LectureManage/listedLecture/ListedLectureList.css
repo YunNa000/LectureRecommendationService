@@ -196,3 +196,7 @@
     width: 100%;
   }
 }
+
+.listed-lec-completed {
+  color: rgb(99, 182, 99);
+}
