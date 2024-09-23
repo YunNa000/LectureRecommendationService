@@ -59,7 +59,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
         "http://localhost:8000/user/add_user_listed_lecture_manually",
         {
           user_id: user,
-          year: parseInt(year),
+          year: year ? parseInt(year) : null,
           semester: semester,
           classroom: classroom,
           memo: memo,
@@ -76,7 +76,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
       setMemo("");
       setLecName("");
       setLecTime("");
-      setLecCredit("");
+      setLecCredit(0);
       setLecClassification("");
       setDay("");
       setStartPeriod("");
@@ -246,7 +246,9 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
           강의 추가
         </button>
       </form>
-      {error && <div>{error}</div>}
+      {error && (
+        <div>{typeof error === "string" ? error : JSON.stringify(error)}</div>
+      )}
     </div>
   );
 };

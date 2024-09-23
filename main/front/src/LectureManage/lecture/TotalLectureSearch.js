@@ -23,7 +23,6 @@ const TotalLectureSearch = ({
           강의 검색
         </button>
       </div>
-      <div className="total-search-button-box"></div>
     </div>
   );
 };

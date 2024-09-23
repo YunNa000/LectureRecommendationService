@@ -189,6 +189,63 @@ const EvaluationRatioTable = ({ ratioString }) => {
   );
 };
 
+const LectureScheduleTable = ({ scheduleString }) => {
+  if (!scheduleString) {
+    return <div></div>; // scheduleString이 null 또는 undefined일 경우 빈 컴포넌트 반환
+  }
+
+  const rows = scheduleString?.split('|').map(item => item.trim()) || [];
+  const scheduleData = rows.map((row, index) => ({
+    week: index + 1,
+    content: row.split('\n').map(item => item.trim()).filter(item => item)
+  }));
+
+  return (
+    <table className='border 1'>
+      <thead>
+        <tr>
+          <th >주차</th>
+          <th >강의 내용</th>
+        </tr>
+      </thead>
+      <tbody>
+        {scheduleData.map((week, index) => (
+          <React.Fragment key={index}>
+            <tr>
+              <td rowSpan={week.content.length || 1} className="lecture-department">
+                {week.week}
+              </td>
+              <td >{week.content[0] || ''}</td>
+            </tr>
+            {week.content.slice(1).map((content, i) => (
+              <tr key={`${index}-${i}`}>
+                <td className="lecture-code" >{content}</td>
+              </tr>
+            ))}
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+const LectureTimeFormatter = ({ lecTime }) => {
+  const daysOfWeek = ['월', '화', '수', '목', '금'];
+  
+  const formatTime = (timeString) => {
+    if (lecTime === '') return;
+    const times = timeString.slice(1, -1).split('),(');
+    return times.map(time => {
+      const [day, period] = time.split(':');
+      return `${daysOfWeek[parseInt(day) - 1]} ${period}교시`;
+    }).join(' ');
+  };
+
+  return (
+    <div className="lecture-department">{formatTime(lecTime)}</div>
+  );
+};
+
 
 const LectureDetail = ({ year, semester, lectureNumber }) => {
   const [lectureName, setLectureName] = useState('');
@@ -196,9 +253,9 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState({});
-
+  const [takenPeoples, setTakenPeoples] = useState([0,0,0,0]);
   const defaultYear = '24';
-  const defaultSemester = '1학기';
+  const defaultSemester = '2학기';
 
 
 
@@ -230,7 +287,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           '예술': '예술 관련 강의입니다.'
         };
 
-
+        const takenPeoplesT = [0,0,0,0]
         const newTags = {};
 
         if (lecture.isPNP) newTags['P/NP 여부'] = tagDescriptions['P/NP 여부'];
@@ -245,9 +302,14 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         if (lecture.isExperimentDesign) newTags['실험 설계'] = tagDescriptions['실험 설계'];
         if (lecture.isELearning) newTags['E-러닝'] = tagDescriptions['E-러닝'];
         if (lecture.isArt) newTags['예술'] = tagDescriptions['예술'];
+        if (lecture.takenPeople1yearsAgo) takenPeoplesT[0]=lecture.takenPeople1yearsAgo
+        if (lecture.takenPeople2yearsAgo) takenPeoplesT[1]=lecture.takenPeople2yearsAgo
+        if (lecture.takenPeople3yearsAgo) takenPeoplesT[2]=lecture.takenPeople3yearsAgo
+
         console.log(newTags);
         setTags(newTags);
-      } catch (err) {
+        setTakenPeoples(takenPeoplesT);
+      } catch (err) { 
         setError(err.message);
         console.log(err.message)
       } finally {
@@ -273,10 +335,11 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
   if (loading) return <div>로딩 중...</div>;
   //if (error) return <div>강의 정보가 없습니다.</div>; 
 
-  const data = [0, 22, 0, 25];
+ 
   //const data = [lecture.takenPeople3yearsAgo,lecture.takenPeople2yearsAgo,lecture.takenPeople1yearsAgo];
   return (
     <div className="lecture-detail">
+      <div style={{ marginTop: "50px" }}></div>
       <div className="lecture-main">
         <div className="lecture-left">
           <div className="lecture-title">{lecture.lecName}</div>
@@ -292,7 +355,8 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
       </div>
       <div className="lecture-detail">
         <div className="lecture-code">강의시간</div>
-        <div className="lecture-department">{lecture.lecTime}월 3교시(참107), 수 4교시 (참B107)</div>
+        <LectureTimeFormatter lecTime={lecture.lecTime}></LectureTimeFormatter>
+        <div className="lecture-department">{lecture.lecClassroom}</div>
       </div>
       <div>
       </div>
@@ -305,7 +369,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         <div className="lecture-right"><button>리뷰 더보기</button></div>
       </div>
       <TagList tags={tags} />
-      <LineGraphComponent data={data} />
+      <LineGraphComponent data={takenPeoples} />
       <h1>강의정보</h1>
       <div className="lecture-detail">
         <div className="lecture-code">교과목 개요</div>
@@ -313,39 +377,9 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
       </div>
       <div className="lecture-detail">
         <div className="lecture-code">교재</div>
-        <div className="lecture-department">주교재 {lecture.mainBook}<br/>부교재 Natural Language Processing Fundamentals</div>
+        <div className="lecture-department">주교재 강의교안 <br/>부교재 Natural Language Processing Fundamentals</div>
       </div>
-      <div className="lecture-detail">
-      <div className="lecture-code">강의 일정</div>
-      <table>
-      <tr>
-        <th >주차</th>
-        <th >강의 내용</th>
-      </tr>
-      <tr>
-        <td rowSpan="2" >1</td>
-        <td>1. 텍스트 마이닝 강의 소개 & Introduction </td>
-      </tr>
-      <tr>
-        <td>2. </td>
-      </tr>
-      <tr>
-        <td rowSpan="2" >2</td>
-        <td>1.텍스트마이닝을 위한 기초 수학 </td>
-      </tr>
-      <tr>
-        <td>2. </td>
-      </tr>
-      <tr>
-        <td rowSpan="2" >3</td>
-        <td>텍스트 데이터 처리 </td>
-      </tr>
-      <tr>
-        <td>{renderField('일정 및 내용', lecture.scheduleNcontent)} </td>
-      </tr>
-      </table>
-      </div>
-      {lecture.scheduleNcontent}
+      <LectureScheduleTable scheduleString={lecture.scheduleNcontent} />
       <div className="lecture-code">평가 항목</div>
       <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
     </div>

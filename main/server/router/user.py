@@ -317,11 +317,11 @@ async def return_user_graduation_conditions(request: userID):
         else:
             user_not_taken_require_gyoPillName.append(lecture)
 
-    print(f"user: {user_id} | 전체 학점: {user_taken_total_credit}/{user_require_requirementTotalCredit} | 전공 학점: {user_taken_major_credit}/{user_require_major_credit} | {what_multiple_major_department} {what_multiple_major} 학점: {user_taken_multiple_major_credit}/{multiple_major_credit}| 교양 학점: {user_taken_gyoyang_credit}/{user_require_gyoPillCredit + user_require_gyoGyunCredit} | 기타 학점: {user_taken_other_credit}")
-    print(f"수강한 교양균형: {user_taken_require_gyoGyunTheme}")
-    print(f"미수강한 교양균형: {user_not_taken_require_gyoGyunTheme}")
-    print(f"수강한 교필: {user_taken_require_gyoPillName}")
-    print(f"미수강한 교필: {user_not_taken_require_gyoPillName}")
+    # print(f"user: {user_id} | 전체 학점: {user_taken_total_credit}/{user_require_requirementTotalCredit} | 전공 학점: {user_taken_major_credit}/{user_require_major_credit} | {what_multiple_major_department} {what_multiple_major} 학점: {user_taken_multiple_major_credit}/{multiple_major_credit}| 교양 학점: {user_taken_gyoyang_credit}/{user_require_gyoPillCredit + user_require_gyoGyunCredit} | 기타 학점: {user_taken_other_credit}")
+    # print(f"수강한 교양균형: {user_taken_require_gyoGyunTheme}")
+    # print(f"미수강한 교양균형: {user_not_taken_require_gyoGyunTheme}")
+    # print(f"수강한 교필: {user_taken_require_gyoPillName}")
+    # print(f"미수강한 교필: {user_not_taken_require_gyoPillName}")
 
     return {
         "taken_total_credit": user_taken_total_credit,

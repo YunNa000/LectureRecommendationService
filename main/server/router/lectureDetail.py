@@ -41,9 +41,9 @@ class LectureDetail(BaseModel):
     lecWeekTime: int | None
     lecClassroom: str | None
     isLecClose: bool | None
-    takenPeople1yearsAgo: int | None
-    takenPeople2yearsAgo: int | None
-    takenPeople3yearsAgo: int | None
+    takenPeople1yearsAgo: int | str| None
+    takenPeople2yearsAgo: int | str| None
+    takenPeople3yearsAgo: int | str| None
     ForeignLanguage: str | None
     percentageOfOnline: int | None
     isPNP: bool | None
@@ -72,6 +72,7 @@ class LectureDetail(BaseModel):
     reviewSummary: str | None
     checkAttend: str | None
     testNum: str | None
+    
 
 @router.get("/lecture/{year}/{semester}/{lecture_number}", response_model=LectureDetail)
 async def get_lecture(year: int, semester: str, lecture_number: str):

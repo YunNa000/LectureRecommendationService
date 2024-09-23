@@ -3,7 +3,12 @@
   overflow-x: auto;
   margin: 20px 10px;
   white-space: nowrap;
+  scrollbar-width: none;
 }
+.graduation-taken-credit-box::-webkit-scrollbar {
+  display: none;
+}
+
 .graduation-taken-credit-each-box {
   text-align: center;
   margin: 0 10px;
@@ -37,6 +42,10 @@
   margin-left: 5px;
   overflow-x: auto;
   white-space: nowrap;
+  scrollbar-width: none;
+}
+.graduation-gyun-gyo-text-taken-list::-webkit-scrollbar {
+  display: none;
 }
 
 .graduation-gyun-gyo-text-taken {
