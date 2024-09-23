@@ -2081,3 +2081,7 @@ lecture-data/data_preprocessing/pdf2md/PRIVATE.py
 main/server/router/__pycache__/
 main/server/router/gecko/geckodriver
 main/server/router/gecko/geckodriver-v0.34.0-linux64.tar.gz
+/main/server/.cache/data_
+/main/server/.cache
+*.md
+/data-processing/pdf2md/json_output
