@@ -350,7 +350,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           <div>{lecture.lecProfessor}</div>
           <div>{lecture.lecClassification}</div>
           <div>{lecture.isEngineering}학점</div>
-          <button>리스트 추가</button>
+          <button className="listed-lec-more-info-button">리스트 추가</button>
         </div>
       </div>
       <div className="lecture-detail">
@@ -366,7 +366,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         <StarRating count={lecture.star} />{lecture.star}/5.0
         </div>
         <div className="lecture-department">{lecture.reviewSummary}수업을 천천히 진행되며, 학생들과 함께 실습을 하지만, 비전공자에겐 다소 어려울 수 있어요.</div>
-        <div className="lecture-right"><button>리뷰 더보기</button></div>
+        <div className="lecture-right"><button className="listed-lec-more-info-button">리뷰 더보기</button></div>
       </div>
       <TagList tags={tags} />
       <LineGraphComponent data={takenPeoples} />
