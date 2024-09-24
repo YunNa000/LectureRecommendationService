@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import "./LectureList.css";
+import { useNavigate } from "react-router-dom";
 
 const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const [user, setUser] = useState(null);
   const [expandedLectures, setExpandedLectures] = useState({});
   const [visibleButtons, setVisibleButtons] = useState({});
+  const navigate = useNavigate();
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -359,7 +361,14 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                               </div>
                             </div>
                             <div className="lecturelist-buttons">
-                              <button className="lecture-list-button-godetail">
+                              <button
+                                className="lecture-list-button-godetail"
+                                onClick={() =>
+                                  navigate(
+                                    `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
+                                  )
+                                }
+                              >
                                 강의 자세히 보기
                               </button>
                             </div>

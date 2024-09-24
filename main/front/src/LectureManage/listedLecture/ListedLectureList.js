@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./ListedLectureList.css";
+import { useNavigate } from "react-router-dom";
 
 const ListedLectureList = ({
   filteredLectures,
@@ -21,6 +22,7 @@ const ListedLectureList = ({
   const [showButtons, setShowButtons] = useState(
     Array(filteredLectures.length).fill(false)
   );
+  const navigate = useNavigate();
 
   // if (filteredLectures.length === 0) {
   //   return <p>강의를 추가해주세요.</p>;
@@ -299,7 +301,14 @@ const ListedLectureList = ({
                             >
                               수정
                             </button>
-                            <button className="listed-lec-more-info-button">
+                            <button
+                              className="listed-lec-more-info-button"
+                              onClick={() =>
+                                navigate(
+                                  `/lecture/${year}/${semester}/${lecture.lecNumber}`
+                                )
+                              }
+                            >
                               강의 자세히 보기
                             </button>
                           </div>
