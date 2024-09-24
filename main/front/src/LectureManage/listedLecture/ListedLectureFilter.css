@@ -33,6 +33,7 @@
   box-shadow: 0 2px 5px rgb(230, 230, 230);
   background-color: white;
   padding: 0 5px 0 5px;
+  white-space: nowrap;
 }
 
 .semester {
@@ -67,6 +68,7 @@
   font-size: 14px;
   padding-left: 7px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .manually {
