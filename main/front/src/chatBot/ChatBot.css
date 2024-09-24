@@ -23,6 +23,7 @@
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  margin-top: 40px;
 }
 
 .intro-section {

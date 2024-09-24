@@ -1,105 +1,109 @@
-.th-friends{
-    padding: 8px;
+.th-friends {
+  padding: 8px;
 }
 .friend-list-container {
-    padding: 0px;
-  }
-  
-  .friend-list-title {
-    margin-bottom: 5px;
-    margin-left: 5px;
-    margin-top: 5px;
-    font-size: 18px;
-  }
-  
-  .friend-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 10px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .friend-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .friend-name {
-    font-weight: bold;
-  }
-  
-  .friend-major {
-    color: #666;
-    font-size: 0.9em;
-  }
-  
-  .friend-action-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  .friend-request-buttons {
-    display: flex;
-    gap: 10px; /* 버튼 사이의 간격 */
-  }
-  
-  .friend-request-button {
-    padding: 5px 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .center-text {
-    display: flex;
-    justify-content: center;  /* 수평 중앙 정렬 */
-    align-items: center;       /* 수직 중앙 정렬 */
-    height: 90vh;             /* 부모 요소의 높이를 100%로 설정 */
-    text-align: center;        /* 텍스트 중앙 정렬 */
-    color: #666;
-  }
-  
+  padding: 0px;
+  margin-top: 50px;
+}
 
+.friend-list-title {
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
+  font-size: 18px;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.friend-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.friend-name {
+  font-weight: bold;
+}
+
+.friend-major {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.friend-action-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.friend-request-buttons {
+  display: flex;
+  gap: 10px; /* 버튼 사이의 간격 */
+}
+
+.friend-request-button {
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.center-text {
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  height: 90vh; /* 부모 요소의 높이를 100%로 설정 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  color: #666;
+}
 
 .friend-search-form {
-    display: flex;
-    margin-bottom: 5px;
-    padding:0px 10px;
-  }
-  
-  .friend-search-input {
-    flex-grow: 1;
-    padding: 2px;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
-    font-size: 12px;
-  }
-  
-  .friend-search-button {
-    padding: 10px 20px;
-    background-color: #070401;
-    color: white;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .friend-search-button:hover {
-    background-color: #444544;
-  }
+  display: flex;
+  margin-bottom: 5px;
+  padding: 0px 10px;
+}
 
-  .friendrequest-list-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #f8f9fa;
-    border-top: 1px solid #dee2e6;
-    padding: 15px;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    max-height: 30vh; /* 화면 높이의 30%로 제한 */
-    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 생성 */
-  }
+.friend-search-input {
+  flex-grow: 1;
+  padding: 2px 2px 2px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 12px;
+  outline: none;
+}
+
+.friend-search-input:focus {
+  border: 1px solid #aaa;
+}
+
+.friend-search-button {
+  padding: 10px 20px;
+  background-color: #fff0a0;
+  color: #333;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.friend-search-button:hover {
+  background-color: #444544;
+}
+
+.friendrequest-list-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 15px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 30vh; /* 화면 높이의 30%로 제한 */
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤 생성 */
+}
