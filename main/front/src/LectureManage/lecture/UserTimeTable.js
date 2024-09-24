@@ -60,23 +60,13 @@ const UserTimeTable = ({ coordinates, setCoordinates }) => {
                     key={key}
                     className={selectedCells[key] ? "selected" : ""}
                     onClick={() => handleCellClick(day, period)}
-                  >
-                    {" "}
-                  </td>
+                  ></td>
                 );
               })}
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="coordinate-list">
-        <h3>선택된 좌표:</h3>
-        <ul>
-          {uniqueCoordinates.map((coord, index) => (
-            <li key={index}>{coord}</li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 };
