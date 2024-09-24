@@ -143,7 +143,12 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
     JOIN LectureDetailData ld ON ll.LectureID = ld.LectureID
     WHERE (ll.isLecClose IS NULL OR ll.isLecClose = 0)
-    AND (lc.canTakeOnly{userYear}year = 1 OR (lc.canTakeOnly1year IS NULL AND lc.canTakeOnly2year IS NULL AND lc.canTakeOnly3year IS NULL AND lc.canTakeOnly4year IS NULL AND lc.canTakeOnly5year IS NULL))
+    AND (lc.canTakeOnly{userYear}year = 1
+    OR (((lc.canTakeOnly1year IS NULL or lc.canTakeOnly1year is 0)
+    AND (lc.canTakeOnly2year IS NULL or lc.canTakeOnly2year IS 0)
+    AND (lc.canTakeOnly3year IS NULL or lc.canTakeOnly3year IS 0)
+    AND (lc.canTakeOnly4year IS NULL or lc.canTakeOnly4year IS 0)
+    AND (lc.canTakeOnly5year IS NULL  or lc.canTakeOnly5year IS 0))))
     AND ll.year = ?
     AND ll.semester = ?
     AND lc.canTakeBunBan LIKE ?
