@@ -39,9 +39,7 @@ const LectureManage = () => {
             !data.userMajor ||
             !data.username ||
             data.isForeign === null ||
-            data.isMultipleMajor === null ||
-            !data.whatMultipleMajor ||
-            !data.whatMultipleMajorDepartment
+            data.isMultipleMajor === null
           ) {
             window.location.href = "/mypage";
           } else {
