@@ -196,39 +196,50 @@ const LectureScheduleTable = ({ scheduleString }) => {
 
   const rows = scheduleString?.split('|').map(item => item.trim()) || [];
   const scheduleData = rows.map((row, index) => ({
-    week: index + 1,
+    week: Math.floor(index / 2) + 1,
     content: row.split('\n').map(item => item.trim()).filter(item => item)
   }));
 
   return (
-    <table className='border 1'>
+    <table className="w-full border-collapse border border-gray-300">
       <thead>
-        <tr>
-          <th >주차</th>
-          <th >강의 내용</th>
+        <tr className="bg-gray-100">
+          <th className="border border-gray-300 px-4 py-2">주차</th>
+          <th className="border border-gray-300 px-4 py-2">강의 내용</th>
         </tr>
       </thead>
       <tbody>
-        {scheduleData.map((week, index) => (
-          <React.Fragment key={index}>
-            <tr>
-              <td rowSpan={week.content.length || 1} className="lecture-department">
-                {week.week}
-              </td>
-              <td >{week.content[0] || ''}</td>
-            </tr>
-            {week.content.slice(1).map((content, i) => (
-              <tr key={`${index}-${i}`}>
-                <td className="lecture-code" >{content}</td>
+        {scheduleData.reduce((acc, week, index) => {
+          if (index % 2 === 0) {
+            acc.push(
+              <tr key={week.week}>
+                <td rowSpan="2" className="border border-gray-300 px-4 py-2 text-center">
+                  {week.week}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {week.content.map((content, i) => (
+                    <div key={i}>{content}</div>
+                  ))}
+                </td>
               </tr>
-            ))}
-          </React.Fragment>
-        ))}
+            );
+          } else {
+            acc.push(
+              <tr key={`${week.week}-2`}>
+                <td className="border border-gray-300 px-4 py-2">
+                  {week.content.map((content, i) => (
+                    <div key={i}>{content}</div>
+                  ))}
+                </td>
+              </tr>
+            );
+          }
+          return acc;
+        }, [])}
       </tbody>
     </table>
   );
 };
-
 const LectureTimeFormatter = ({ lecTime }) => {
   const daysOfWeek = ['월', '화', '수', '목', '금'];
   
