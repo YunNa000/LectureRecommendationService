@@ -1,0 +1,14 @@
+services:
+  fastapi:
+    build:
+      context: ./server
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+
+  react:
+    build:
+      context: ./front
+    ports:
+      - "3000:3000"
