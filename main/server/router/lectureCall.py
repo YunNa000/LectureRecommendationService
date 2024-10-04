@@ -284,6 +284,8 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         ))
         seen_lecture_ids.add(lecture_id)
 
+    response.sort(key=lambda x: x.star, reverse=True)
+
     return response
 
 
@@ -465,6 +467,8 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         ))
 
         seen_lecture_ids.add(lecture_id)
+
+    response.sort(key=lambda x: x.star, reverse=True)
 
     return response
 
