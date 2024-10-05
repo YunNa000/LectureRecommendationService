@@ -159,12 +159,14 @@ const GraduationRequirements = () => {
                   formData.user_require_gyoPillCredit}
               </p>
             </div>
-            <div className="graduation-taken-credit-each-box">
-              <p className="graduation-taken-credit-text">기타 학점</p>
-              <p className="graduation-taken-credit-text">
-                {formData.taken_other_credit}
-              </p>
-            </div>
+            {formData.taken_other_credit > 0 && (
+              <div className="graduation-taken-credit-each-box">
+                <p className="graduation-taken-credit-text">기타 학점</p>
+                <p className="graduation-taken-credit-text">
+                  {formData.taken_other_credit}
+                </p>
+              </div>
+            )}
             {(formData.what_multiple_major_department ||
               formData.what_multiple_major_department !== "") && (
               <div className="graduation-taken-credit-each-box">
