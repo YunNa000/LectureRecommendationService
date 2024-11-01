@@ -284,15 +284,15 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
 
         console.log(data);
         const tagDescriptions = {
-          'P/NP 여부': 'Pass/No Pass 평가 방식을 사용하는 강의입니다.',
-          '공학 인증': '공학 교육 인증을 위한 강의입니다.',
+          'P/NP 여부': 'Pass/None Pass 평가 방식으로 성적이 산출되는 강의입니다.',
+          '공학 인증': '공학 교육 인증을 위한 강의입니다. 특정 학과에게만 필요한 요소입니다.',
           'TBL': 'Team-Based Learning 방식을 사용하는 강의입니다.',
           'PBL': 'Project-Based Learning 방식을 사용하는 강의입니다.',
           '세미나': '세미나 형식으로 진행되는 강의입니다.',
           '소규모': '소규모로 진행되는 강의입니다.',
           '융합': '여러 학문 분야를 융합한 강의입니다.',
           '팀 티칭': '둘 이상의 교수자가 함께 진행하는 강의입니다.',
-          '집중': '단기간 집중적으로 진행되는 강의입니다.',
+          '집중': '집중이수제는 15주차 동안 2개의 교과목을 연계하여 수강하는 체계적이고 집중적으로 수강할 수 있는 제도 입니다./n예시) 1~9주차: 디지털 헬스케어 산업의 이해(기초과정-2학점) / 10주~15주차: 디지털 헬스케어 서비스 프로젝트 관리 실무(심화과정-2학점).',
           '실험 설계': '실험 설계를 포함하는 강의입니다.',
           'E-러닝': '온라인으로 진행되는 E-러닝 강의입니다.',
           '예술': '예술 관련 강의입니다.'
@@ -343,8 +343,15 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
     );
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  //if (error) return <div>강의 정보가 없습니다.</div>; 
+  if (loading) return     
+    <div className="lecture-detail">
+      <div style={{ marginTop: "50px" }}></div>
+      <div>로딩 중...</div>
+    </div>
+  if (error) return <div className="lecture-detail">
+  <div style={{ marginTop: "50px" }}></div>
+  <div>강의 정보가 없습니다. </div>
+</div>
 
  
   //const data = [lecture.takenPeople3yearsAgo,lecture.takenPeople2yearsAgo,lecture.takenPeople1yearsAgo];
