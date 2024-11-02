@@ -2,149 +2,84 @@ import React, { useState } from "react";
 import "./GyoYangLectureSearch.css";
 
 const Recommendation = ({
-  lecClassification,
-  isPillSu,
-  setIsPillSu,
-  lecTheme,
-  setLecTheme,
-  teamplayAmount,
-  setTeamplayAmount,
-  gradeAmount,
-  setGradeAmount,
-  assignmentAmount,
-  setAssignmentAmount,
-  fetchLectures,
-  star,
-  setStar,
-  lectureName,
-  setLectureName,
-  lecCredit,
-  setLecCredit,
-  lecTimeTable,
-  setlecTimeTable,
+  fetchRecommendLectures,
+  dontWantFirstPeriod,
+  setDontWantFirstPeriod,
+  dontWantThirdPeriod,
+  setDontWantThirdPeriod,
+  wantLowAssignment,
+  setWantLowAssignment,
+  wantLowTeamplay,
+  setWantLowTeamplay,
+  wantLectureMethod,
+  setWantLectureMethod,
+  wantEvaluateMethod,
+  setWantEvaluateMethod,
 }) => {
   return (
     <div className="gyoyang-search-box">
       강의추천들어왔어요
-      <div className="gyoyang-search-classification">
-        {lecClassification === "교양" && !isPillSu && (
-          <div>
-            <select
-              value={lecTheme}
-              onChange={(e) => setLecTheme(e.target.value)}
-              className="gyoyang-search-classification-select"
-            >
-              <option value="">전체 주제</option>
-              <option value="과학과기술">과학과기술</option>
-              <option value="인간과철학">인간과철학</option>
-              <option value="사회와경제">사회와경제</option>
-              <option value="글로벌문화와제2외국어">
-                글로벌문화와제2외국어
-              </option>
-              <option value="예술과체육">예술과체육</option>
-              <option value="수리와자연">수리와자연</option>
-            </select>
-          </div>
-        )}
-
-        {lecClassification === "교양" && isPillSu && (
-          <div>
-            <select
-              value={lecTheme}
-              onChange={(e) => setLecTheme(e.target.value)}
-              className="gyoyang-search-classification-select"
-            >
-              <option value="">전체 주제</option>
-              <option value="광운인되기">광운인되기</option>
-              <option value="대학영어">대학영어</option>
-              <option value="정보">정보</option>
-              <option value="융합적사고와글쓰기">융합적사고와글쓰기</option>
-            </select>
-          </div>
-        )}
-        <label>
-          <input
-            type="checkbox"
-            checked={isPillSu}
-            onChange={(e) => setIsPillSu(e.target.checked)}
-          />
-          필수 과목만 보기
-        </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={dontWantFirstPeriod}
+          onChange={(e) => setDontWantFirstPeriod(e.target.checked)}
+        />
+        0교시, 1교시는 자제해주세요.
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={dontWantThirdPeriod}
+          onChange={(e) => setDontWantThirdPeriod(e.target.checked)}
+        />
+        점심시간은 비웠으면 해요.
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={wantLowAssignment}
+          onChange={(e) => setWantLowAssignment(e.target.checked)}
+        />
+        과제가 적었으면 해요.
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={wantLowTeamplay}
+          onChange={(e) => setWantLowTeamplay(e.target.checked)}
+        />
+        팀플이 적었으면 해요.
+      </label>
+      <div>
+        <select
+          value={wantLectureMethod}
+          onChange={(e) => setWantLectureMethod(e.target.value)}
+          className="gyoyang-search-classification-select"
+        >
+          <option value="">상관 없어요.</option>
+          <option value="강의">강의식 수업</option>
+          <option value="토론">토론식 수업</option>
+          <option value="실습">실습 수업</option>
+        </select>
       </div>
-      <div className="gyoyang-search-conditions-bar">
-        <div>
-          <input
-            value={lectureName}
-            onChange={(e) => setLectureName(e.target.value)} //백엔드에서 강의명, 학정번호, 교수명으로 동시에 검색할 수 있도록 하는 것이 필요해요
-            placeholder="강의명/학정번호/교수명"
-            className="gyoyang-search-lecturename"
-          />
-        </div>
-        <div className="gyoyang-search-conditions-credit">
-          <label>학점:</label>
-          <select
-            value={lecCredit}
-            onChange={(e) => setLecCredit(e.target.value)}
-            className="gyoyang-search-conditions-credit-select"
-          >
-            <option value={0}>상관없음</option>
-            <option value={1}>1학점</option>
-            <option value={2}>2학점</option>
-            <option value={3}>3학점</option>
-            <option value={4}>4학점 이상</option>
-          </select>
-        </div>
-        <div className="gyoyang-search-conditions-credit">
-          <label>별점:</label>
-          <select
-            value={star}
-            onChange={(e) => setStar(e.target.value)}
-            className="gyoyang-search-conditions-credit-select"
-          >
-            <option value={0}>상관없음</option>
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-            <option value={4}>4</option>
-          </select>
-        </div>
-        <div className="gyoyang-search-conditions-credit">
-          <label>팀플 양:</label>
-          <select
-            value={teamplayAmount}
-            onChange={(e) => setTeamplayAmount(e.target.value)}
-            className="gyoyang-search-conditions-credit-select"
-          >
-            <option value="상관없음">상관없음</option>
-            <option value="적음">적음</option>
-          </select>
-        </div>
-
-        <div className="gyoyang-search-conditions-credit">
-          <label>성적 양:</label>
-          <select
-            value={gradeAmount}
-            onChange={(e) => setGradeAmount(e.target.value)}
-            className="gyoyang-search-conditions-credit-select"
-          >
-            <option value="상관없음">상관없음</option>
-            <option value="너그러움">너그러움</option>
-          </select>
-        </div>
-        <div className="gyoyang-search-conditions-credit">
-          <label>과제 양:</label>
-          <select
-            value={assignmentAmount}
-            onChange={(e) => setAssignmentAmount(e.target.value)}
-            className="gyoyang-search-conditions-credit-select"
-          >
-            <option value="상관없음">상관없음</option>
-            <option value="적음">적음</option>
-          </select>
-        </div>
+      <div>
+        <select
+          value={wantEvaluateMethod}
+          onChange={(e) => setWantEvaluateMethod(e.target.value)}
+          className="gyoyang-search-classification-select"
+        >
+          <option value="">상관 없어요.</option>
+          <option value="시험">시험</option>
+          <option value="프로젝트">프로젝트</option>
+          <option value="발표">발표</option>
+        </select>
       </div>
       <div className="gyoyang-search-button-box">
-        <button onClick={fetchLectures} className="gyoyang-search-button">
+        <button
+          onClick={fetchRecommendLectures}
+          className="gyoyang-search-button"
+        >
           강의 검색
         </button>
       </div>

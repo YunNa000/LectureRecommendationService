@@ -29,10 +29,10 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const [activeButton, setActiveButton] = useState("");
   const [dontWantFirstPeriod, setDontWantFirstPeriod] = useState(false);
   const [dontWantThirdPeriod, setDontWantThirdPeriod] = useState(false);
-  const [wantLowAssignment, setWantLowAssWantLowAssignment] = useState(false);
-  const [wantLowTeamplay, setWantLowTeamWantLowTeamplay] = useState(false);
-  const [wantLectureMethod, setWantLectureMethod] = useState(false);
-  const [wantEvaluateMethod, setWantEvaluateMethod] = useState(false);
+  const [wantLowAssignment, setWantLowAssignment] = useState(false);
+  const [wantLowTeamplay, setWantLowTeamplay] = useState(false);
+  const [wantLectureMethod, setWantLectureMethod] = useState("");
+  const [wantEvaluateMethod, setWantEvaluateMethod] = useState("");
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -290,9 +290,19 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       )}
       {activeComponent === "Recommend" && (
         <Recommendation
+          fetchRecommendLectures={fetchRecommendLectures}
           dontWantFirstPeriod={dontWantFirstPeriod}
           setDontWantFirstPeriod={setDontWantFirstPeriod}
-          fetchRecommendLectures={fetchRecommendLectures}
+          dontWantThirdPeriod={dontWantThirdPeriod}
+          setDontWantThirdPeriod={setDontWantThirdPeriod}
+          wantLowAssignment={wantLowAssignment}
+          setWantLowAssignment={setWantLowAssignment}
+          wantLowTeamplay={wantLowTeamplay}
+          setWantLowTeamplay={setWantLowTeamplay}
+          wantLectureMethod={wantLectureMethod}
+          setWantLectureMethod={setWantLectureMethod}
+          wantEvaluateMethod={wantEvaluateMethod}
+          setWantEvaluateMethod={setWantEvaluateMethod}
         />
       )}
       {activeComponent && (
