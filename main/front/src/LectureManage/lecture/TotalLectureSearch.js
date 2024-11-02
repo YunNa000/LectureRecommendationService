@@ -1,15 +1,7 @@
 import React from "react";
 import "./TotalLectureSearch.css";
 
-const TotalLectureSearch = ({
-  fetchLectures,
-  lectureName,
-  setLectureName,
-  setYear,
-  setSemester,
-  year,
-  semester,
-}) => {
+const TotalLectureSearch = ({ fetchLectures, lectureName, setLectureName }) => {
   return (
     <div className="total-search-box">
       <div className="total-search-conditions-bar">
