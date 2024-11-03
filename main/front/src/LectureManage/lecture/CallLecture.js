@@ -33,6 +33,8 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const [wantLowTeamplay, setWantLowTeamplay] = useState(false);
   const [wantLectureMethod, setWantLectureMethod] = useState("");
   const [wantEvaluateMethod, setWantEvaluateMethod] = useState("");
+  const [userPrefer, setUserPrefer] = useState("");
+  const [wantLectureLevel, setWantLectureLevel] = useState(0);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -108,17 +110,22 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const fetchRecommendLectures = async () => {
     const inputData2Recommend = {
       user_id: user,
+      year,
+      semester,
       dontWantFirstPeriod,
       dontWantThirdPeriod,
       wantLowAssignment,
       wantLowTeamplay,
       wantLectureMethod,
       wantEvaluateMethod,
+      wantLectureLevel,
+      userPrefer,
     };
 
     try {
+      console.log(inputData2Recommend);
       const response = await axios.post(
-        "http://localhost:8000/lectures/",
+        "http://localhost:8000/lectures/recommendation",
         inputData2Recommend
       );
       setLectures(response.data);
@@ -282,7 +289,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
         />
       )}
       {activeComponent === "Total" && (
-        <TotalLectureSearch // fetchLectures, lectureName, setLectureName
+        <TotalLectureSearch
           fetchLectures={fetchLectures}
           setLectureName={setLectureName}
           lectureName={lectureName}
@@ -303,6 +310,10 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
           setWantLectureMethod={setWantLectureMethod}
           wantEvaluateMethod={wantEvaluateMethod}
           setWantEvaluateMethod={setWantEvaluateMethod}
+          userPrefer={userPrefer}
+          setUserPrefer={setUserPrefer}
+          wantLectureLevel={wantLectureLevel}
+          setWantLectureLevel={setWantLectureLevel}
         />
       )}
       {activeComponent && (

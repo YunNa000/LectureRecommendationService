@@ -33,6 +33,29 @@ class LectureCallResponse(BaseModel):
     reviewSummary: Optional[str] = None
 
 
+class LectureRecommendCallResponse(BaseModel):
+    lectureID: int
+    lecNumber: Optional[str] = None
+    lecName: Optional[str] = None
+    lecProfessor: Optional[str] = None
+    lecCredit: Optional[int] = None
+    lecTime: Optional[str] = None
+    lecClassroom: Optional[str] = None
+    moreInfo: Optional[str] = None
+    semester: Optional[str] = None
+    year: Optional[int] = None
+    lecClassification: Optional[str] = None
+    lecTheme: Optional[str] = None
+    lecWeekTime: Optional[str] = None
+    star: Optional[float] = None
+    assignmentAmount: Optional[float] = None
+    teamPlayAmount: Optional[float] = None
+    gradeAmount: Optional[float] = None
+    reviewSummary: Optional[str] = None
+    OverviewEmbedding: Optional[bytes] = None
+    EverytimeEmbedding: Optional[bytes] = None
+
+
 class LectureCallInput(BaseModel):
     user_id: str
     lecClassification: str
@@ -48,6 +71,20 @@ class LectureCallInput(BaseModel):
     semester: str
     lecCredit: int
     lecTimeTable: Optional[List[str]] = None
+
+
+class LectureRecommendationCallInput(BaseModel):
+    user_id: str
+    year: int
+    semester: str
+    dontWantFirstPeriod: bool
+    dontWantThirdPeriod: bool
+    wantLowAssignment: bool
+    wantLowTeamplay: bool
+    wantLectureMethod: str
+    wantEvaluateMethod: str
+    wantLectureLevel: int
+    userPrefer: str
 
 
 class LectureSelect(BaseModel):

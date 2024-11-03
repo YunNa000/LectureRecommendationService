@@ -15,10 +15,20 @@ const Recommendation = ({
   setWantLectureMethod,
   wantEvaluateMethod,
   setWantEvaluateMethod,
+  userPrefer,
+  setUserPrefer,
+  wantLectureLevel,
+  setWantLectureLevel,
 }) => {
   return (
     <div className="gyoyang-search-box">
-      강의추천들어왔어요
+      <div>
+        <textarea
+          value={userPrefer}
+          onChange={(e) => setUserPrefer(e.target.value)}
+          placeholder="예시를 어떻게 깔끔하게 넣을 수 있을까 고민해보는 게 필요해요. ? 버튼 하나 넣고, 누르면 예시 질문들 넣을 수 있도록 하는 것도 괜찮을지도..."
+        />
+      </div>
       <label>
         <input
           type="checkbox"
@@ -73,6 +83,19 @@ const Recommendation = ({
           <option value="시험">시험</option>
           <option value="프로젝트">프로젝트</option>
           <option value="발표">발표</option>
+        </select>
+      </div>
+      <div>
+        <select
+          value={wantLectureLevel}
+          onChange={(e) => setWantLectureLevel(e.target.value)}
+          className="gyoyang-search-classification-select"
+        >
+          <option value={0}>상관 없어요.</option>
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4 이상</option>
         </select>
       </div>
       <div className="gyoyang-search-button-box">
