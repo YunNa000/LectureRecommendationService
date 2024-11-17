@@ -14,8 +14,16 @@ const LectureList = ({
   const [user, setUser] = useState(null);
   const [expandedLectures, setExpandedLectures] = useState({});
   const [visibleButtons, setVisibleButtons] = useState({});
-  const [isLoading, setIsLoading] = useState(!lectures);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const groupedLectures = groupLecturesByName(lectures);
+    const initialExpandedState = {};
+    Object.keys(groupedLectures).forEach((lecName) => {
+      initialExpandedState[lecName] = true;
+    });
+    setExpandedLectures(initialExpandedState);
+  }, [lectures]);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -217,9 +225,6 @@ const LectureList = ({
 
     return "정보 없음";
   };
-  useEffect(() => {
-    setIsLoading(!lectures);
-  }, [lectures]);
 
   if (showSpinner) {
     return (
