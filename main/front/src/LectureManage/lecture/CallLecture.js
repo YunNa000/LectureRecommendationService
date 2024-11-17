@@ -35,6 +35,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const [wantEvaluateMethod, setWantEvaluateMethod] = useState("");
   const [userPrefer, setUserPrefer] = useState("");
   const [wantLectureLevel, setWantLectureLevel] = useState(0);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -78,6 +79,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   };
 
   const fetchLectures = async () => {
+    setShowSpinner(true);
     const inputData = {
       user_id: user,
       lecClassification,
@@ -104,10 +106,13 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       console.log(response.data);
     } catch (err) {
       setError(err);
+    } finally {
+      setShowSpinner(false);
     }
   };
   ////////////////////////////////////////////////////////////
   const fetchRecommendLectures = async () => {
+    setShowSpinner(true);
     const inputData2Recommend = {
       user_id: user,
       year,
@@ -132,6 +137,8 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       console.log(response.data);
     } catch (err) {
       setError(err);
+    } finally {
+      setShowSpinner(false);
     }
   };
 
@@ -199,7 +206,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
     }
   }, [lecClassification, activeComponent]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="when-loading"></div>;
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
 
   return (
@@ -321,6 +328,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
           lectures={lectures}
           selectedLectures={selectedLectures}
           setSelectedLectures={setSelectedLectures}
+          showSpinner={showSpinner}
         />
       )}
     </div>

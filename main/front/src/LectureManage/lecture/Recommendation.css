@@ -35,3 +35,8 @@
   resize: vertical;
   padding: 5px;
 }
+
+.recommendation-search-button-disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+}

@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import "./LectureList.css";
+import "../../loader.css";
 import { useNavigate } from "react-router-dom";
 
-const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
+const LectureList = ({
+  lectures,
+  selectedLectures,
+  setSelectedLectures,
+  showSpinner,
+}) => {
   const [user, setUser] = useState(null);
   const [expandedLectures, setExpandedLectures] = useState({});
   const [visibleButtons, setVisibleButtons] = useState({});
+  const [isLoading, setIsLoading] = useState(!lectures);
   const navigate = useNavigate();
 
   const checkLoginStatus = async () => {
@@ -210,7 +217,20 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
 
     return "정보 없음";
   };
+  useEffect(() => {
+    setIsLoading(!lectures);
+  }, [lectures]);
 
+  if (showSpinner) {
+    return (
+      <div className="lecturelist">
+        <div className="loader">
+          <div className="spinner"></div>
+          <p>강의들을 불러오는 중이에요.</p>
+        </div>
+      </div>
+    );
+  }
   const groupedLectures = groupLecturesByName(lectures);
 
   return (

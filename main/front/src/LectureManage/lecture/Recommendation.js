@@ -28,7 +28,10 @@ const Recommendation = ({
       <div className="recommendation-search-button-box">
         <button
           onClick={fetchRecommendLectures}
-          className="recommendation-search-button"
+          className={`recommendation-search-button ${
+            !userPrefer ? "recommendation-search-button-disabled" : ""
+          }`}
+          disabled={!userPrefer}
         >
           강의 검색
         </button>

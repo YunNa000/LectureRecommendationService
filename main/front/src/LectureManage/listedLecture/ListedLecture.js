@@ -7,6 +7,7 @@ import AddListedLectureManaully from "./AddListedLectureManually";
 import ListedLectureTimeTable from "./ListedLectureTimeTable";
 import ShowCheckedLectureCredit from "./ShowCheckedLectureCredit";
 import "./ListedLecture.css";
+import "../../loader.css";
 
 const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const [user, setUser] = useState(null);
@@ -242,7 +243,13 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
     filterLectures();
   }, [year, semester, lectures, filterLectures]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="loader">
+        <div className="spinner"></div>
+        <p>시간표를 불러오는 중이에요.</p>
+      </div>
+    );
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
 
   return (
