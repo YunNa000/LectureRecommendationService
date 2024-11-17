@@ -1,0 +1,37 @@
+.recommendation-search-box {
+  margin: 0 10px;
+  padding: 7px 5px 40px 5px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #fbfbfb;
+}
+
+.recommendation-search-button {
+  height: 30px;
+  border: none;
+  outline: none;
+  background-color: #fff0a0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  justify-self: end;
+  margin-right: 10px;
+  float: inline-end;
+  cursor: pointer;
+}
+.recommendation-text-area-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recommendation-text-area {
+  width: 100%;
+  height: 60px;
+  border: none;
+  border: solid 1px #eee;
+  border-radius: 5px;
+  margin: 0 1px 5px 0;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 5px;
+}
