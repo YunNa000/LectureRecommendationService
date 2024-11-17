@@ -622,13 +622,6 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
     user_id = input_data.user_id
     year = input_data.year
     semester = input_data.semester
-    dontWantFirstPeriod = input_data.dontWantFirstPeriod
-    dontWantThirdPeriod = input_data.dontWantThirdPeriod
-    wantLowAssignment = input_data.wantLowAssignment
-    wantLowTeamplay = input_data.wantLowTeamplay
-    wantLectureMethod = input_data.wantLectureMethod
-    wantEvaluateMethod = input_data.wantEvaluateMethod
-    wantLectureLevel = input_data.wantLectureLevel
     userPrefer = input_data.userPrefer
 
     can_take = print_user_can_take(
@@ -642,9 +635,15 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
         overview_embedding = row.OverviewEmbedding
         everytime_embedding = row.EverytimeEmbedding
 
-        if overview_embedding is not None:
-            embeddings = np.frombuffer(overview_embedding, dtype=np.float32)
-            data.append((lecture_id, embeddings))
+        if overview_embedding is not None and everytime_embedding is not None:
+            overview_embeddings = np.frombuffer(
+                overview_embedding, dtype=np.float32)
+            everytime_embeddings = np.frombuffer(
+                everytime_embedding, dtype=np.float32)
+
+            combined_embeddings = (
+                0.3 * overview_embeddings) + (0.7 * everytime_embeddings)
+            data.append((lecture_id, combined_embeddings))
 
     cosine_scores = []
     for lecture_id, embeddings in data:
