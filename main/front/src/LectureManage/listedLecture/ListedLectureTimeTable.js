@@ -183,47 +183,72 @@ const ListedLectureTimeTable = ({
                         ) : null}
                         {editingLectureIndex ===
                           `${rowIndex}-${cellIndex}-${index}` && (
-                          <div className="edit-lecture">
-                            <label className="edit-lecture-unckeck">
-                              <input
-                                type="checkbox"
-                                checked={
-                                  lecture.priority &&
-                                  lecture.priority.split(" ").includes(priority)
-                                }
-                                onChange={() =>
-                                  updateLecturePriority(
-                                    lecture.lecNumber,
-                                    priority
-                                  )
-                                }
-                              />
-                              <p className="edit-lecture-uncheck-text">
-                                시간표에서 제외
-                              </p>
-                            </label>
-
-                            <input
-                              type="text"
-                              value={memo}
-                              onChange={(e) => setMemo(e.target.value)}
-                              placeholder="메모"
-                              className="input-memo"
-                            />
-                            <input
-                              type="text"
-                              value={classroom}
-                              onChange={(e) => setClassroom(e.target.value)}
-                              placeholder="강의실"
-                              className="input-classroom"
-                            />
-                            <button
+                          <>
+                            <div
+                              className="modal-overlay"
                               onClick={() => handleUpdate(lecture)}
-                              className="update-button"
-                            >
-                              완료
-                            </button>
-                          </div>
+                            />
+                            <div className="edit-lecture">
+                              <p className="listed-lec-timetable-more-lecName">
+                                {lecture.lecName}
+                              </p>
+                              <p className="listed-lec-timetable-more-lecProfessor">
+                                {lecture.lecProfessor}
+                              </p>
+                              <button
+                                className="edit-lecture-unckeck"
+                                onClick={() => {
+                                  const confirmRemove = window.confirm(
+                                    "정말로 시간표에서 제외하시겠습니까?"
+                                  );
+                                  if (confirmRemove) {
+                                    updateLecturePriority(
+                                      lecture.lecNumber,
+                                      priority
+                                    );
+                                  }
+                                }}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    lecture.priority &&
+                                    lecture.priority
+                                      .split(" ")
+                                      .includes(priority)
+                                  }
+                                  readOnly
+                                />
+                                <p className="edit-lecture-uncheck-text">
+                                  시간표에서 제외하기
+                                </p>
+                              </button>
+
+                              <input
+                                type="text"
+                                value={classroom}
+                                onChange={(e) => setClassroom(e.target.value)}
+                                placeholder="강의실"
+                                className="input-classroom"
+                              />
+                              <input
+                                type="text"
+                                value={memo}
+                                onChange={(e) => setMemo(e.target.value)}
+                                placeholder="메모"
+                                className="input-memo"
+                              />
+                              <button
+                                onClick={() => handleUpdate(lecture)}
+                                className="update-button"
+                              >
+                                완료
+                              </button>
+                              <button className="detail-a-button">
+                                강의 자세히 보기
+                              </button>
+                            </div>
+                          </>
                         )}
                       </div>
                     ))
