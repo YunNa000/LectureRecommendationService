@@ -1,6 +1,6 @@
 .recommendation-search-box {
   margin: 0 10px;
-  padding: 7px 5px 40px 5px;
+  padding: 7px 5px 5px 5px;
   border: 1px solid #eee;
   border-radius: 10px;
   font-size: 14px;
@@ -16,11 +16,27 @@
   justify-self: end;
   float: inline-end;
   cursor: pointer;
+  margin-top: 5px;
   border-radius: 50px;
   background: linear-gradient(145deg, #fae88b, #ffffab);
   box-shadow: 0 2px 5px rgb(230, 230, 230);
 }
-
+.recommendation-search-button-box-box {
+  display: flex;
+}
+.recommendation-search-button-box {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.recommendation-search-info {
+  margin: 0 0 0 5px;
+  float: inline-start;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #999;
+  align-content: center;
+}
 .recommendation-text-area-box {
   width: 100%;
   margin-top: -2px;

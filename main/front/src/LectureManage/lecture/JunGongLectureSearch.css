@@ -82,6 +82,9 @@
   border-radius: 5px;
   padding: 0 5px;
 }
+.jungong-search-button-box-box {
+  display: flex;
+}
 .jungong-search-button-box {
   width: 100%;
   display: flex;
@@ -105,7 +108,17 @@
   background: #fff0a0;
   box-shadow: inset 3px 3px 7px #e6d890, inset -3px -3px 7px #ffffb0;
 }
-
+.gyoyang-search-button-box-box {
+  display: flex;
+}
+.jungong-search-info {
+  margin: 0 0 0 10px;
+  float: inline-start;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #999;
+  align-content: center;
+}
 .jungong-search-view-only-require {
   margin: 5px 0 8px 10px;
 }

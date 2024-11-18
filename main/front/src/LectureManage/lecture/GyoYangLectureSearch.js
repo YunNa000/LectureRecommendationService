@@ -162,10 +162,17 @@ const GyoYangLectureSearch = ({
           setCoordinates={setlecTimeTable}
         />
       )}
-      <div className="gyoyang-search-button-box">
-        <button onClick={fetchLectures} className="gyoyang-search-button">
-          강의 검색
-        </button>
+      <div className="gyoyang-search-button-box-box">
+        <p className="gyoyang-search-info">
+          수강 가능한 강의만 떠요.
+          <br />
+          수강 불가능한 강의는 전체강의 탭을 이용해주세요.
+        </p>
+        <div className="gyoyang-search-button-box">
+          <button onClick={fetchLectures} className="gyoyang-search-button">
+            강의 검색
+          </button>
+        </div>
       </div>
     </div>
   );

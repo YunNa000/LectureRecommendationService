@@ -91,6 +91,14 @@
   display: flex;
   justify-content: flex-end;
 }
+.gyoyang-search-info {
+  margin: 0 0 0 10px;
+  float: inline-start;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #999;
+  align-content: center;
+}
 .gyoyang-search-button {
   height: 35px;
   border: none;
