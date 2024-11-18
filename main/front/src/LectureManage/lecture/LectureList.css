@@ -141,6 +141,7 @@
 
 .lecturelist-lecture-check-box {
   display: flex;
+  cursor: pointer;
 }
 
 .lecturelist-amount-infoNbar {

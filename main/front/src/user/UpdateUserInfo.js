@@ -21,7 +21,10 @@ const UpdateUserInfo = () => {
   const [isHakBunError, SetIsHakBunError] = useState(false);
   const [isSameMajor, SetIsSameMajor] = useState(false);
 
-  const handleEditClick = () => {
+  const handleEditClick = (event) => {
+    if (event.target.closest(".userinfo-edit-form")) {
+      return;
+    }
     setIsEditing(!isEditing);
     getUserInfo(user);
   };
@@ -135,7 +138,7 @@ const UpdateUserInfo = () => {
   }, []);
 
   return (
-    <div className="userinfo-update-box">
+    <div className="userinfo-update-box" onClick={handleEditClick}>
       <div className="userinfo-box-box">
         <div className="userinfo-box">
           <p className="userinfo-username">{formData.username}</p>
@@ -159,7 +162,7 @@ const UpdateUserInfo = () => {
           )}
         </div>
         <div className="userinfo-edit-button-box">
-          <button onClick={handleEditClick} className="userinfo-edit-button">
+          <button className="userinfo-edit-button">
             <img
               src={firsangledown}
               alt="정보 수정하기 버튼"

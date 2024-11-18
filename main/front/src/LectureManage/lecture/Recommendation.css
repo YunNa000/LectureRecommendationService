@@ -8,19 +8,22 @@
 }
 
 .recommendation-search-button {
-  height: 30px;
+  height: 35px;
   border: none;
   outline: none;
-  background-color: #fff0a0;
-  border-radius: 5px;
   padding: 5px 10px;
+  width: 80px;
   justify-self: end;
-  margin-right: 10px;
   float: inline-end;
   cursor: pointer;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #fae88b, #ffffab);
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
 }
+
 .recommendation-text-area-box {
   width: 100%;
+  margin-top: -2px;
   box-sizing: border-box;
 }
 
@@ -29,14 +32,21 @@
   height: 60px;
   border: none;
   border: solid 1px #eee;
-  border-radius: 5px;
+  border-radius: 6px;
   margin: 0 1px 5px 0;
   box-sizing: border-box;
   resize: vertical;
   padding: 5px;
+  outline: none;
+  box-shadow: 0 1px 8px rgb(230, 230, 230);
 }
-
+.recommendation-search-button:active {
+  border-radius: 45px;
+  background: #fff0a0;
+  box-shadow: inset 3px 3px 7px #e6d890, inset -3px -3px 7px #ffffb0;
+}
 .recommendation-search-button-disabled {
-  background-color: #eee;
   cursor: not-allowed;
+  box-shadow: none;
+  background: linear-gradient(145deg, #eee, #ddd);
 }

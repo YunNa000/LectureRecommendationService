@@ -33,6 +33,7 @@
   width: 400px;
   left: 50%;
   transform: translateX(-50%);
+  box-shadow: 0 -5px 10px rgb(230, 230, 230);
 }
 
 .lecture-list-inner {
@@ -53,6 +54,7 @@
 .lsited-lecture-checkNnameNprof {
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .lsited-lecture-checkNnameNprof input[type="checkbox"] {
@@ -106,6 +108,7 @@
 
 .listed-lecture-left {
   display: flex;
+  cursor: pointer;
 }
 .listed-lec-info-second {
   display: flex;

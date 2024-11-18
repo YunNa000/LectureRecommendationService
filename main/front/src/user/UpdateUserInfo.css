@@ -100,6 +100,7 @@
 
 .userinfo-hakbun {
   flex: 1;
+  cursor: text;
 }
 
 .userinfo-major {
@@ -109,9 +110,11 @@
 .userinfo-bunban {
   flex: 3;
   margin-right: 5px;
+  cursor: text;
 }
 .userinfo-year {
   flex: 2;
+  cursor: text;
 }
 .userinfo-year-text {
   margin-right: 10px;
@@ -119,12 +122,15 @@
 .userinfo-isForeign {
   margin-right: 5px;
   padding-left: 3px;
+  cursor: pointer;
 }
 .userinfo-username {
   margin-right: 5px;
+  cursor: text;
 }
 .userinfo-isMultipleMajor {
   padding-left: 3px;
+  cursor: pointer;
 }
 .userinfo-select-multiplemajor {
   background-color: white;
@@ -134,14 +140,21 @@
   padding: 12px 7px;
   border-radius: 5px;
   margin: 0 5px 0 0;
+  cursor: pointer;
 }
 .userinfo-update-button {
   padding: 7px 10px;
-  background-color: #fff0a0;
+  background: linear-gradient(145deg, #fae88b, #ffffab);
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
   border: none;
   outline: none;
   border-radius: 5px;
   float: right;
+  cursor: pointer;
+}
+.userinfo-update-button:active {
+  background: #fff0a0;
+  box-shadow: inset 3px 3px 7px #e6d890, inset -3px -3px 7px #ffffb0;
 }
 .userinfo-row-box-space-between {
   justify-content: space-between;

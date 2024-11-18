@@ -34,6 +34,7 @@
   background-color: white;
   padding: 0 5px 0 5px;
   white-space: nowrap;
+  cursor: text;
 }
 
 .semester {
@@ -45,6 +46,7 @@
   border: none;
   font-size: 14px;
   padding-left: 7px;
+  cursor: pointer;
 }
 
 .priority {
@@ -56,6 +58,7 @@
   border: none;
   font-size: 14px;
   padding-left: 7px;
+  cursor: pointer;
 }
 
 .manuallyAddbutton {
