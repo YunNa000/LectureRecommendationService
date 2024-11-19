@@ -14,3 +14,4 @@ main/server/router/gecko/geckodriver-v0.34.0-linux64.tar.gz
 __pycache__/
 test-env/
 ssh/
+geckodriver
