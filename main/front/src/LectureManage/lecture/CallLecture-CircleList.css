@@ -25,9 +25,9 @@
 .CircleList .circle {
   width: 90px;
   height: 90px;
-  background-color: white;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  background: linear-gradient(145deg, #ffffff, #fafafa);
+  box-shadow: 3px 3px 8px #e6e6e6, -3px -3px 3px #ffffff78;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,9 +44,11 @@
 }
 
 .circle.active {
-  background-color: #fff0a0;
   transition: 0.2s;
   color: black;
+  border-radius: 50%;
+  background: #fff0a0;
+  box-shadow: inset 5px 5px 12px #d6ca86, inset -5px -5px 12px #ffffba;
 }
 
 .when-loading {

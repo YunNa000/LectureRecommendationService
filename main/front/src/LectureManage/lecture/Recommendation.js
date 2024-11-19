@@ -25,16 +25,23 @@ const Recommendation = ({
           className="recommendation-text-area"
         />
       </div>
-      <div className="recommendation-search-button-box">
-        <button
-          onClick={fetchRecommendLectures}
-          className={`recommendation-search-button ${
-            !userPrefer ? "recommendation-search-button-disabled" : ""
-          }`}
-          disabled={!userPrefer}
-        >
-          강의 검색
-        </button>
+      <div className="recommendation-search-button-box-box">
+        <p className="recommendation-search-info">
+          타과 전공은 뜨지 않아요.
+          <br />
+          타과 전공은 전체 강의나 강의 추천 탭을 이용해주세요.
+        </p>
+        <div className="recommendation-search-button-box">
+          <button
+            onClick={fetchRecommendLectures}
+            className={`recommendation-search-button ${
+              !userPrefer ? "recommendation-search-button-disabled" : ""
+            }`}
+            disabled={!userPrefer}
+          >
+            강의 검색
+          </button>
+        </div>
       </div>
     </div>
   );

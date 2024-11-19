@@ -131,12 +131,14 @@
 .manually-addButton {
   margin-top: 5px;
   width: 80px;
-  height: 40px;
-  background-color: #fff0a0;
+  height: 35px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #fae88b, #ffffab);
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
 }
 
 .manually-addButton:hover {

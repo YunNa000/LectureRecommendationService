@@ -1,6 +1,6 @@
 .gyoyang-search-box {
   margin: 0 10px;
-  padding: 7px 5px 10px 5px;
+  padding: 7px 5px 6px 5px;
   border: 1px solid #eee;
   border-radius: 10px;
   font-size: 14px;
@@ -91,13 +91,28 @@
   display: flex;
   justify-content: flex-end;
 }
+.gyoyang-search-info {
+  margin: 0 0 0 10px;
+  float: inline-start;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #999;
+  align-content: center;
+}
 .gyoyang-search-button {
-  height: 30px;
+  height: 35px;
   border: none;
   outline: none;
-  background-color: #fff0a0;
-  border-radius: 5px;
-  padding: 5px 10px;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #fae88b, #ffffab);
+  box-shadow: 0 2px 5px rgb(230, 230, 230);
+  width: 80px;
   justify-self: end;
-  margin-right: 10px;
+  cursor: pointer;
+  margin: 0 5px 5px 0;
+}
+.gyoyang-search-button:active {
+  border-radius: 45px;
+  background: #fff0a0;
+  box-shadow: inset 3px 3px 7px #e6d890, inset -3px -3px 7px #ffffb0;
 }

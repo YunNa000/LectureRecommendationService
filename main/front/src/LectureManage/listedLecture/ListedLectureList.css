@@ -13,7 +13,7 @@
   height: 20px;
   text-align: center;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 998;
   transition: transform 0.3s ease;
   box-shadow: 0 -2px 5px rgb(230, 230, 230);
   width: 400px;
@@ -27,12 +27,13 @@
   max-height: calc(50vh);
   background-color: #fafafa;
   border-radius: 7px 7px 0 0;
-  z-index: 999;
+  z-index: 997;
   transition: transform 0.3s ease;
   padding: 5px 0 0 0;
   width: 400px;
   left: 50%;
   transform: translateX(-50%);
+  box-shadow: 0 -5px 10px rgb(230, 230, 230);
 }
 
 .lecture-list-inner {
@@ -53,6 +54,7 @@
 .lsited-lecture-checkNnameNprof {
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .lsited-lecture-checkNnameNprof input[type="checkbox"] {
@@ -106,6 +108,7 @@
 
 .listed-lecture-left {
   display: flex;
+  cursor: pointer;
 }
 .listed-lec-info-second {
   display: flex;
