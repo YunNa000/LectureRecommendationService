@@ -20,15 +20,22 @@
 }
 
 .listed-lecture-warning-message {
-  animation: fadeInDown 0.5s ease-in-out;
   position: fixed;
-  top: 0;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 998;
-  background-color: white;
+  z-index: 997;
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.listed-lecture-warning-message-text {
+  z-index: 998;
+  position: relative;
+  margin: 0;
 }
 
 @keyframes fadeOutUp {

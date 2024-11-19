@@ -65,13 +65,17 @@ const ListedLectureList = ({
   }, [totalGPA, totalCredits, maxCredits, priority]);
 
   const warningMessage = showWarning && (
-    <p
+    <div
       className={`listed-lecture-warning-message ${fadeOut ? "fade-out" : ""}`}
     >
-      {checkedLectures.some((lecture) => lecture.lecName.includes("광운인되기"))
-        ? `광운인되기를 포함해서 ${maxCredits}학점 까지 들을 수 있어요.`
-        : `${maxCredits}학점 까지 들을 수 있어요.`}
-    </p>
+      <p className="listed-lecture-warning-message-text">
+        {checkedLectures.some((lecture) =>
+          lecture.lecName.includes("광운인되기")
+        )
+          ? `광운인되기를 포함해서 ${maxCredits}학점 까지 들을 수 있어요.`
+          : `${maxCredits}학점 까지 들을 수 있어요.`}
+      </p>
+    </div>
   );
 
   const handleUnselect = (lecNumber, year, semester) => {
