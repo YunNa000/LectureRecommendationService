@@ -62,7 +62,7 @@ const ListedLectureList = ({
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [totalGPA, totalCredits, maxCredits]);
+  }, [totalGPA, totalCredits, maxCredits, priority]);
 
   const warningMessage = showWarning && (
     <p
