@@ -1,8 +1,9 @@
 .lecturelist {
   border-radius: 10px;
   border: 1px solid #eee;
-  background-color: #fbfbfb;
+  background-color: rgb(255, 255, 255, 0.85);
   margin: 5px 10px;
+  z-index: 993;
 }
 .lecturelist-no-lecture {
   padding: 10px;
