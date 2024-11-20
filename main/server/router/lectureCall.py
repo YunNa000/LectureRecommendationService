@@ -505,13 +505,11 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
     AND (lc.canTakeOnly5year IS NULL  or lc.canTakeOnly5year IS 0))))
     AND ll.year = ?
     AND ll.semester = ?
-    AND lc.canTakeBunBan LIKE ?
     """
 
     query_params = [
         year,
         semester,
-        f'%{bunBan}%'
     ]
 
     if isForeign:
@@ -532,6 +530,43 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
     can_take = []
     seen_lecture_ids = set()
 
+    major_mapping = {
+        "E1": "전자공학과",
+        "E5": "전자통신공학과",
+        "E7": "전자융합공학",
+        "J1": "전기공학과",
+        "J3": "전자재료공학과",
+        "T1": "반도체시스템공학부",
+        "C1": "컴퓨터정보공학부",
+        "C4": "소프트웨어학부",
+        "C7": "🔥최 강 정 융🔥",
+        "J5": "로봇학부",
+        "A2": "건축공학과",
+        "K1": "화학공학과",
+        "K3": "환경공학과",
+        "A1": "건축학과",
+        "N1": "수학과",
+        "N2": "전자바이오물리학과",
+        "N4": "화학과",
+        "P1": "스포츠융합학과",
+        "test2": "정보콘텐츠학과(사이버정보보안학과)",
+        "R1": "국어국문학과",
+        "R2": "영어산업학과",
+        "M1": "미디어커뮤니케이션학부",
+        "R3": "산업심리학과",
+        "R4": "동북아문화산업학부",
+        "S1": "행정학과",
+        "L1": "법학부",
+        "S3": "국제학부",
+        "test1": "자산관리학과(부동산법무학과)",
+        "B1": "경영학부",
+        "B5": "국제통상학부",
+        "V1": "금융부동산법무학과",
+        "V2": "게임콘텐츠학과",
+        "V3": "스마트전기전자학과",
+        "V4": "스포츠상담재활학과",
+    }
+
     for row in lectures:
         lecture_id = row[0]
         lecture_name = row[2]
@@ -541,9 +576,14 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
 
         more_info = ""
 
-        if user_plused_bunban and user_plused_bunban in row[9]:
-            multi_major = check_multi_major(user_plused_bunban)
-            more_info += f"{multi_major} 전공 과목 "
+        major_recog_bunban = row[9].split(',')
+        print("major_recog_bunban", major_recog_bunban)
+        for major in major_recog_bunban:
+            major = major.strip()
+            if major in major_mapping:
+                more_info += f"{major_mapping[major]} "
+        if more_info != "":
+            more_info += "전공 과목."
 
         try:
             lec_week_time = str(int(row[13]))
