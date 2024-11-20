@@ -19,7 +19,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
   const fetchYearAndSemester = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_year_n_semester"
+        `${process.env.REACT_APP_API_URL}/get_year_n_semester`
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
@@ -56,7 +56,7 @@ const AddListedLectureManaully = ({ user, fetchLectures }) => {
 
     try {
       await axios.post(
-        "http://localhost:8000/user/add_user_listed_lecture_manually",
+        `${process.env.REACT_APP_API_URL}/user/add_user_listed_lecture_manually`,
         {
           user_id: user,
           year: year ? parseInt(year) : null,

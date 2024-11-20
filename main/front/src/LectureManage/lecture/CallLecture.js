@@ -41,7 +41,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -53,7 +53,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
         }
       } else {
         console.log("로그인 해주세요.");
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = `/login`;
       }
     } catch (err) {
       console.log("CallLecture.js - checkLogin");
@@ -64,7 +64,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const fetchYearAndSemester = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_year_n_semester"
+        `${process.env.REACT_APP_API_URL}/get_year_n_semester`
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
@@ -99,7 +99,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/lectures/",
+        `${process.env.REACT_APP_API_URL}/lectures/`,
         inputData
       );
       setLectures(response.data);
@@ -130,7 +130,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
     try {
       console.log(inputData2Recommend);
       const response = await axios.post(
-        "http://localhost:8000/lectures/recommendation",
+        `${process.env.REACT_APP_API_URL}/lectures/recommendation`,
         inputData2Recommend
       );
       setLectures(response.data);

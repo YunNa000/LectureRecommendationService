@@ -29,7 +29,7 @@ const LectureList = ({
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -57,7 +57,7 @@ const LectureList = ({
 
     try {
       if (isSelected) {
-        await axios.post("http://localhost:8000/lecture_unselect", {
+        await axios.post(`${process.env.REACT_APP_API_URL}/lecture_unselect`, {
           user_id: user,
           lecNumber: lecNumber,
           year: year,
@@ -69,7 +69,7 @@ const LectureList = ({
           return newSelected;
         });
       } else {
-        await axios.post("http://localhost:8000/lecture_select", {
+        await axios.post(`${process.env.REACT_APP_API_URL}/lecture_select`, {
           user_id: user,
           lecNumber: lecNumber,
           year: year,
@@ -89,7 +89,7 @@ const LectureList = ({
     if (!user) return;
     try {
       const response = await axios.post(
-        "http://localhost:8000/selected_lecture",
+        `${process.env.REACT_APP_API_URL}/selected_lecture`,
         {
           user_id: user,
         }

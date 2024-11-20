@@ -31,7 +31,7 @@ const UserList = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/users?userName=${searchQuery}`
+          `${process.env.REACT_APP_API_URL}/users?userName=${searchQuery}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -50,16 +50,19 @@ const UserList = () => {
 
   const handleFriendRequest = async (friendId) => {
     try {
-      const response = await fetch("http://localhost:8000/add_friend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id1: myUserId.toString(),
-          user_id2: friendId.toString(),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/add_friend`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id1: myUserId.toString(),
+            user_id2: friendId.toString(),
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

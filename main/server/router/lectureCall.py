@@ -577,7 +577,6 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
         more_info = ""
 
         major_recog_bunban = row[9].split(',')
-        print("major_recog_bunban", major_recog_bunban)
         for major in major_recog_bunban:
             major = major.strip()
             if major in major_mapping:

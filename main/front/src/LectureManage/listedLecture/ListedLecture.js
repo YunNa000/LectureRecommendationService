@@ -29,7 +29,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -44,7 +44,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
         }
       } else {
         console.log("로그인 해주세요.");
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = "/login";
       }
     } catch (err) {
       console.log("ListedLecture.js - checkLogin");
@@ -59,7 +59,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const fetchYearAndSemester = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_year_n_semester"
+        `${process.env.REACT_APP_API_URL}/get_year_n_semester`
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
@@ -73,7 +73,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const fetchLectures = async (userID) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/listed_lecture",
+        `${process.env.REACT_APP_API_URL}/user/listed_lecture`,
         { user_id: userID }
       );
       setLectures(response.data);
@@ -95,7 +95,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const updateLecturePriority = async (lecNumber, newPriority) => {
     try {
       await axios.post(
-        "http://localhost:8000/user/update_listed_lecture_priority",
+        `${process.env.REACT_APP_API_URL}/user/update_listed_lecture_priority`,
         {
           user_id: user,
           lecNumber: lecNumber,
@@ -122,7 +122,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
 
   const unselectLecture = async (lecNumber, year, semester) => {
     try {
-      await axios.post("http://localhost:8000/lecture_unselect", {
+      await axios.post(`${process.env.REACT_APP_API_URL}/lecture_unselect`, {
         user_id: user,
         lecNumber: lecNumber,
         year: year,
@@ -138,7 +138,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
     try {
       lectureData.user_id = user;
       await axios.post(
-        "http://localhost:8000/user/update_user_listed_lecture_info",
+        `${process.env.REACT_APP_API_URL}/user/update_user_listed_lecture_info`,
         lectureData
       );
       fetchLectures(user);
@@ -150,7 +150,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const fetchTotalGPA = async (userId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/data/totalgpa",
+        `${process.env.REACT_APP_API_URL}/user/data/totalgpa`,
         { user_id: userId }
       );
       setTotalGPA(response.data);
@@ -162,7 +162,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
   const getTakenLecture = async (user) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/get_taken_lectures",
+        `${process.env.REACT_APP_API_URL}/user/get_taken_lectures`,
         { user_id: user },
         { withCredentials: true }
       );
@@ -179,7 +179,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
     try {
       lectureData.user_id = user;
       await axios.post(
-        "http://localhost:8000/user/add_taken_lecture_auto",
+        `${process.env.REACT_APP_API_URL}/user/add_taken_lecture_auto`,
         lectureData
       );
       fetchLectures(user);

@@ -330,7 +330,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
     const fetchLecture = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/lecture/${year}/${semester}/${lectureNumber}`
+          `${process.env.REACT_APP_API_URL}/lecture/${year}/${semester}/${lectureNumber}`
         );
         if (!response.ok) {
           throw new Error("강의를 불러오는데 실패했습니다.");

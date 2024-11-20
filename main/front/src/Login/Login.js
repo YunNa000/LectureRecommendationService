@@ -10,7 +10,7 @@ const Login = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -22,8 +22,6 @@ const Login = () => {
         }
       } else {
         console.log("로그인 해주세요.");
-        // window.location.href = "http://127.0.0.1:3000/login";
-        // 로그인 페이지가 아닌, 다른 페이지에서는 이 주석 해제
       }
     } catch (err) {
       console.log("Login.js - checkLoginStatus");
@@ -33,12 +31,12 @@ const Login = () => {
   };
 
   const handleLogin = () => {
-    window.location.href = "http://127.0.0.1:8000/login";
+    window.location.href = `${process.env.REACT_APP_API_URL}/login`;
   };
 
   const handleLogout = async () => {
     setUser(null);
-    window.location.href = "http://127.0.0.1:3000/";
+    window.location.href = "/";
   };
 
   useEffect(() => {

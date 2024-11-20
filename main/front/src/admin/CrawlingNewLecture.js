@@ -23,7 +23,7 @@ const CrawlingNewLecture = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_data",
+        `${process.env.REACT_APP_API_URL}/get_data`,
         inputData
       );
       console.log(response.data);
@@ -38,7 +38,7 @@ const CrawlingNewLecture = () => {
   const fetchYearAndSemester = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_year_n_semester"
+        `${process.env.REACT_APP_API_URL}/get_year_n_semester`
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;

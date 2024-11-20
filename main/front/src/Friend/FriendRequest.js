@@ -21,16 +21,19 @@ const FriendRequest = () => {
 
   const handleFriendRequest = async (friendId) => {
     try {
-      const response = await fetch("http://localhost:8000/add_friend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id1: myUserId.toString(),
-          user_id2: friendId.toString(), // 문자열로 변환
-        }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/add_friend`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id1: myUserId.toString(),
+            user_id2: friendId.toString(), // 문자열로 변환
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,7 +52,7 @@ const FriendRequest = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/friendrequest?userId=${myUserId}`
+          `${process.env.REACT_APP_API_URL}/friendrequest?userId=${myUserId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}` + myUserId);
@@ -73,16 +76,19 @@ const FriendRequest = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/delete_friend`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id2: myUserId.toString(),
-          user_id1: friendId.toString(),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/delete_friend`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id2: myUserId.toString(),
+            user_id1: friendId.toString(),
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
