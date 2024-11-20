@@ -189,16 +189,15 @@ const LectureList = ({
 
   const getWidth = (amount, what) => {
     console.log(what, amount);
-    if (what === "assignment" || what === "teamplay") {
+    if (what === "assignment") {
       if (amount === 0.1) {
         return null;
       }
       return amount;
-    } else if (what === "grade") {
+    } else if (what === "grade" || what === "teamplay") {
       if (amount === 0.1 || amount === 0.1) {
         return null;
       }
-      console.log("asdfasdfasdf", 100 - amount);
       return 100 - amount;
     }
   };
@@ -237,11 +236,11 @@ const LectureList = ({
       if (amount === (0.1 || 99.9)) {
         return "정보 없음";
       } else if (amount >= 70) {
-        return "적음";
+        return "많음";
       } else if (amount >= 50) {
         return "보통";
       } else if (amount > 0) {
-        return "많음";
+        return "적음";
       }
     }
 
@@ -402,7 +401,7 @@ const LectureList = ({
                                         "teamplay"
                                       )}%`,
                                       backgroundColor: getColor(
-                                        lecture.teamPlayAmount
+                                        100 - lecture.teamPlayAmount
                                       ),
                                     }}
                                   />
@@ -576,7 +575,7 @@ const LectureList = ({
                                             "teamplay"
                                           )}%`,
                                           backgroundColor: getColor(
-                                            lecture.teamPlayAmount
+                                            100 - lecture.teamPlayAmount
                                           ),
                                         }}
                                       />
