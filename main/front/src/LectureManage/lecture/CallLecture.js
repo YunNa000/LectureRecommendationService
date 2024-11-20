@@ -207,7 +207,19 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   }, [lecClassification, activeComponent]);
 
   if (loading) return <div className="when-loading"></div>;
-  if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
+  if (error)
+    return (
+      <div className="call-lecture-error-message">
+        <p>서버의 응답이 없어요...</p>
+        <p>{error.message}</p>
+        <button
+          className="call-lecture-error-message-reload"
+          onClick={() => window.location.reload()}
+        >
+          새로 고침
+        </button>
+      </div>
+    );
 
   return (
     <div>
