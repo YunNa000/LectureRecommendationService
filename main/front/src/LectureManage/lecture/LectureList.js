@@ -182,8 +182,8 @@ const LectureList = ({
   };
 
   const getColor = (value) => {
-    const red = Math.max(50, 255 - value * 2.55);
-    const green = Math.max(0, value * 2.3 + 25);
+    const red = Math.max(50, 255 - value * 2.3);
+    const green = Math.max(0, value * 2 + 25);
     return `rgb(${red}, ${green}, 0)`;
   };
 
