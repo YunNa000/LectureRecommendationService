@@ -247,7 +247,7 @@ const ListedLecture = ({ selectedLecturesState, setSelectedLecturesState }) => {
     return (
       <div className="loader">
         <div className="spinner"></div>
-        <p>시간표를 불러오는 중이에요.</p>
+        <p>시간표를 불러오고 있어요.</p>
       </div>
     );
   if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;

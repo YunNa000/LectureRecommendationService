@@ -187,6 +187,22 @@ const LectureList = ({
     return `rgb(${red}, ${green}, 0)`;
   };
 
+  const getWidth = (amount, what) => {
+    console.log(what, amount);
+    if (what === "assignment" || what === "teamplay") {
+      if (amount === 0.1) {
+        return null;
+      }
+      return amount;
+    } else if (what === "grade") {
+      if (amount === 0.1 || amount === 0.1) {
+        return null;
+      }
+      console.log("asdfasdfasdf", 100 - amount);
+      return 100 - amount;
+    }
+  };
+
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -198,7 +214,9 @@ const LectureList = ({
   const isItHard = (amount, what) => {
     console.log(amount);
     if (what === "assignment") {
-      if (amount >= 70) {
+      if (amount === (0.1 || 99.9)) {
+        return "정보 없음";
+      } else if (amount >= 70) {
         return "적음";
       } else if (amount >= 50) {
         return "보통";
@@ -206,7 +224,9 @@ const LectureList = ({
         return "많음";
       }
     } else if (what === "grade") {
-      if (amount >= 70) {
+      if (amount === 0.1 || amount === 99.9) {
+        return "정보 없음";
+      } else if (amount >= 70) {
         return "쉬움";
       } else if (amount >= 50) {
         return "보통";
@@ -214,7 +234,9 @@ const LectureList = ({
         return "힘듦";
       }
     } else if (what === "teamplay") {
-      if (amount >= 70) {
+      if (amount === (0.1 || 99.9)) {
+        return "정보 없음";
+      } else if (amount >= 70) {
         return "적음";
       } else if (amount >= 50) {
         return "보통";
@@ -231,7 +253,7 @@ const LectureList = ({
       <div className="lecturelist">
         <div className="loader">
           <div className="spinner"></div>
-          <p>강의들을 불러오는 중이에요.</p>
+          <p>강의들을 불러오고 있어요.</p>
         </div>
       </div>
     );
@@ -316,9 +338,6 @@ const LectureList = ({
                           <div className="lecturelist-reviewSummary">
                             <p className="lecturelist-reviewSummary-text">
                               {lecture.reviewSummary}
-                              openai api key 받기 전까지는 요걸 강의 요약이라고
-                              할게요. 이건 강의 요약인데.. 음.. 딱 세 줄까지가
-                              괜찮을 거 같아요.
                             </p>
                           </div>
                           <div className="lecturelist-expanded">
@@ -331,7 +350,10 @@ const LectureList = ({
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.assignmentAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.assignmentAmount,
+                                        "assignment"
+                                      )}%`,
                                       backgroundColor: getColor(
                                         lecture.assignmentAmount
                                       ),
@@ -353,15 +375,18 @@ const LectureList = ({
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.gradeAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.gradeAmount,
+                                        "grade"
+                                      )}%`,
                                       backgroundColor: getColor(
-                                        lecture.gradeAmount
+                                        100 - lecture.gradeAmount
                                       ),
                                     }}
                                   />
                                 </div>
                                 <p className="lecturelist-amount-info-text">
-                                  {isItHard(lecture.gradeAmount, "grade")}
+                                  {isItHard(100 - lecture.gradeAmount, "grade")}
                                 </p>
                               </div>
                               <div className="lecturelist-amount-infoNbar">
@@ -369,13 +394,15 @@ const LectureList = ({
                                   팀플
                                 </p>
                                 <div className="lecturelist-bar">
-                                  {" "}
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.teamPlayAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.teamPlayAmount,
+                                        "teamplay"
+                                      )}%`,
                                       backgroundColor: getColor(
-                                        lecture.gradeAmount
+                                        lecture.teamPlayAmount
                                       ),
                                     }}
                                   />
@@ -482,9 +509,6 @@ const LectureList = ({
                               <div className="lecturelist-reviewSummary">
                                 <p className="lecturelist-reviewSummary-text">
                                   {lecture.reviewSummary}
-                                  openai api key 받기 전까지는 요걸 강의
-                                  요약이라고 할게요. 이건 강의 요약인데.. 음..
-                                  딱 세 줄까지가 괜찮을 거 같아요.
                                 </p>
                               </div>
                               <div className="lecturelist-expanded">
@@ -497,7 +521,10 @@ const LectureList = ({
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.assignmentAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.assignmentAmount,
+                                            "assignment"
+                                          )}%`,
                                           backgroundColor: getColor(
                                             lecture.assignmentAmount
                                           ),
@@ -519,15 +546,21 @@ const LectureList = ({
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.gradeAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.gradeAmount,
+                                            "grade"
+                                          )}%`,
                                           backgroundColor: getColor(
-                                            lecture.gradeAmount
+                                            100 - lecture.gradeAmount
                                           ),
                                         }}
                                       />
                                     </div>
                                     <p className="lecturelist-amount-info-text">
-                                      {isItHard(lecture.gradeAmount, "grade")}
+                                      {isItHard(
+                                        100 - lecture.gradeAmount,
+                                        "grade"
+                                      )}
                                     </p>
                                   </div>
                                   <div className="lecturelist-amount-infoNbar">
@@ -535,13 +568,15 @@ const LectureList = ({
                                       팀플
                                     </p>
                                     <div className="lecturelist-bar">
-                                      {" "}
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.teamPlayAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.teamPlayAmount,
+                                            "teamplay"
+                                          )}%`,
                                           backgroundColor: getColor(
-                                            lecture.gradeAmount
+                                            lecture.teamPlayAmount
                                           ),
                                         }}
                                       />

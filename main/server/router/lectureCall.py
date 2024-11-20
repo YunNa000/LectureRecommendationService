@@ -288,7 +288,8 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         ))
         seen_lecture_ids.add(lecture_id)
 
-    response.sort(key=lambda x: x.star, reverse=True)
+    response.sort(
+        key=lambda x: x.star if x.star is not None else 3, reverse=True)
 
     return response
 
