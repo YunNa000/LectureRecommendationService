@@ -15,5 +15,3 @@ __pycache__/
 test-env/
 ssh/
 geckodriver
-
-main\server\router\PRIVATE.py
