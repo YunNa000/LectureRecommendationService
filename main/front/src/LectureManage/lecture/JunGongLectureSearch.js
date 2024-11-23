@@ -45,9 +45,14 @@ const JunGongLectureSearch = ({
         <div>
           <input
             value={lectureName}
-            onChange={(e) => setLectureName(e.target.value)} //백엔드에서 강의명, 학정번호, 교수명으로 동시에 검색할 수 있도록 하는 것이 필요해요
+            onChange={(e) => setLectureName(e.target.value)}
             placeholder="강의명/학정번호/교수명"
             className="jungong-search-lecturename"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchLectures();
+              }
+            }}
           />
         </div>
         <div className="jungong-search-conditions-credit">
@@ -119,17 +124,23 @@ const JunGongLectureSearch = ({
           {isTimeTableVisible ? "시간 선택 숨기기" : "가능한 시간 선택"}
         </button>
       </div>
-
       {isTimeTableVisible && (
         <UserTimeTable
           coordinates={lecTimeTable}
           setCoordinates={setlecTimeTable}
         />
       )}
-      <div className="jungong-search-button-box">
-        <button onClick={fetchLectures} className="jungong-search-button">
-          강의 검색
-        </button>
+      <div className="jungong-search-button-box-box">
+        <p className="jungong-search-info">
+          타과 전공은 뜨지 않아요.
+          <br />
+          타과 전공은 전체 강의나 강의 추천 탭을 이용해주세요.
+        </p>
+        <div className="jungong-search-button-box">
+          <button onClick={fetchLectures} className="jungong-search-button">
+            강의 검색
+          </button>
+        </div>
       </div>
     </div>
   );

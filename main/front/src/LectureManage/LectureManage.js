@@ -19,14 +19,17 @@ const LectureManage = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/user/data", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_id: userId }),
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/user/data`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: userId }),
+            credentials: "include",
+          }
+        );
 
         const data = await response.json();
 
@@ -48,7 +51,7 @@ const LectureManage = () => {
         }
       } else {
         console.log("로그인 해주세요.");
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = "/login";
       }
     } catch (err) {
       console.log("CallLecture.js - checkLogin");

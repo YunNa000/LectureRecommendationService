@@ -1,5 +1,7 @@
 .timetable-box {
+  position: relative;
   margin: 10px 10px 55vh 10px;
+  z-index: 990;
 }
 
 .user-timetable {
@@ -20,7 +22,7 @@
 .lecture-cell {
   border: 1px solid #ddd;
   width: 80px;
-  height: 100px;
+  height: 80px;
   padding: 0;
 }
 
@@ -38,9 +40,10 @@
 }
 
 .lecture-name {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 12px;
   margin: 0;
+  padding: 3px 0 0 0;
   text-align: center;
 }
 
@@ -94,14 +97,37 @@
 }
 
 .edit-lecture {
-  align-items: center;
-  margin-top: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(3px);
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 30px rgba(9, 9, 9, 0.2);
+  border-radius: 10px;
+  width: 200px;
+  cursor: auto;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 999;
+  backdrop-filter: blur(15px);
 }
 
 .edit-lecture-unckeck {
-  /* align-items: center; */
-  margin-right: 10px;
+  margin: 3px 0 5px -5px;
   display: flex;
+  cursor: pointer;
+  background-color: rgb(0, 0, 0, 0);
+  outline: none;
+  border: none;
 }
 
 .edit-lecture-unckeck input[type="checkbox"] {
@@ -118,6 +144,17 @@
   font-size: 14px;
   width: calc(100% - 12px);
   outline: none;
+  margin: 2px 0;
+}
+
+.listed-lec-timetable-more-lecName {
+  margin: 0;
+}
+
+.listed-lec-timetable-more-lecProfessor {
+  margin: 0;
+  font-size: 12px;
+  color: #777;
 }
 
 .update-button {
@@ -129,6 +166,20 @@
   border-radius: 4px;
   font-size: 12px;
   float: right;
+  margin-top: 15px;
+  margin-bottom: -15px;
+}
+
+.detail-a-button {
+  background-color: #eee;
+  color: #333;
+  border: none;
+  padding: 7px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 15px;
+  margin-bottom: -15px;
 }
 
 .conflict-message {
@@ -141,4 +192,5 @@
 .edit-lecture-uncheck-text {
   font-size: 10px;
   margin: 0;
+  align-self: center;
 }

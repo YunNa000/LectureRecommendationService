@@ -1,10 +1,14 @@
 from typing import List
 from fastapi import HTTPException, APIRouter
 from db import db_connect
-from model import LectureCallResponse, LectureCallInput
+from model import LectureCallResponse, LectureCallInput, LectureRecommendationCallInput, LectureRecommendCallResponse
 from typing import List, Optional
+from sentence_transformers import SentenceTransformer, util
+import numpy as np
 
 router = APIRouter()
+
+model = SentenceTransformer('intfloat/multilingual-e5-large-instruct')
 
 
 def get_user_info(user_id):
@@ -284,7 +288,8 @@ def print_JunGong_n_GyoYang(year: int, semester: str, bunBan: str, lecClassifica
         ))
         seen_lecture_ids.add(lecture_id)
 
-    response.sort(key=lambda x: x.star, reverse=True)
+    response.sort(
+        key=lambda x: x.star if x.star is not None else 3, reverse=True)
 
     return response
 
@@ -473,6 +478,144 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
     return response
 
 
+def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, user_id: str, isForeign: bool):
+    conn = db_connect()
+    cursor = conn.cursor()
+
+    user_taken_query = """
+    SELECT lecName
+    FROM userTakenLecture
+    WHERE user_id = ? AND userCredit IS NOT 'F'
+    """
+    cursor.execute(user_taken_query, (user_id,))
+    user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
+
+    base_query = f"""
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary, ld.OverviewEmbedding, ld.EverytimeEmbedding
+    FROM LectureList ll
+    JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
+    JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
+    JOIN LectureDetailData ld ON ll.LectureID = ld.LectureID
+    WHERE (ll.isLecClose IS NULL OR ll.isLecClose = 0)
+    AND (lc.canTakeOnly{userYear}year = 1
+    OR (((lc.canTakeOnly1year IS NULL or lc.canTakeOnly1year is 0)
+    AND (lc.canTakeOnly2year IS NULL or lc.canTakeOnly2year IS 0)
+    AND (lc.canTakeOnly3year IS NULL or lc.canTakeOnly3year IS 0)
+    AND (lc.canTakeOnly4year IS NULL or lc.canTakeOnly4year IS 0)
+    AND (lc.canTakeOnly5year IS NULL  or lc.canTakeOnly5year IS 0))))
+    AND ll.year = ?
+    AND ll.semester = ?
+    """
+
+    query_params = [
+        year,
+        semester,
+    ]
+
+    if isForeign:
+        base_query += " AND (lc.canTakeForeignPeople = 1 OR lc.canTakeForeignPeople = 0)"
+    else:
+        base_query += " AND (lc.canTakeForeignPeople = 2 OR lc.canTakeForeignPeople = 0)"
+
+    user_plused_bunban = None
+
+    base_query += " AND (lc.requirementClass IS NULL OR lc.requirementClass = '' OR EXISTS (SELECT 1 FROM userTakenLecture utl WHERE utl.lecName LIKE '%' || lc.requirementClass || '%'))"
+
+    base_query = base_query.replace("{userYear}", str(userYear))
+
+    cursor.execute(base_query, query_params)
+    lectures = cursor.fetchall()
+    conn.close()
+
+    can_take = []
+    seen_lecture_ids = set()
+
+    major_mapping = {
+        "E1": "전자공학과",
+        "E5": "전자통신공학과",
+        "E7": "전자융합공학",
+        "J1": "전기공학과",
+        "J3": "전자재료공학과",
+        "T1": "반도체시스템공학부",
+        "C1": "컴퓨터정보공학부",
+        "C4": "소프트웨어학부",
+        "C7": "🔥최 강 정 융🔥",
+        "J5": "로봇학부",
+        "A2": "건축공학과",
+        "K1": "화학공학과",
+        "K3": "환경공학과",
+        "A1": "건축학과",
+        "N1": "수학과",
+        "N2": "전자바이오물리학과",
+        "N4": "화학과",
+        "P1": "스포츠융합학과",
+        "test2": "정보콘텐츠학과(사이버정보보안학과)",
+        "R1": "국어국문학과",
+        "R2": "영어산업학과",
+        "M1": "미디어커뮤니케이션학부",
+        "R3": "산업심리학과",
+        "R4": "동북아문화산업학부",
+        "S1": "행정학과",
+        "L1": "법학부",
+        "S3": "국제학부",
+        "test1": "자산관리학과(부동산법무학과)",
+        "B1": "경영학부",
+        "B5": "국제통상학부",
+        "V1": "금융부동산법무학과",
+        "V2": "게임콘텐츠학과",
+        "V3": "스마트전기전자학과",
+        "V4": "스포츠상담재활학과",
+    }
+
+    for row in lectures:
+        lecture_id = row[0]
+        lecture_name = row[2]
+
+        if lecture_id in seen_lecture_ids or lecture_name in user_taken_courses:
+            continue
+
+        more_info = ""
+
+        major_recog_bunban = row[9].split(',')
+        for major in major_recog_bunban:
+            major = major.strip()
+            if major in major_mapping:
+                more_info += f"{major_mapping[major]} "
+        if more_info != "":
+            more_info += "전공 과목."
+
+        try:
+            lec_week_time = str(int(row[13]))
+        except (ValueError, TypeError):
+            lec_week_time = '0'
+
+        can_take.append(LectureRecommendCallResponse(
+            lectureID=lecture_id,
+            lecNumber=row[1],
+            lecName=lecture_name,
+            lecProfessor=row[3],
+            lecCredit=row[4],
+            lecTime=row[5],
+            lecClassroom=row[6],
+            semester=row[7],
+            year=row[8],
+            moreInfo=more_info,
+            lecTheme=row[11],
+            lecClassification=row[12],
+            lecWeekTime=lec_week_time,
+            star=row[14],
+            assignmentAmount=row[15],
+            teamPlayAmount=row[16],
+            gradeAmount=row[17],
+            reviewSummary=row[18],
+            OverviewEmbedding=row[19],
+            EverytimeEmbedding=row[20]
+        ))
+        seen_lecture_ids.add(lecture_id)
+
+    return can_take
+
+
 @router.post("/lectures/", response_model=List[LectureCallResponse])
 async def get_lectures(input_data: LectureCallInput):
 
@@ -505,3 +648,76 @@ async def get_lectures(input_data: LectureCallInput):
             year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable, whatMultipleMajor=whatMultipleMajor, whatMultipleMajorDepartment=whatMultipleMajorDepartment)
 
     return response
+
+
+@router.post("/lectures/recommendation", response_model=List[LectureRecommendCallResponse])
+async def get_lectures(input_data: LectureRecommendationCallInput):
+    user_info = get_user_info(input_data.user_id)
+
+    if user_info:
+        bunBan, userYear, isForeign, isMultipleMajor, whatMultipleMajor, whatMultipleMajorDepartment = user_info
+    else:
+        return {"error": "error fetch user data"}
+
+    user_id = input_data.user_id
+    year = input_data.year
+    semester = input_data.semester
+    userPrefer = input_data.userPrefer
+
+    can_take = print_user_can_take(
+        year=year, semester=semester, bunBan=bunBan, isForeign=isForeign, userYear=userYear, user_id=user_id)
+
+    user_embedding = model.encode(userPrefer)
+
+    data = []
+    for row in can_take:
+        lecture_id = row.lectureID
+        overview_embedding = row.OverviewEmbedding
+        everytime_embedding = row.EverytimeEmbedding
+
+        if overview_embedding is not None and everytime_embedding is not None:
+            overview_embeddings = np.frombuffer(
+                overview_embedding, dtype=np.float32)
+            everytime_embeddings = np.frombuffer(
+                everytime_embedding, dtype=np.float32)
+
+            combined_embeddings = (
+                0.3 * overview_embeddings) + (0.7 * everytime_embeddings)
+            data.append((lecture_id, combined_embeddings))
+
+    cosine_scores = []
+    for lecture_id, embeddings in data:
+        score = util.pytorch_cos_sim(user_embedding, embeddings)
+        cosine_scores.append((lecture_id, score.item()))
+
+    cosine_scores.sort(key=lambda x: x[1], reverse=True)
+
+    top_results = []
+    return_num = 10
+    for lecture_id, score in cosine_scores[:return_num]:
+
+        lecture_info = next(
+            (row for row in can_take if row.lectureID == lecture_id), None)
+        if lecture_info:
+            top_results.append(LectureCallResponse(
+                lectureID=lecture_info.lectureID,
+                lecNumber=lecture_info.lecNumber,
+                lecName=lecture_info.lecName,
+                lecProfessor=lecture_info.lecProfessor,
+                lecCredit=lecture_info.lecCredit,
+                lecTime=lecture_info.lecTime,
+                lecClassroom=lecture_info.lecClassroom,
+                moreInfo=lecture_info.moreInfo,
+                semester=lecture_info.semester,
+                year=lecture_info.year,
+                lecClassification=lecture_info.lecClassification,
+                lecTheme=lecture_info.lecTheme,
+                lecWeekTime=lecture_info.lecWeekTime,
+                star=lecture_info.star,
+                assignmentAmount=lecture_info.assignmentAmount,
+                teamPlayAmount=lecture_info.teamPlayAmount,
+                gradeAmount=lecture_info.gradeAmount,
+                reviewSummary=lecture_info.reviewSummary
+            ))
+
+    return top_results

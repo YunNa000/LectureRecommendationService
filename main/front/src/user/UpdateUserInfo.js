@@ -21,7 +21,10 @@ const UpdateUserInfo = () => {
   const [isHakBunError, SetIsHakBunError] = useState(false);
   const [isSameMajor, SetIsSameMajor] = useState(false);
 
-  const handleEditClick = () => {
+  const handleEditClick = (event) => {
+    if (event.target.closest(".userinfo-edit-form")) {
+      return;
+    }
     setIsEditing(!isEditing);
     getUserInfo(user);
   };
@@ -30,7 +33,7 @@ const UpdateUserInfo = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -42,7 +45,7 @@ const UpdateUserInfo = () => {
           getUserInfo(data.user_id);
         }
       } else {
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = "/login";
       }
     } catch (err) {
       console.log("Login.js - checkLoginStatus");
@@ -81,7 +84,7 @@ const UpdateUserInfo = () => {
     if (!hakBunLengthError && !isSameMajorError) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/user/update",
+          `${process.env.REACT_APP_API_URL}/user/update`,
           {
             ...formData,
             user_id: user,
@@ -106,7 +109,7 @@ const UpdateUserInfo = () => {
   const getUserInfo = async (userId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/data",
+        `${process.env.REACT_APP_API_URL}/user/data`,
         { user_id: userId },
         { withCredentials: true }
       );
@@ -135,7 +138,7 @@ const UpdateUserInfo = () => {
   }, []);
 
   return (
-    <div className="userinfo-update-box">
+    <div className="userinfo-update-box" onClick={handleEditClick}>
       <div className="userinfo-box-box">
         <div className="userinfo-box">
           <p className="userinfo-username">{formData.username}</p>
@@ -159,7 +162,7 @@ const UpdateUserInfo = () => {
           )}
         </div>
         <div className="userinfo-edit-button-box">
-          <button onClick={handleEditClick} className="userinfo-edit-button">
+          <button className="userinfo-edit-button">
             <img
               src={firsangledown}
               alt="정보 수정하기 버튼"

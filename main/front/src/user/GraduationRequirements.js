@@ -30,7 +30,7 @@ const GraduationRequirements = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -55,7 +55,7 @@ const GraduationRequirements = () => {
   const getUserGraduationReqInfo = async (userId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/data/graduation_conditions",
+        `${process.env.REACT_APP_API_URL}/user/data/graduation_conditions`,
         { user_id: userId },
         { withCredentials: true }
       );
@@ -93,7 +93,7 @@ const GraduationRequirements = () => {
   const getUserMajorGPA = async (userId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/data/majorgpa",
+        `${process.env.REACT_APP_API_URL}/user/data/majorgpa`,
         { user_id: userId },
         { withCredentials: true }
       );
@@ -112,7 +112,7 @@ const GraduationRequirements = () => {
   const getUserTotalGPA = async (userId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/data/totalgpa",
+        `${process.env.REACT_APP_API_URL}/user/data/totalgpa`,
         { user_id: userId },
         { withCredentials: true }
       );

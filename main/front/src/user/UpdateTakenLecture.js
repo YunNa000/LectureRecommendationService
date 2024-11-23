@@ -19,7 +19,7 @@ const UpdateTakenLecture = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -30,10 +30,10 @@ const UpdateTakenLecture = () => {
           setUser(data.user_id);
           getTakenLecture(data.user_id);
         } else {
-          window.location.href = "http://127.0.0.1:3000/login";
+          window.location.href = "/login";
         }
       } else {
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = "/login";
       }
     } catch (err) {
       console.error("Login.js - checkLoginStatus", err);
@@ -43,7 +43,7 @@ const UpdateTakenLecture = () => {
   const getTakenLecture = async (user) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/get_taken_lectures",
+        `${process.env.REACT_APP_API_URL}/user/get_taken_lectures`,
         { user_id: user },
         { withCredentials: true }
       );
@@ -67,7 +67,7 @@ const UpdateTakenLecture = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/add_taken_lecture_manually",
+        `${process.env.REACT_APP_API_URL}/user/add_taken_lecture_manually`,
         inputData,
         {
           withCredentials: true,
@@ -96,7 +96,7 @@ const UpdateTakenLecture = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/delete_taken_lecture",
+        `${process.env.REACT_APP_API_URL}/user/delete_taken_lecture`,
         inputData,
         {
           withCredentials: true,
@@ -131,7 +131,7 @@ const UpdateTakenLecture = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/user/update_taken_lecture",
+        `${process.env.REACT_APP_API_URL}/user/update_taken_lecture`,
         inputData,
         { withCredentials: true }
       );
@@ -180,7 +180,7 @@ const UpdateTakenLecture = () => {
     try {
       const userId = Cookies.get("user_id");
       const response = await axios.post(
-        "http://localhost:8000/ocr",
+        `${process.env.REACT_APP_API_URL}/ocr`,
         {
           ocrResults,
           user_id: userId,

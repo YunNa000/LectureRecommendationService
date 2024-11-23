@@ -5,6 +5,7 @@ import GyoYangLectureSearch from "./GyoYangLectureSearch";
 import JunGongLectureSearch from "./JunGongLectureSearch.js";
 import TotalLectureSearch from "./TotalLectureSearch.js";
 import LectureList from "./LectureList";
+import Recommendation from "./Recommendation.js";
 import "./CallLecture-CircleList.css";
 
 const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
@@ -26,12 +27,21 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const [lecCredit, setLecCredit] = useState(0);
   const [lecTimeTable, setlecTimeTable] = useState([]);
   const [activeButton, setActiveButton] = useState("");
+  const [dontWantFirstPeriod, setDontWantFirstPeriod] = useState(false);
+  const [dontWantThirdPeriod, setDontWantThirdPeriod] = useState(false);
+  const [wantLowAssignment, setWantLowAssignment] = useState(false);
+  const [wantLowTeamplay, setWantLowTeamplay] = useState(false);
+  const [wantLectureMethod, setWantLectureMethod] = useState("");
+  const [wantEvaluateMethod, setWantEvaluateMethod] = useState("");
+  const [userPrefer, setUserPrefer] = useState("");
+  const [wantLectureLevel, setWantLectureLevel] = useState(0);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -43,7 +53,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
         }
       } else {
         console.log("로그인 해주세요.");
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = `/login`;
       }
     } catch (err) {
       console.log("CallLecture.js - checkLogin");
@@ -54,7 +64,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   const fetchYearAndSemester = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/get_year_n_semester"
+        `${process.env.REACT_APP_API_URL}/get_year_n_semester`
       );
       const { year: fetchedYear, semester: fetchedSemester } =
         response.data.year_n_semester;
@@ -69,6 +79,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
   };
 
   const fetchLectures = async () => {
+    setShowSpinner(true);
     const inputData = {
       user_id: user,
       lecClassification,
@@ -88,13 +99,46 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/lectures/",
+        `${process.env.REACT_APP_API_URL}/lectures/`,
         inputData
       );
       setLectures(response.data);
       console.log(response.data);
     } catch (err) {
       setError(err);
+    } finally {
+      setShowSpinner(false);
+    }
+  };
+  ////////////////////////////////////////////////////////////
+  const fetchRecommendLectures = async () => {
+    setShowSpinner(true);
+    const inputData2Recommend = {
+      user_id: user,
+      year,
+      semester,
+      dontWantFirstPeriod,
+      dontWantThirdPeriod,
+      wantLowAssignment,
+      wantLowTeamplay,
+      wantLectureMethod,
+      wantEvaluateMethod,
+      wantLectureLevel,
+      userPrefer,
+    };
+
+    try {
+      console.log(inputData2Recommend);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/lectures/recommendation`,
+        inputData2Recommend
+      );
+      setLectures(response.data);
+      console.log(response.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setShowSpinner(false);
     }
   };
 
@@ -107,6 +151,18 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       fetchYearAndSemester();
     }
   }, [user]);
+
+  const handleRecommendClick = () => {
+    if (activeButton === "Recommend") {
+      setLecClassification("");
+      setActiveComponent(null);
+      setActiveButton("");
+    } else {
+      setLecClassification("추천");
+      setActiveComponent("Recommend");
+      setActiveButton("Recommend");
+    }
+  };
 
   const handleGyoYangClick = () => {
     if (activeButton === "GyoYang") {
@@ -150,8 +206,20 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
     }
   }, [lecClassification, activeComponent]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>서버의 응답이 없어요.. {error.message}</div>;
+  if (loading) return <div className="when-loading"></div>;
+  if (error)
+    return (
+      <div className="call-lecture-error-message">
+        <p>서버의 응답이 없어요...</p>
+        <p>{error.message}</p>
+        <button
+          className="call-lecture-error-message-reload"
+          onClick={() => window.location.reload()}
+        >
+          새로 고침
+        </button>
+      </div>
+    );
 
   return (
     <div>
@@ -159,12 +227,17 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
         <button
           className="circle"
           onClick={() =>
-            (window.location.href = "http://localhost:3000/mypage")
+            (window.location.href = process.env.REACT_APP_MY_PAGE_URL)
           }
         >
           my page
         </button>
-
+        <button
+          onClick={handleRecommendClick}
+          className={`circle ${activeButton === "Recommend" ? "active" : ""}`}
+        >
+          강의 추천
+        </button>
         <button
           onClick={handleGyoYangClick}
           className={`circle ${activeButton === "GyoYang" ? "active" : ""}`}
@@ -236,25 +309,30 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       )}
       {activeComponent === "Total" && (
         <TotalLectureSearch
-          teamplayAmount={teamplayAmount}
-          setTeamplayAmount={setTeamplayAmount}
-          gradeAmount={gradeAmount}
-          setGradeAmount={setGradeAmount}
-          assignmentAmount={assignmentAmount}
-          setAssignmentAmount={setAssignmentAmount}
-          star={star}
-          setStar={setStar}
           fetchLectures={fetchLectures}
           setLectureName={setLectureName}
           lectureName={lectureName}
-          setYear={setYear}
-          setSemester={setSemester}
-          year={year}
-          semester={semester}
-          setLecCredit={setLecCredit}
-          lecCredit={lecCredit}
-          lecTimeTable={lecTimeTable}
-          setlecTimeTable={setlecTimeTable}
+        />
+      )}
+      {activeComponent === "Recommend" && (
+        <Recommendation
+          fetchRecommendLectures={fetchRecommendLectures}
+          dontWantFirstPeriod={dontWantFirstPeriod}
+          setDontWantFirstPeriod={setDontWantFirstPeriod}
+          dontWantThirdPeriod={dontWantThirdPeriod}
+          setDontWantThirdPeriod={setDontWantThirdPeriod}
+          wantLowAssignment={wantLowAssignment}
+          setWantLowAssignment={setWantLowAssignment}
+          wantLowTeamplay={wantLowTeamplay}
+          setWantLowTeamplay={setWantLowTeamplay}
+          wantLectureMethod={wantLectureMethod}
+          setWantLectureMethod={setWantLectureMethod}
+          wantEvaluateMethod={wantEvaluateMethod}
+          setWantEvaluateMethod={setWantEvaluateMethod}
+          userPrefer={userPrefer}
+          setUserPrefer={setUserPrefer}
+          wantLectureLevel={wantLectureLevel}
+          setWantLectureLevel={setWantLectureLevel}
         />
       )}
       {activeComponent && (
@@ -262,6 +340,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
           lectures={lectures}
           selectedLectures={selectedLectures}
           setSelectedLectures={setSelectedLectures}
+          showSpinner={showSpinner}
         />
       )}
     </div>

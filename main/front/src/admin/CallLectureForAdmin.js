@@ -26,7 +26,7 @@ const CallLectureForAdmin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/admin",
+        `${process.env.REACT_APP_API_URL}/admin`,
         inputData
       );
       console.log(response.data);
@@ -60,7 +60,7 @@ const CallLectureForAdmin = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8000/admin/edit?lecture_id=${selectedLecture.lectureID}`,
+        `${process.env.REACT_APP_API_URL}/admin/edit?lecture_id=${selectedLecture.lectureID}`,
         updateData
       );
       console.log(response.data);
@@ -84,7 +84,7 @@ const CallLectureForAdmin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/admin/edit/time",
+        `${process.env.REACT_APP_API_URL}/admin/edit/time`,
         updateData
       );
       console.log(response.data);

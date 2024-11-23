@@ -19,7 +19,7 @@ const ChatBot = () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -29,7 +29,7 @@ const ChatBot = () => {
         }
       } else {
         console.log("로그인 해주세요.");
-        window.location.href = "http://127.0.0.1:3000/login";
+        window.location.href = "/login";
       }
     } catch (err) {
       console.error("ChatBot.js - checkLogin", err);
@@ -38,7 +38,7 @@ const ChatBot = () => {
 
   const fetchAvailableThemes = async () => {
     try {
-      const response = await fetch("http://localhost:8000/themes/");
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/themes/`);
       const data = await response.json();
       setAvailableThemes(data.themes);
     } catch (err) {
@@ -113,13 +113,16 @@ const ChatBot = () => {
   const handleThemeSelection = async (theme) => {
     setSelectedTheme(theme);
     try {
-      const response = await fetch("http://localhost:8000/selecttheme/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ theme: theme }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/selecttheme/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ theme: theme }),
+        }
+      );
       const data = await response.json();
       console.log(data.message);
       const themeContent = getThemeContent(theme);
@@ -147,13 +150,16 @@ const ChatBot = () => {
     setChatLog([...chatLog, { type: "user", text: inputText }]);
 
     try {
-      const response = await fetch("http://localhost:8000/chatbot/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ theme: selectedTheme, question: inputText }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/chatbot/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ theme: selectedTheme, question: inputText }),
+        }
+      );
       const data = await response.json();
       setChatLog((prevLog) => [
         ...prevLog,

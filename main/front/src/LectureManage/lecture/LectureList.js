@@ -2,19 +2,34 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import "./LectureList.css";
+import "../../loader.css";
 import { useNavigate } from "react-router-dom";
 
-const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
+const LectureList = ({
+  lectures,
+  selectedLectures,
+  setSelectedLectures,
+  showSpinner,
+}) => {
   const [user, setUser] = useState(null);
   const [expandedLectures, setExpandedLectures] = useState({});
   const [visibleButtons, setVisibleButtons] = useState({});
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const groupedLectures = groupLecturesByName(lectures);
+    const initialExpandedState = {};
+    Object.keys(groupedLectures).forEach((lecName) => {
+      initialExpandedState[lecName] = true;
+    });
+    setExpandedLectures(initialExpandedState);
+  }, [lectures]);
+
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
     try {
       if (userId) {
-        const response = await fetch("http://localhost:8000/", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/`, {
           method: "GET",
           credentials: "include",
         });
@@ -42,7 +57,7 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
 
     try {
       if (isSelected) {
-        await axios.post("http://localhost:8000/lecture_unselect", {
+        await axios.post(`${process.env.REACT_APP_API_URL}/lecture_unselect`, {
           user_id: user,
           lecNumber: lecNumber,
           year: year,
@@ -54,7 +69,7 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
           return newSelected;
         });
       } else {
-        await axios.post("http://localhost:8000/lecture_select", {
+        await axios.post(`${process.env.REACT_APP_API_URL}/lecture_select`, {
           user_id: user,
           lecNumber: lecNumber,
           year: year,
@@ -74,7 +89,7 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
     if (!user) return;
     try {
       const response = await axios.post(
-        "http://localhost:8000/selected_lecture",
+        `${process.env.REACT_APP_API_URL}/selected_lecture`,
         {
           user_id: user,
         }
@@ -167,9 +182,24 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   };
 
   const getColor = (value) => {
-    const red = Math.max(50, 255 - value * 2.55);
-    const green = Math.max(0, value * 2.3 + 25);
+    const red = Math.max(50, 255 - value * 2.3);
+    const green = Math.max(0, value * 2 + 25);
     return `rgb(${red}, ${green}, 0)`;
+  };
+
+  const getWidth = (amount, what) => {
+    console.log(what, amount);
+    if (what === "assignment") {
+      if (amount === 0.1) {
+        return null;
+      }
+      return amount;
+    } else if (what === "grade" || what === "teamplay") {
+      if (amount === 0.1 || amount === 0.1) {
+        return null;
+      }
+      return 100 - amount;
+    }
   };
 
   useEffect(() => {
@@ -183,7 +213,9 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
   const isItHard = (amount, what) => {
     console.log(amount);
     if (what === "assignment") {
-      if (amount >= 70) {
+      if (amount === (0.1 || 99.9)) {
+        return "정보 없음";
+      } else if (amount >= 70) {
         return "적음";
       } else if (amount >= 50) {
         return "보통";
@@ -191,7 +223,9 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
         return "많음";
       }
     } else if (what === "grade") {
-      if (amount >= 70) {
+      if (amount === 0.1 || amount === 99.9) {
+        return "정보 없음";
+      } else if (amount >= 70) {
         return "쉬움";
       } else if (amount >= 50) {
         return "보통";
@@ -199,18 +233,30 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
         return "힘듦";
       }
     } else if (what === "teamplay") {
-      if (amount >= 70) {
-        return "적음";
+      if (amount === (0.1 || 99.9)) {
+        return "정보 없음";
+      } else if (amount >= 70) {
+        return "많음";
       } else if (amount >= 50) {
         return "보통";
       } else if (amount > 0) {
-        return "많음";
+        return "적음";
       }
     }
 
     return "정보 없음";
   };
 
+  if (showSpinner) {
+    return (
+      <div className="lecturelist">
+        <div className="loader">
+          <div className="spinner"></div>
+          <p>강의들을 불러오고 있어요.</p>
+        </div>
+      </div>
+    );
+  }
   const groupedLectures = groupLecturesByName(lectures);
 
   return (
@@ -291,9 +337,6 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                           <div className="lecturelist-reviewSummary">
                             <p className="lecturelist-reviewSummary-text">
                               {lecture.reviewSummary}
-                              openai api key 받기 전까지는 요걸 강의 요약이라고
-                              할게요. 이건 강의 요약인데.. 음.. 딱 세 줄까지가
-                              괜찮을 거 같아요.
                             </p>
                           </div>
                           <div className="lecturelist-expanded">
@@ -306,7 +349,10 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.assignmentAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.assignmentAmount,
+                                        "assignment"
+                                      )}%`,
                                       backgroundColor: getColor(
                                         lecture.assignmentAmount
                                       ),
@@ -328,15 +374,18 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.gradeAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.gradeAmount,
+                                        "grade"
+                                      )}%`,
                                       backgroundColor: getColor(
-                                        lecture.gradeAmount
+                                        100 - lecture.gradeAmount
                                       ),
                                     }}
                                   />
                                 </div>
                                 <p className="lecturelist-amount-info-text">
-                                  {isItHard(lecture.gradeAmount, "grade")}
+                                  {isItHard(100 - lecture.gradeAmount, "grade")}
                                 </p>
                               </div>
                               <div className="lecturelist-amount-infoNbar">
@@ -344,13 +393,15 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                   팀플
                                 </p>
                                 <div className="lecturelist-bar">
-                                  {" "}
                                   <div
                                     className="lecturelist-bar-fill"
                                     style={{
-                                      width: `${lecture.teamPlayAmount}%`,
+                                      width: `${getWidth(
+                                        lecture.teamPlayAmount,
+                                        "teamplay"
+                                      )}%`,
                                       backgroundColor: getColor(
-                                        lecture.gradeAmount
+                                        100 - lecture.teamPlayAmount
                                       ),
                                     }}
                                   />
@@ -457,9 +508,6 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                               <div className="lecturelist-reviewSummary">
                                 <p className="lecturelist-reviewSummary-text">
                                   {lecture.reviewSummary}
-                                  openai api key 받기 전까지는 요걸 강의
-                                  요약이라고 할게요. 이건 강의 요약인데.. 음..
-                                  딱 세 줄까지가 괜찮을 거 같아요.
                                 </p>
                               </div>
                               <div className="lecturelist-expanded">
@@ -472,7 +520,10 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.assignmentAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.assignmentAmount,
+                                            "assignment"
+                                          )}%`,
                                           backgroundColor: getColor(
                                             lecture.assignmentAmount
                                           ),
@@ -494,15 +545,21 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.gradeAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.gradeAmount,
+                                            "grade"
+                                          )}%`,
                                           backgroundColor: getColor(
-                                            lecture.gradeAmount
+                                            100 - lecture.gradeAmount
                                           ),
                                         }}
                                       />
                                     </div>
                                     <p className="lecturelist-amount-info-text">
-                                      {isItHard(lecture.gradeAmount, "grade")}
+                                      {isItHard(
+                                        100 - lecture.gradeAmount,
+                                        "grade"
+                                      )}
                                     </p>
                                   </div>
                                   <div className="lecturelist-amount-infoNbar">
@@ -510,13 +567,15 @@ const LectureList = ({ lectures, selectedLectures, setSelectedLectures }) => {
                                       팀플
                                     </p>
                                     <div className="lecturelist-bar">
-                                      {" "}
                                       <div
                                         className="lecturelist-bar-fill"
                                         style={{
-                                          width: `${lecture.teamPlayAmount}%`,
+                                          width: `${getWidth(
+                                            lecture.teamPlayAmount,
+                                            "teamplay"
+                                          )}%`,
                                           backgroundColor: getColor(
-                                            lecture.gradeAmount
+                                            100 - lecture.teamPlayAmount
                                           ),
                                         }}
                                       />

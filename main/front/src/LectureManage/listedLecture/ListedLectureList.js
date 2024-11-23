@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ListedLectureList.css";
 import { useNavigate } from "react-router-dom";
 
@@ -43,17 +43,40 @@ const ListedLectureList = ({
     ? 19
     : 22;
 
-  const warningMessage =
-    (totalGPA < 3.5 && totalCredits > maxCredits) ||
-    (totalGPA >= 3.5 && totalCredits > maxCredits) ? (
-      <p>
+  const [showWarning, setShowWarning] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  useEffect(() => {
+    if (
+      (totalGPA < 3.5 && totalCredits > maxCredits) ||
+      (totalGPA >= 3.5 && totalCredits > maxCredits)
+    ) {
+      setShowWarning(true);
+      const timer = setTimeout(() => {
+        setFadeOut(true);
+        const removeTimer = setTimeout(() => {
+          setShowWarning(false);
+          setFadeOut(false);
+        }, 500);
+        return () => clearTimeout(removeTimer);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [totalGPA, totalCredits, maxCredits, priority]);
+
+  const warningMessage = showWarning && (
+    <div
+      className={`listed-lecture-warning-message ${fadeOut ? "fade-out" : ""}`}
+    >
+      <p className="listed-lecture-warning-message-text">
         {checkedLectures.some((lecture) =>
           lecture.lecName.includes("광운인되기")
         )
           ? `광운인되기를 포함해서 ${maxCredits}학점 까지 들을 수 있어요.`
           : `${maxCredits}학점 까지 들을 수 있어요.`}
       </p>
-    ) : null;
+    </div>
+  );
 
   const handleUnselect = (lecNumber, year, semester) => {
     unselectLecture(lecNumber, year, semester);
