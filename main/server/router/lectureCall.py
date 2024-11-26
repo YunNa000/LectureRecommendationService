@@ -8,7 +8,8 @@ import numpy as np
 
 router = APIRouter()
 
-model = SentenceTransformer('intfloat/multilingual-e5-large-instruct')
+# model = SentenceTransformer('intfloat/multilingual-e5-large')
+model = SentenceTransformer('intfloat/multilingual-e5-small')
 
 
 def get_user_info(user_id):
@@ -94,7 +95,7 @@ def check_multi_major(bunban):
         "T1": "반도체시스템공학부",
         "C1": "컴퓨터정보공학부",
         "C4": "소프트웨어학부",
-        "C7": "🔥최 강 정 융🔥",
+        "C7": "정보융합학부",
         "J5": "로봇학부",
         "A2": "건축공학과",
         "K1": "화학공학과",
@@ -372,7 +373,7 @@ def print_Total(year: int, semester: str, bunBan: str, lecClassification: str, i
         "T1": "반도체시스템공학부",
         "C1": "컴퓨터정보공학부",
         "C4": "소프트웨어학부",
-        "C7": "🔥최 강 정 융🔥",
+        "C7": "정보융합학부",
         "J5": "로봇학부",
         "A2": "건축공학과",
         "K1": "화학공학과",
@@ -539,7 +540,7 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
         "T1": "반도체시스템공학부",
         "C1": "컴퓨터정보공학부",
         "C4": "소프트웨어학부",
-        "C7": "🔥최 강 정 융🔥",
+        "C7": "정보융합학부",
         "J5": "로봇학부",
         "A2": "건축공학과",
         "K1": "화학공학과",
@@ -682,7 +683,7 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
                 everytime_embedding, dtype=np.float32)
 
             combined_embeddings = (
-                0.3 * overview_embeddings) + (0.7 * everytime_embeddings)
+                0.5 * overview_embeddings) + (0.5 * everytime_embeddings)
             data.append((lecture_id, combined_embeddings))
 
     cosine_scores = []
@@ -691,6 +692,8 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
         cosine_scores.append((lecture_id, score.item()))
 
     cosine_scores.sort(key=lambda x: x[1], reverse=True)
+
+    print("cosine_scores:", cosine_scores[:10])
 
     top_results = []
     return_num = 10
