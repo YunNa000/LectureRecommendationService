@@ -226,9 +226,7 @@ const CallLecture = ({ selectedLectures, setSelectedLectures }) => {
       <div className="CircleList">
         <button
           className="circle"
-          onClick={() =>
-            (window.location.href = process.env.REACT_APP_MY_PAGE_URL)
-          }
+          onClick={() => (window.location.href = "/mypage")}
         >
           my page
         </button>

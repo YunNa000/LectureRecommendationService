@@ -310,7 +310,7 @@ const UpdateTakenLecture = () => {
                 </select>
                 <button
                   onClick={() => {
-                    if (window.confirm("정말 삭제할까요?")) {
+                    if (window.confirm("수강한 강의 목록에서 삭제할까요?")) {
                       handleDeleteLecture(lecture);
                     }
                   }}

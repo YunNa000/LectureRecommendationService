@@ -198,9 +198,8 @@ const ListedLectureTimeTable = ({
                               <button
                                 className="edit-lecture-unckeck"
                                 onClick={() => {
-                                  const confirmRemove = window.confirm(
-                                    "정말로 시간표에서 제외하시겠습니까?"
-                                  );
+                                  const confirmRemove =
+                                    window.confirm("시간표에서 제외할까요?");
                                   if (confirmRemove) {
                                     updateLecturePriority(
                                       lecture.lecNumber,
