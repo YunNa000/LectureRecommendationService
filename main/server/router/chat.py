@@ -35,7 +35,7 @@ llm = ChatOpenAI(
 theme_retrievers = {}
 
 # MD 파일이 저장된 디렉토리 경로
-MD_DIR = r"/Users/ga111o/Documents/dev/kwu-lecture-recommendation-service/main/server/router/.cache/data"
+MD_DIR = os.path.join(os.path.dirname(__file__), ".cache", "data")
 
 # 테마별 MD 파일 매핑
 THEME_FILES = {
@@ -191,7 +191,8 @@ async def ask_question(question: Question):
         user_data = json.loads(question.user_data)
         print(type(user_data))
         print(1)
-        user_data_str = f"학년: {user_data.get('userYear', 'N/A')}학년, 전공: {user_data.get('userMajor', 'N/A')}, 다전공 여부: {'예' if user_data.get('isMultipleMajor') else '아니오'}, 다전공 종류: {user_data.get('whatMultipleMajor', 'N/A')}, 다전공 학과: {user_data.get('whatMultipleMajorDepartment', 'N/A')}"
+        user_data_str = f"학년: {user_data.get('userYear', 'N/A')}학년, 전공: {user_data.get('userMajor', 'N/A')}, 다전공 여부: {'예' if user_data.get(
+            'isMultipleMajor') else '아니오'}, 다전공 종류: {user_data.get('whatMultipleMajor', 'N/A')}, 다전공 학과: {user_data.get('whatMultipleMajorDepartment', 'N/A')}"
         print(2)
         chain = (
             {

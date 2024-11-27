@@ -731,8 +731,6 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
 
     cosine_scores.sort(key=lambda x: x[1], reverse=True)
 
-    print("cosine_scores:", cosine_scores[:10])
-
     top_results = []
     return_num = 10
     for lecture_id, score in cosine_scores[:return_num]:
@@ -757,7 +755,6 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
             """
 
             result = chain.invoke(question)
-            print(lecture_info.lecName, result.content)
 
             if result.content == "yes":
                 top_results.append(LectureCallResponse(
