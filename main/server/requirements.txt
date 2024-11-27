@@ -1,14 +1,14 @@
-selenium
-langchain
-langchain_community
-bs4
-pandas
-openai
-tiktoken
-unstructured
-# "unstructured[pdf]"
-faiss-cpu
-langchain_openai
 fastapi
 uvicorn
 python-dotenv
+pydantic
+httpx
+beautifulsoup4
+selenium
+pandas
+langchain
+langchain-openai
+langchain-community
+faiss-cpu
+sentence-transformers
+numpy
