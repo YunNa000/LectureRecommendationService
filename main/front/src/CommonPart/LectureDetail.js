@@ -442,25 +442,32 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         </div>
       </div>
 
-      <div className="lecture-detail">
-        <p className="lecture-detail-overview">교과목 개요</p>
-        <p className="lecture-detail-overview-content">{lecture.Overview}</p>
-      </div>
-
-      <div className="lecture-detail-evaluation">
-        <p className="lecture-detail-evaluation-title">평가 항목</p>
-        <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
-      </div>
-
-      <div className="lecture-detail">
-        <p className="lecture-detail-overview">강의 리뷰 요약</p>
-
-        <div className="lecture-star-box">
-          <StarRating count={lecture.star} />
-          <p className="lecture-star-score">{lecture.star.toFixed(1)}/5.0</p>
+      {lecture.Overview && (
+        <div className="lecture-detail">
+          <p className="lecture-detail-overview">교과목 개요</p>
+          <p className="lecture-detail-overview-content">{lecture.Overview}</p>
         </div>
-        <p className="lecture-review-summary">{lecture.reviewSummary}</p>
-      </div>
+      )}
+
+      {lecture.evaluationRatio &&
+        lecture.evaluationRatio.replace(/,/g, "").trim() && (
+          <div className="lecture-detail-evaluation">
+            <p className="lecture-detail-evaluation-title">평가 항목</p>
+            <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
+          </div>
+        )}
+
+      {lecture.reviewSummary && (
+        <div className="lecture-detail">
+          <p className="lecture-detail-overview">강의 리뷰 요약</p>
+
+          <div className="lecture-star-box">
+            <StarRating count={lecture.star} />
+            <p className="lecture-star-score">{lecture.star.toFixed(1)}/5.0</p>
+          </div>
+          <p className="lecture-review-summary">{lecture.reviewSummary}</p>
+        </div>
+      )}
       <TagList tags={tags} />
 
       <LectureScheduleTable scheduleString={lecture.scheduleNcontent} />
