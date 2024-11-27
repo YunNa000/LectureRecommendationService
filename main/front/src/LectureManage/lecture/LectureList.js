@@ -412,16 +412,17 @@ const LectureList = ({
                               </div>
                             </div>
                             <div className="lecturelist-buttons">
-                              <button
-                                className="lecture-list-button-godetail"
-                                onClick={() =>
-                                  navigate(
-                                    `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
-                                  )
-                                }
-                              >
-                                강의 자세히 보기
-                              </button>
+                            {!(lecture.lecNumber.substring(0, 4) === 'xxxx') && (
+                                <button 
+                                  onClick={() =>
+                                    navigate(
+                                      `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
+                                    )
+                                  } 
+                                  className="lecture-list-button-godetail">
+                                  강의 자세히 보기
+                                </button>
+                              )}
                             </div>
                           </div>
                         </>
@@ -589,9 +590,17 @@ const LectureList = ({
                                   </div>
                                 </div>
                                 <div className="lecturelist-buttons">
-                                  <button className="lecture-list-button-godetail">
-                                    강의 자세히 보기
-                                  </button>
+                                {!(lecture.lecNumber.substring(0, 4) === 'user') && (
+                                <button 
+                                  onClick={() =>
+                                    navigate(
+                                      `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
+                                    )
+                                  } 
+                                  className="lecture-list-button-godetail">
+                                  강의 자세히 보기
+                                </button>
+                              )}
                                 </div>
                               </div>
                             </>

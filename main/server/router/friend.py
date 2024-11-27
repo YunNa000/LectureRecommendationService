@@ -149,7 +149,7 @@ async def add_friend(request: FriendRequest):
         existing_friend = cursor.fetchone()
         
         if existing_friend:
-            return {"message": "These users are already friends"}
+            return {"message": "이미 친구 신청을 보냈습니다."}
 
         cursor.execute("SELECT * FROM friend WHERE (user_id2 = ? AND user_id1 = ?)",
                        (request.user_id1, request.user_id2))
@@ -166,14 +166,14 @@ async def add_friend(request: FriendRequest):
             WHERE (user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)
             """, (request.user_id1, request.user_id2, request.user_id2, request.user_id1))
             conn.commit()
-            return {"message": "Mutality Success"}
+            return {"message": "친구 요청에 성공했습니다."}
         
         # 친구 관계 추가
         cursor.execute("INSERT INTO friend (user_id1, user_id2, mutality) VALUES (?, ?, ?)",
                        (request.user_id1, request.user_id2, False))
         conn.commit()
         
-        return {"message": "Friend added successfully"}
+        return {"message": "친구 요청에 성공했습니다."}
     
     except sqlite3.Error as e:
         conn.rollback()
@@ -212,7 +212,7 @@ async def delete_friend(request: FriendRequest):
                 """, (request.user_id1, request.user_id2))
 
                 conn.commit()
-                return {"message": "Mutual friend relationship removed and other side updated"}
+                return {"message": "친구가 삭제되었습니다."}
             else:
                 # mutality가 없을 때
                 # 그냥 요청 삭제
@@ -227,9 +227,9 @@ async def delete_friend(request: FriendRequest):
                     WHERE user_id1 = ? OR user_id2 = ?
                 """, (request.user_id1, request.user_id2))
                 conn.commit()
-                return {"message": "Friend request removed"}
+                return {"message": "친구가 삭제되었습니다."}
         else:
-            return {"message": "No friend relationship found"}
+            return {"message": "친구 관계를 찾을 수 없습니다."}
     
     except sqlite3.Error as e:
         conn.rollback()

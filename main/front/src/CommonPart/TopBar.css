@@ -24,6 +24,7 @@
 .goback {
   border: none;
   background: none;
+  padding: 0;
 }
 
 @media (max-width: 400px) {

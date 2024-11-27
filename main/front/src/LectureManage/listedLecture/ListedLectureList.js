@@ -324,16 +324,17 @@ const ListedLectureList = ({
                             >
                               수정
                             </button>
-                            <button
-                              className="listed-lec-more-info-button"
-                              onClick={() =>
-                                navigate(
-                                  `/lecture/${year}/${semester}/${lecture.lecNumber}`
-                                )
-                              }
-                            >
-                              강의 자세히 보기
-                            </button>
+                              {!(lecture.lecNumber.substring(0, 4) === 'user') && (
+                                <button 
+                                  onClick={() =>
+                                    navigate(
+                                      `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
+                                    )
+                                  } 
+                                  className="listed-lec-more-info-button">
+                                  강의 자세히 보기
+                                </button>
+                              )}
                           </div>
                         ) : (
                           editingLectureIndex === index && (
