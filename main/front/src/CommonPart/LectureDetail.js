@@ -40,12 +40,13 @@ const LineGraphComponent = ({ data }) => {
         height: chartHeight,
         maxWidth: "600px",
         margin: "0 auto",
-      }}
-    >
+      }}>
+      <div className="lecture-detail"><div className="lecture-code">수강인원 그래프</div></div>
+  
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={formattedData}
-          margin={{ top: 20, right: 30, left: 0, bottom: 10 }}
+          margin={{ top: 20, right: 35, left: 0, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="year" />
@@ -54,13 +55,13 @@ const LineGraphComponent = ({ data }) => {
           <Legend />
           <ReferenceLine
             y={20}
-            stroke="red"
+            stroke="brown"
             strokeDasharray="3 3"
             name="절대평가 기준인원"
             label={{
               value: "절대평가",
               position: "insideTopRight",
-              fill: "red",
+              fill: "brown",
               fontSize: 10,
             }}
           />
@@ -340,6 +341,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         }
         const data = await response.json();
         setLecture(data);
+        console.log("data", data);
 
         console.log(data);
         const tagDescriptions = {
@@ -356,9 +358,9 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           "E-러닝": "온라인으로 진행되는 E-러닝 강의입니다.",
           예술: "예술 관련 강의입니다.",
         };
-
         const takenPeoplesT = [0, 0, 0, 0];
         const newTags = {};
+
 
         if (lecture.isPNP) newTags["P/NP 여부"] = tagDescriptions["P/NP 여부"];
         if (lecture.isEngineering === true || lecture.isEngineering === 1)
@@ -375,19 +377,20 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           newTags["실험 설계"] = tagDescriptions["실험 설계"];
         if (lecture.isELearning) newTags["E-러닝"] = tagDescriptions["E-러닝"];
         if (lecture.isArt) newTags["예술"] = tagDescriptions["예술"];
-        if (lecture.takenPeople1yearsAgo)
-          takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
-          setdataNumBool(true)
-        if (lecture.takenPeople2yearsAgo)
-          takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
-          setdataNumBool(true)
-        if (lecture.takenPeople3yearsAgo)
-          takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
-          setdataNumBool(true)
 
-        console.log(newTags);
         setTags(newTags);
+        if (lecture.takenPeople1yearsAgo)
+          {takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
+          setdataNumBool(true)}
+        if (lecture.takenPeople2yearsAgo)
+          {takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
+          setdataNumBool(true)}
+        if (lecture.takenPeople3yearsAgo)
+          {takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
+          setdataNumBool(true)}
+
         setTakenPeoples(takenPeoplesT);
+        console.log(newTags);
       } catch (err) {
         setError(err.message);
         console.log(err.message);
@@ -398,25 +401,15 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
     };
 
     fetchLecture();
-  }, [year, semester, lectureNumber]);
-
-  const renderField = (label, value) => {
-    // 있을 경우에만 띄우는 코드
-    if (value === undefined || value === null) return null;
-    return (
-      <p>
-        <strong>{label}:</strong>{" "}
-        {typeof value === "boolean" ? (value ? "예" : "아니오") : value}
-      </p>
-    );
-  };
-
+  }, [year, semester, lectureNumber,lecture]);
   if (loading) return <div>로딩 중...</div>;
+  if  (!lecture || !tags || !takenPeoples) return <div>로딩 중...</div>;
   //if (error) return <div>강의 정보가 없습니다.</div>;
 
   //const data = [lecture.takenPeople3yearsAgo,lecture.takenPeople2yearsAgo,lecture.takenPeople1yearsAgo];
   return (
     <div className="lecture-detail">
+
       <div style={{ marginTop: "50px" }}></div>
       <div className="lecture-main">
         <div className="lecture-left">
@@ -428,7 +421,6 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           <div>{lecture.lecProfessor}</div>
           <div>{lecture.lecClassification}</div>
           <div>{lecture.isEngineering}학점</div>
-          <button className="listed-lec-more-info-button">리스트 추가</button>
         </div>
       </div>
       <div className="lecture-detail">
@@ -441,19 +433,15 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         <div className="lecture-code">에브리타임 리뷰 요약</div>
         <div className="lecture-right">
           <StarRating count={lecture.star} />
-          {lecture.star}/5.0
+          {lecture.star.toFixed(1)}/5.0
         </div>
         <div className="lecture-department">
           {lecture.reviewSummary}
         </div>
-        <div className="lecture-right">
-          <button className="listed-lec-more-info-button">리뷰 더보기</button>
-        </div>
       </div>
       <TagList tags={tags} />
       {(dataNumBool) && ( <LineGraphComponent data={takenPeoples} />)}
-      <h1>강의정보</h1>
-      <div className="lecture-detail">
+      <div className="lecture-detail"><h2>강의정보</h2>
         <div className="lecture-code">교과목 개요</div>
         <div className="lecture-department">{lecture.Overview}</div>
       </div>
@@ -465,8 +453,10 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         </div>
       </div>
       <LectureScheduleTable scheduleString={lecture.scheduleNcontent} />
-      <div className="lecture-code">평가 항목</div>
-      <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
+      <div className="lecture-detail">
+        <div className="lecture-code">평가 항목</div>
+        <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
+      </div>
     </div>
   );
 };
