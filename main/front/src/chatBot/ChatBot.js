@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import chatbotImage from "./chatbot.png";
-import { Send } from "lucide-react";
 import "./ChatBot.css";
 
 const ChatBot = () => {
@@ -12,6 +11,17 @@ const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isThemesLoading, setIsThemesLoading] = useState(true);
   const [isLoginChecking, setIsLoginChecking] = useState(true);
+  const [userData, setUserData] = useState({
+    hakBun: "",
+    bunBan: "",
+    userYear: "",
+    userMajor: "",
+    username: "",
+    isForeign: null,
+    isMultipleMajor: null,
+    whatMultipleMajor: "없음",
+    whatMultipleMajorDepartment: "없음",
+  });
   const chatLogRef = useRef(null);
 
   useEffect(() => {
@@ -167,6 +177,8 @@ const ChatBot = () => {
     setIsLoading(true);
 
     try {
+      console.log(userData);
+
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/chatbot/`,
         {
@@ -174,7 +186,11 @@ const ChatBot = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ theme: selectedTheme, question: inputText }),
+          body: JSON.stringify({
+            theme: selectedTheme,
+            question: inputText,
+            user_data: JSON.stringify(userData),
+          }),
         }
       );
       const data = await response.json();
@@ -201,6 +217,65 @@ const ChatBot = () => {
     }
   };
 
+  useEffect(() => {
+    checkUserData();
+  }, []);
+
+  const checkUserData = async () => {
+    const userId = Cookies.get("user_id");
+    try {
+      if (userId) {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/user/data`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: userId }),
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+        console.log(data.bunBan);
+
+        if (response.ok && data.user_id) {
+          if (
+            !data.hakBun ||
+            !data.bunBan ||
+            !data.userYear ||
+            !data.userMajor ||
+            !data.username ||
+            data.isForeign === null ||
+            data.isMultipleMajor === null
+          ) {
+            window.location.href = "/mypage";
+          } else {
+            console.log("good!");
+            console.log(data.hakBun);
+            setUserData({
+              hakBun: data.hakBun,
+              bunBan: data.bunBan,
+              userYear: data.userYear,
+              userMajor: data.userMajor,
+              username: data.username,
+              isForeign: data.isForeign,
+              isMultipleMajor: data.isMultipleMajor,
+              whatMultipleMajor: data.whatMultipleMajor,
+              whatMultipleMajorDepartment: data.whatMultipleMajorDepartment,
+            });
+          }
+        }
+      } else {
+        console.log("로그인 해주세요.");
+        window.location.href = "/login";
+      }
+    } catch (err) {
+      console.log("CallLecture.js - checkLogin");
+    }
+  };
+
   return (
     <div className="chatbot-container">
       <div className="chatbot-header"></div>
@@ -208,7 +283,7 @@ const ChatBot = () => {
         {isLoginChecking ? (
           <div className="loader">
             <div className="spinner"></div>
-            <p>로그인 확인중...</p>
+            <p>챗봇 불러오는 중...</p>
           </div>
         ) : (
           <>
@@ -309,11 +384,10 @@ const ChatBot = () => {
             viewBox="0 0 32 32"
           >
             <path
-              class="st0"
               d="M26.4,2.9L3.8,15c-0.7,0.4-0.7,1.5,0.1,1.8l20.8,8.7c0.6,0.3,1.3-0.2,1.4-0.8l1.7-20.8
 	C27.9,3,27.1,2.5,26.4,2.9z"
             />
-            <path class="st0" d="M26,4L13,20v7.3c0,0.9,1.2,1.4,1.8,0.7L19,23" />
+            <path d="M26,4L13,20v7.3c0,0.9,1.2,1.4,1.8,0.7L19,23" />
           </svg>
         </button>
       </div>

@@ -12,6 +12,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.embeddings import OpenAIEmbeddings
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -57,6 +58,7 @@ THEME_FILES = {
 class Question(BaseModel):
     theme: str
     question: str
+    user_data: str
 
 
 def embed_file(file_path: str):
@@ -92,11 +94,11 @@ prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-            당신은 광운대학교의 학사정보를 안내하는 챗봇입니다. 주어진 컨텍스트만을 사용하여 질문에 답변하세요. 
+            당신은 광운대학교의 학사정보를 안내하는 챗봇입니다. 주어진 컨텍스트만을 사용하여 질문에 답변하세요.
             답변을 모를 경우 모른다고 말하세요. 절대로 없는 정보를 만들어내지 마세요.
             학생들에게 친절하고 도움이 되는 태도로 답변해주세요.
 
-            Context: {context}
+            {context}
             """,
         ),
         ("human", "{question}"),
@@ -174,6 +176,11 @@ async def ask_question(question: Question):
     retriever = theme_retrievers[question.theme]
 
     try:
+        user_data = json.loads(question.user_data)
+        print(type(user_data))
+        print(1)
+        user_data_str = f"학년: {user_data.get('userYear', 'N/A')}학년, 전공: {user_data.get('userMajor', 'N/A')}, 다전공 여부: {'예' if user_data.get('isMultipleMajor') else '아니오'}, 다전공 종류: {user_data.get('whatMultipleMajor', 'N/A')}, 다전공 학과: {user_data.get('whatMultipleMajorDepartment', 'N/A')}"
+        print(2)
         chain = (
             {
                 "context": retriever | RunnableLambda(format_docs),
@@ -182,7 +189,9 @@ async def ask_question(question: Question):
             | prompt
             | llm
         )
-        response = chain.invoke(question.question)
+
+        final_question = f"학생 정보: {user_data_str}\n\n질문: {question.question}"
+        response = chain.invoke(final_question)
 
         print(f"Generated response: {response.content}")  # 로깅 추가
 

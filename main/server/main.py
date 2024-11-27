@@ -15,7 +15,7 @@ origins = [
     "http://127.0.0.1:8000",
     "http://localhost:3000/",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:3000/", 2
+    "http://127.0.0.1:3000/",
     "http://klas-planner.duckdns.org:3000/",
     "https://klas-planner.duckdns.org/",
     "https://klas-planner.duckdns.org",
