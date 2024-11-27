@@ -19,6 +19,8 @@ origins = [
     "http://klas-planner.duckdns.org:3000/",
     "https://klas-planner.duckdns.org/",
     "https://klas-planner.duckdns.org",
+    "http://3.39.197.185:8000/",
+    "http://3.39.197.185:8000",
 ]
 
 app.add_middleware(
