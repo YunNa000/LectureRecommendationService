@@ -15,8 +15,6 @@ import {
 const LineGraphComponent = ({ data }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-
-  
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -32,7 +30,7 @@ const LineGraphComponent = ({ data }) => {
   // 모바일 화면에서의 설정
   const isMobile = windowWidth <= 768;
   const chartHeight = isMobile ? 220 : 300;
-  
+
   return (
     <div
       style={{
@@ -194,7 +192,7 @@ const TagList = ({ tags }) => {
   //   return <div>No tags available</div>;
   // }
   return (
-    <div>
+    <div className="lecture-tag-list">
       {Object.entries(tags).map(([key, value]) => (
         <Tag key={key} text={key} description={value} />
       ))}
@@ -205,35 +203,35 @@ const TagList = ({ tags }) => {
 const EvaluationRatioTable = ({ ratioString }) => {
   const categories = [
     "출석",
-    "중간고사",
-    "기말고사",
-    "과제보고서",
+    "중간",
+    "기말",
+    "과제",
     "수업태도",
-    "Quiz",
+    "퀴즈",
     "기타",
   ];
   const ratios = ratioString.split(",").map(Number);
 
   return (
-    <table className="w-full border-collapse">
+    <table className="lecture-detail-evaluation-table">
       <thead>
         <tr>
           {categories.map((category) => (
-            <th key={category} className="border p-2">
+            <th key={category} className="lecture-detail-evaluation-table-th">
               {category}
             </th>
           ))}
-          <th className="border p-2 ">총계</th>
+          <th className="lecture-detail-evaluation-table-th">총계</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           {ratios.map((ratio, index) => (
-            <td key={index} className="border p-2 text-center">
+            <td key={index} className="lecture-detail-evaluation-table-td">
               {ratio || 0}
             </td>
           ))}
-          <td className="border p-2 text-center font-bold">
+          <td className="lecture-detail-evaluation-table-td">
             {ratios.reduce((sum, ratio) => sum + ratio, 0)}
           </td>
         </tr>
@@ -257,11 +255,11 @@ const LectureScheduleTable = ({ scheduleString }) => {
   }));
 
   return (
-    <table className="w-full border-collapse border border-gray-300">
+    <table className="lecture-detail-schedule-table">
       <thead>
-        <tr className="bg-gray-100">
-          <th className="border border-gray-300 px-4 py-2">주차</th>
-          <th className="border border-gray-300 px-4 py-2">강의 내용</th>
+        <tr className="lecture-detail-schedule-table-tr">
+          <th className="lecture-detail-schedule-table-th">주차</th>
+          <th className="lecture-detail-schedule-table-th">강의 내용</th>
         </tr>
       </thead>
       <tbody>
@@ -271,11 +269,11 @@ const LectureScheduleTable = ({ scheduleString }) => {
               <tr key={week.week}>
                 <td
                   rowSpan="2"
-                  className="border border-gray-300 px-4 py-2 text-center"
+                  className="lecture-detail-schedule-table-td-week"
                 >
                   {week.week}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="lecture-detail-schedule-table-td">
                   {week.content.map((content, i) => (
                     <div key={i}>{content}</div>
                   ))}
@@ -285,7 +283,7 @@ const LectureScheduleTable = ({ scheduleString }) => {
           } else {
             acc.push(
               <tr key={`${week.week}-2`}>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="lecture-detail-schedule-table-td">
                   {week.content.map((content, i) => (
                     <div key={i}>{content}</div>
                   ))}
@@ -313,7 +311,7 @@ const LectureTimeFormatter = ({ lecTime }) => {
       .join(" ");
   };
 
-  return <div className="lecture-department">{formatTime(lecTime)}</div>;
+  return <p className="lecture-detail-time">{formatTime(lecTime)}</p>;
 };
 
 const LectureDetail = ({ year, semester, lectureNumber }) => {
@@ -325,7 +323,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
   const [takenPeoples, setTakenPeoples] = useState([0, 0, 0, 0]);
   const defaultYear = "24";
   const defaultSemester = "2학기";
-  const [dataNumBool,setdataNumBool]=useState(false);
+  const [dataNumBool, setdataNumBool] = useState(false);
 
   year = year || defaultYear;
   semester = semester || defaultSemester;
@@ -377,13 +375,13 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         if (lecture.isArt) newTags["예술"] = tagDescriptions["예술"];
         if (lecture.takenPeople1yearsAgo)
           takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
-          setdataNumBool(true)
+        setdataNumBool(true);
         if (lecture.takenPeople2yearsAgo)
           takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
-          setdataNumBool(true)
+        setdataNumBool(true);
         if (lecture.takenPeople3yearsAgo)
           takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
-          setdataNumBool(true)
+        setdataNumBool(true);
 
         console.log(newTags);
         setTags(newTags);
@@ -411,62 +409,63 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
     );
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  //if (error) return <div>강의 정보가 없습니다.</div>;
+  if (loading)
+    return (
+      <div>
+        <div className="loader">
+          <div className="spinner"></div>
+          <p>강의 세부 정보를 불러오고 있어요.</p>
+        </div>
+      </div>
+    );
 
-  //const data = [lecture.takenPeople3yearsAgo,lecture.takenPeople2yearsAgo,lecture.takenPeople1yearsAgo];
   return (
     <div className="lecture-detail">
       <div style={{ marginTop: "50px" }}></div>
-      <div className="lecture-main">
+      <div className="lecture-detail-main-box">
         <div className="lecture-left">
-          <div className="lecture-title">{lecture.lecName}</div>
-          <div className="lecture-code">{lecture.lecNumber}</div>
-          <div className="lecture-department">정보융합학부</div>
+          <div className="lecture-detail-title-box">
+            <p className="lecture-detail-title">{lecture.lecName}</p>
+            <p className="lecture-detail-professor">{lecture.lecProfessor}</p>
+          </div>
+          <p className="lecture-code">{lecture.lecNumber}</p>
+          <LectureTimeFormatter
+            lecTime={lecture.lecTime}
+          ></LectureTimeFormatter>
         </div>
-        <div className="lecture-right">
-          <div>{lecture.lecProfessor}</div>
-          <div>{lecture.lecClassification}</div>
-          <div>{lecture.isEngineering}학점</div>
-          <button className="listed-lec-more-info-button">리스트 추가</button>
+        <div className="lecture-detail-right">
+          <p className="lecture-detail-right-text">
+            {lecture.lecClassification}
+          </p>
+          <p className="lecture-detail-right-text">{lecture.lecCredit}학점</p>
+          <p className="lecture-detail-right-text">{lecture.lecClassroom}</p>
         </div>
       </div>
+
       <div className="lecture-detail">
-        <div className="lecture-code">강의시간</div>
-        <LectureTimeFormatter lecTime={lecture.lecTime}></LectureTimeFormatter>
-        <div className="lecture-department">{lecture.lecClassroom}</div>
+        <p className="lecture-detail-overview">교과목 개요</p>
+        <p className="lecture-detail-overview-content">{lecture.Overview}</p>
       </div>
-      <div></div>
+
+      <div className="lecture-detail-evaluation">
+        <p className="lecture-detail-evaluation-title">평가 항목</p>
+        <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
+      </div>
+
       <div className="lecture-detail">
-        <div className="lecture-code">에브리타임 리뷰 요약</div>
-        <div className="lecture-right">
+        <p className="lecture-detail-overview">강의 리뷰 요약</p>
+
+        <div className="lecture-star-box">
           <StarRating count={lecture.star} />
-          {lecture.star}/5.0
+          <p className="lecture-star-score">{lecture.star.toFixed(1)}/5.0</p>
         </div>
-        <div className="lecture-department">
-          {lecture.reviewSummary}
-        </div>
-        <div className="lecture-right">
-          <button className="listed-lec-more-info-button">리뷰 더보기</button>
-        </div>
+        <p className="lecture-review-summary">{lecture.reviewSummary}</p>
       </div>
       <TagList tags={tags} />
-      {(dataNumBool) && ( <LineGraphComponent data={takenPeoples} />)}
-      <h1>강의정보</h1>
-      <div className="lecture-detail">
-        <div className="lecture-code">교과목 개요</div>
-        <div className="lecture-department">{lecture.Overview}</div>
-      </div>
-      <div className="lecture-detail">
-        <div className="lecture-code">교재</div>
-        <div className="lecture-department">
-          주교재 강의교안 <br />
-          부교재 Natural Language Processing Fundamentals
-        </div>
-      </div>
+
       <LectureScheduleTable scheduleString={lecture.scheduleNcontent} />
-      <div className="lecture-code">평가 항목</div>
-      <EvaluationRatioTable ratioString={lecture.evaluationRatio} />
+      {dataNumBool && <LineGraphComponent data={takenPeoples} />}
+      <div style={{ marginBottom: "70px" }}></div>
     </div>
   );
 };

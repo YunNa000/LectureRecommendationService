@@ -1,73 +1,178 @@
 .lecture-detail {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    padding: 10px;
-  }
-  
-  .lecture-main {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-  }
-  
-  .lecture-left {
-    text-align: left;
-    width: 70%;
-  }
-  
-  .lecture-right {
-    text-align: right;
-    color: #666;
-    font-size: 12px;
-  }
-  
-  .lecture-title {
-    font-weight: bold;
-  }
-  
-  .lecture-code{
-    color: #666;
-    font-size: 14px;
-  }
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px;
+}
 
-  .lecture-department {
-    color: #666;
-    font-size: 12px;
-  }
+.lecture-detail-main-box {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 18px;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
 
+.lecture-detail-title-box {
+  display: flex;
+  align-items: center;
+}
 
-  .rating-bar {
-    height: 20px;
-    background-color: #e0e0e0;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    position: relative;
-  }
-  
-  .rating-bar-fill {
-    height: 100%;
-    background-color: #ffc107;
-    border-radius: 10px;
-  }
-  
-  .rating-bar-label {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-  }
+.lecture-left {
+  text-align: left;
+  width: 70%;
+}
 
-    
-  .lecture-item {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  button{
-    cursor: pointer;
-  }
+.lecture-detail-right {
+  text-align: right;
+  color: #666;
+  font-size: 14px;
+}
+
+.lecture-detail-right-text {
+  margin: 0;
+}
+
+.lecture-detail-title {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0;
+}
+
+.lecture-detail-professor {
+  margin: 0 0 0 5px;
+}
+
+.lecture-detail-time {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.lecture-code {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.lecture-department {
+  color: #666;
+  font-size: 12px;
+}
+
+.lecture-detail-overview {
+  color: #333;
+  font-size: 14px;
+  margin: 10px 0 3px 0;
+  font-weight: 600;
+}
+.lecture-detail-overview-content {
+  color: #333;
+  font-size: 14px;
+  margin: 0;
+}
+.lecture-star-box {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.rating-bar {
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.rating-bar-fill {
+  height: 100%;
+  background-color: #ffc107;
+  border-radius: 10px;
+}
+
+.lecture-star-score {
+  margin: 0 0 0 5px;
+}
+
+.lecture-review-summary {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.lecture-tag-list {
+  padding: 0 6px;
+}
+
+.lecture-detail-evaluation {
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+.lecture-detail-evaluation-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 10px 0 3px 2px;
+}
+.lecture-detail-evaluation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.lecture-detail-evaluation-table-td {
+  border: 1px solid #e0e0e0;
+  padding: 7px 0;
+  text-align: center;
+}
+
+.lecture-detail-evaluation-table-th {
+  border: 1px solid #e0e0e0;
+  padding: 7px 0;
+  text-align: center;
+  font-weight: 600;
+  background-color: #f8f8f8;
+}
+
+.lecture-detail-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0 30px 0;
+}
+.lecture-detail-schedule-table-tr {
+  background-color: #f8f8f8;
+}
+.lecture-detail-schedule-table-td {
+  border: 1px solid #e0e0e0;
+  padding: 7px 0 0 10px;
+}
+.lecture-detail-schedule-table-td-week {
+  border: 1px solid #e0e0e0;
+  padding: 7px 0;
+  text-align: center;
+}
+.lecture-detail-schedule-table-th {
+  border: 1px solid #e0e0e0;
+  padding: 7px 0;
+  text-align: center;
+}
+.rating-bar-label {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
+
+.lecture-item {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  cursor: pointer;
+}
