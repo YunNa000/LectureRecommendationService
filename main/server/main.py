@@ -10,9 +10,24 @@ load_dotenv()
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000/",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3000/", 2
+    "http://klas-planner.duckdns.org:3000/",
+    "https://klas-planner.duckdns.org/",
+    "https://klas-planner.duckdns.org",
+    "http://3.39.197.185:8000/",
+    "http://3.39.197.185:8000",
+    "http://3.39.197.185:3000",
+    "http://3.39.197.185",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
