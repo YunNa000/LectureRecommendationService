@@ -5,11 +5,36 @@ from model import LectureCallResponse, LectureCallInput, LectureRecommendationCa
 from typing import List, Optional
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
+import os
+from fastapi import FastAPI, HTTPException, APIRouter
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.embeddings import CacheBackedEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain.schema import Document
+from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
+from langchain.storage import LocalFileStore
+from langchain_community.vectorstores import FAISS
+from langchain.embeddings import CacheBackedEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
+from dotenv import load_dotenv
+import json
+load_dotenv()
 
 router = APIRouter()
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+
 # model = SentenceTransformer('intfloat/multilingual-e5-large')
 model = SentenceTransformer('intfloat/multilingual-e5-small')
+
+llm = ChatOpenAI(
+    temperature=0.1,
+    streaming=True,
+    model="gpt-4o-mini",
+    openai_api_key=OPENAI_API_KEY)
 
 
 def get_user_info(user_id):
@@ -492,7 +517,7 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
     user_taken_courses = {row['lecName'] for row in cursor.fetchall()}
 
     base_query = f"""
-    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary, ld.OverviewEmbedding, ld.EverytimeEmbedding
+    SELECT ll.lectureID, ll.lecNumber, ll.lecName, ll.lecProfessor, ll.lecCredit, ll.lecTime, ll.lecClassroom, ll.semester, ll.year, lc.majorRecogBunBan, lc.requirementClass, ll.lecTheme, ll.lecClassification, ll.lecWeekTime, le.star, le.assignmentAmount, le.teamPlayAmount, le.gradeAmount, le.reviewSummary, ld.OverviewEmbedding, ld.EverytimeEmbedding, ld.Overview
     FROM LectureList ll
     JOIN LectureConditions lc ON ll.LectureID = lc.LectureID
     JOIN LectureEverytimeData le ON ll.LectureID = le.LectureID
@@ -610,7 +635,8 @@ def print_user_can_take(year: int, semester: str, bunBan: str, userYear: int, us
             gradeAmount=row[17],
             reviewSummary=row[18],
             OverviewEmbedding=row[19],
-            EverytimeEmbedding=row[20]
+            EverytimeEmbedding=row[20],
+            Overview=row[21]
         ))
         seen_lecture_ids.add(lecture_id)
 
@@ -649,6 +675,18 @@ async def get_lectures(input_data: LectureCallInput):
             year=year, semester=semester, bunBan=bunBan, lecClassification=lecClassification, isPillSu=isPillSu, assignmentAmount=assignmentAmount, gradeAmount=gradeAmount, teamplayAmount=teamplayAmount, star=star, lecTheme=lecTheme, lectureName=lectureName, userYear=userYear, user_id=user_id, isForeign=isForeign, lecCredit=lecCredit, lecTimeTable=lecTimeTable, whatMultipleMajor=whatMultipleMajor, whatMultipleMajorDepartment=whatMultipleMajorDepartment)
 
     return response
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+            당신은 광운대학교의 강의를 추천하는 챗봇입니다. 유저가 찾는 강의와, 강의 정보가 주어졌을 때, 해당 강의가 유저가 찾는 강의인지 판단하여 yes 또는 no로만 답하세요. yes 혹은 no를 제외한 그 외의 답은 절대 하지 마세요.
+            """,
+        ),
+        ("human", "{question}"),
+    ]
+)
 
 
 @router.post("/lectures/recommendation", response_model=List[LectureRecommendCallResponse])
@@ -698,29 +736,49 @@ async def get_lectures(input_data: LectureRecommendationCallInput):
     top_results = []
     return_num = 10
     for lecture_id, score in cosine_scores[:return_num]:
-
         lecture_info = next(
             (row for row in can_take if row.lectureID == lecture_id), None)
+
         if lecture_info:
-            top_results.append(LectureCallResponse(
-                lectureID=lecture_info.lectureID,
-                lecNumber=lecture_info.lecNumber,
-                lecName=lecture_info.lecName,
-                lecProfessor=lecture_info.lecProfessor,
-                lecCredit=lecture_info.lecCredit,
-                lecTime=lecture_info.lecTime,
-                lecClassroom=lecture_info.lecClassroom,
-                moreInfo=lecture_info.moreInfo,
-                semester=lecture_info.semester,
-                year=lecture_info.year,
-                lecClassification=lecture_info.lecClassification,
-                lecTheme=lecture_info.lecTheme,
-                lecWeekTime=lecture_info.lecWeekTime,
-                star=lecture_info.star,
-                assignmentAmount=lecture_info.assignmentAmount,
-                teamPlayAmount=lecture_info.teamPlayAmount,
-                gradeAmount=lecture_info.gradeAmount,
-                reviewSummary=lecture_info.reviewSummary
-            ))
+
+            chain = (
+                {
+                    "question": RunnablePassthrough(),
+                }
+                | prompt
+                | llm
+            )
+            question = f"""
+강의명: {lecture_info.lecName}
+강의 개요: {lecture_info.Overview}
+강의 리뷰 요약: {lecture_info.reviewSummary}
+
+유저가 찾는 강의: {userPrefer}
+            """
+
+            result = chain.invoke(question)
+            print(lecture_info.lecName, result.content)
+
+            if result.content == "yes":
+                top_results.append(LectureCallResponse(
+                    lectureID=lecture_info.lectureID,
+                    lecNumber=lecture_info.lecNumber,
+                    lecName=lecture_info.lecName,
+                    lecProfessor=lecture_info.lecProfessor,
+                    lecCredit=lecture_info.lecCredit,
+                    lecTime=lecture_info.lecTime,
+                    lecClassroom=lecture_info.lecClassroom,
+                    moreInfo=lecture_info.moreInfo,
+                    semester=lecture_info.semester,
+                    year=lecture_info.year,
+                    lecClassification=lecture_info.lecClassification,
+                    lecTheme=lecture_info.lecTheme,
+                    lecWeekTime=lecture_info.lecWeekTime,
+                    star=lecture_info.star,
+                    assignmentAmount=lecture_info.assignmentAmount,
+                    teamPlayAmount=lecture_info.teamPlayAmount,
+                    gradeAmount=lecture_info.gradeAmount,
+                    reviewSummary=lecture_info.reviewSummary
+                ))
 
     return top_results

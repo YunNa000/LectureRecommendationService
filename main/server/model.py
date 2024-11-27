@@ -54,6 +54,7 @@ class LectureRecommendCallResponse(BaseModel):
     reviewSummary: Optional[str] = None
     OverviewEmbedding: Optional[bytes] = None
     EverytimeEmbedding: Optional[bytes] = None
+    Overview: Optional[str] = None
 
 
 class LectureCallInput(BaseModel):
