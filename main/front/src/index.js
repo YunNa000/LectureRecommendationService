@@ -36,7 +36,7 @@ function LoginPage() {
 function MainPage() {
   return (
     <div>
-      <TopBar title="시간표" />
+      <TopBar title="KLAS Planner" />
       <LectureManage />
     </div>
   );
