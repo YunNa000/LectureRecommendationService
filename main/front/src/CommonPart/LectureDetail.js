@@ -444,8 +444,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
           {lecture.star}/5.0
         </div>
         <div className="lecture-department">
-          {lecture.reviewSummary}수업을 천천히 진행되며, 학생들과 함께 실습을
-          하지만, 비전공자에겐 다소 어려울 수 있어요.
+          {lecture.reviewSummary}
         </div>
         <div className="lecture-right">
           <button className="listed-lec-more-info-button">리뷰 더보기</button>
