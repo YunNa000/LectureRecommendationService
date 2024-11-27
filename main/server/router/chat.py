@@ -4,29 +4,21 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from langchain.prompts import ChatPromptTemplate
 from langchain.embeddings import CacheBackedEmbeddings
-from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.schema import Document
 from langchain.schema.runnable import RunnableLambda, RunnablePassthrough
 from langchain.storage import LocalFileStore
 from langchain_community.vectorstores import FAISS
-from langchain.embeddings import CacheBackedEmbeddings, OllamaEmbeddings
-from langchain.chat_models import ChatOllama
-from .PRIVATE import OPENAI_API_KEY
+from langchain.embeddings import CacheBackedEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 router = APIRouter()
 
-# embeddings = OllamaEmbeddings(
-#     model="llama3:8b"
-# )
-
-
-# llm = ChatOllama(  # type:ignore
-#     model="llama3:8b",
-#     temperature=0.1,
-#     streaming=True,
-# )
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
@@ -41,9 +33,7 @@ llm = ChatOpenAI(
 theme_retrievers = {}
 
 # MD 파일이 저장된 디렉토리 경로
-#################################################################
-MD_DIR = r"D:\LectureRecommendationService\main\server\router\data"
-#################################################################
+MD_DIR = r"/Users/ga111o/Documents/dev/kwu-lecture-recommendation-service/main/server/router/.cache/data"
 
 # 테마별 MD 파일 매핑
 THEME_FILES = {
@@ -60,8 +50,7 @@ THEME_FILES = {
         "특별교육과정 (CDP, R.O.T.C., 글로벌인재트랙인증제).md", "편입생이 이수해야 할 교과목 및 학점.md",
         "학-석사 연계과정.md", "현장실습학기제 안내.md", "K-MOOC 교내 온라인강좌 수강 안내.md"
     ],
-    "교내전화번호안내": ["교내전화번호안내.md"],
-    "test": ["test.md"]
+    "교내전화번호안내": ["교내전화번호.md"],
 }
 
 
@@ -74,7 +63,7 @@ def embed_file(file_path: str):
     cache_dir = f"./.cache/embeddings/{os.path.basename(file_path)}"
     if os.path.exists(cache_dir):
         cache_store = LocalFileStore(cache_dir)
-        embeddings = OpenAIEmbeddings()
+        embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
             embeddings, cache_store)
         docs = [Document(page_content=open(
@@ -86,7 +75,7 @@ def embed_file(file_path: str):
             file_content = file.read()
         cache_store = LocalFileStore(cache_dir)
         docs = [Document(page_content=file_content)]
-        embeddings = OpenAIEmbeddings()
+        embeddings = embeddings
         cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
             embeddings, cache_store)
         vectorstore = FAISS.from_documents(docs, cached_embeddings)
@@ -126,24 +115,19 @@ class ThemeSelect(BaseModel):
 
 @router.post("/selecttheme/")
 async def select_theme(theme_select: ThemeSelect):
-    print(1)
     try:
-        print(1.5)
         theme = theme_select.theme
-        print(2)
 
         print(f"Selecting theme: {theme}")
         if theme not in THEME_FILES:
             print(f"Theme not found: {theme}")
             raise HTTPException(status_code=404, detail="Theme not found")
-        print(4)
+
         if theme not in theme_retrievers:
-            print(5)
             combined_content = ""
             for file_name in THEME_FILES[theme]:
-                print(file_name)
+
                 file_path = os.path.join(MD_DIR, file_name)
-                print(file_path)
                 try:
                     with open(file_path, "r", encoding='utf-8') as file:
                         combined_content += file.read() + "\n\n"
@@ -158,7 +142,7 @@ async def select_theme(theme_select: ThemeSelect):
 
             cache_dir = f"./.cache/embeddings/{theme}"
             cache_store = LocalFileStore(cache_dir)
-            embeddings = OpenAIEmbeddings()
+            embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
             cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
                 embeddings, cache_store)
             docs = [Document(page_content=combined_content)]

@@ -29,7 +29,7 @@
 .intro-section {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
 }
 
 .chatbot-avatar {
@@ -49,9 +49,14 @@
 
 .theme-selection {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin: 0 0 25px 33px;
 }
 
 .theme-button {
@@ -62,6 +67,7 @@
   font-size: 0.8rem;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .theme-button.selected {
@@ -98,7 +104,7 @@
 }
 
 .message-content {
-  padding: 1rem 1.3rem;
+  padding: 13px;
   border-radius: 1rem;
   line-height: 1.6;
   flex-grow: 1;
@@ -109,15 +115,15 @@
 .chat-message.user .message-content {
   background-color: #ffeeb7;
   color: black;
-  padding: 1rem 1.3rem;
+  padding: 13px;
 }
 
-.input-area {
+.chat-bot-input-area {
   background-color: #ffffff;
-  padding: 0.75rem;
+  box-shadow: 0 -2px 5px rgb(200, 200, 200, 0.5);
+  padding: 0.5rem 0.75rem;
   display: flex;
   align-items: center;
-  border-top: 1px solid #e5e7eb;
 }
 
 .message-input {
@@ -127,6 +133,8 @@
   padding: 0.5rem 1rem;
   outline: none;
   font-size: 0.9rem;
+  height: 2.5rem;
+  box-sizing: border-box;
 }
 
 .send-button {
@@ -149,4 +157,39 @@
 .send-button svg {
   width: 1.2rem;
   height: 1.2rem;
+}
+
+.chatbot-input-disabled {
+  cursor: not-allowed;
+  background-color: #fbfbfb;
+}
+
+.chatbot-button-disabled {
+  cursor: not-allowed;
+  background-color: #fbfbfb;
+}
+
+.chatbot-button-disabled:hover {
+  cursor: not-allowed;
+  background-color: #fbfbfb;
+}
+.chat-bot-loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.chat-bot-spinner {
+  width: 15px;
+  aspect-ratio: 1;
+  --_g: no-repeat radial-gradient(farthest-side, #000 94%, #0000);
+  background: var(--_g) 0 0, var(--_g) 100% 0, var(--_g) 100% 100%,
+    var(--_g) 0 100%;
+  background-size: 40% 40%;
+  animation: l38 0.5s infinite;
+}
+@keyframes l38 {
+  100% {
+    background-position: 100% 0, 100% 100%, 0 100%, 0 0;
+  }
 }

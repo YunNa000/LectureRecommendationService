@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import chatbotImage from "./chatbot.png";
 import { Send } from "lucide-react";
@@ -9,11 +9,21 @@ const ChatBot = () => {
   const [chatLog, setChatLog] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);
   const [availableThemes, setAvailableThemes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isThemesLoading, setIsThemesLoading] = useState(true);
+  const [isLoginChecking, setIsLoginChecking] = useState(true);
+  const chatLogRef = useRef(null);
 
   useEffect(() => {
     checkLoginStatus();
     fetchAvailableThemes();
   }, []);
+
+  useEffect(() => {
+    if (chatLogRef.current) {
+      chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+    }
+  }, [chatLog, isLoading]);
 
   const checkLoginStatus = async () => {
     const userId = Cookies.get("user_id");
@@ -33,6 +43,8 @@ const ChatBot = () => {
       }
     } catch (err) {
       console.error("ChatBot.js - checkLogin", err);
+    } finally {
+      setIsLoginChecking(false);
     }
   };
 
@@ -43,6 +55,8 @@ const ChatBot = () => {
       setAvailableThemes(data.themes);
     } catch (err) {
       console.error("Error fetching available themes:", err);
+    } finally {
+      setIsThemesLoading(false);
     }
   };
 
@@ -112,6 +126,7 @@ const ChatBot = () => {
 
   const handleThemeSelection = async (theme) => {
     setSelectedTheme(theme);
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/selecttheme/`,
@@ -129,6 +144,8 @@ const ChatBot = () => {
       setChatLog([{ type: "system", text: themeContent }]);
     } catch (err) {
       console.error("Error selecting theme:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -143,11 +160,11 @@ const ChatBot = () => {
       setChatLog([]);
       setInputText("");
       setSelectedTheme(null);
-
       return;
     }
 
     setChatLog([...chatLog, { type: "user", text: inputText }]);
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -171,6 +188,8 @@ const ChatBot = () => {
         ...prevLog,
         { type: "system", text: "죄송합니다. 오류가 발생했습니다." },
       ]);
+    } finally {
+      setIsLoading(false);
     }
 
     setInputText("");
@@ -186,59 +205,116 @@ const ChatBot = () => {
     <div className="chatbot-container">
       <div className="chatbot-header"></div>
       <div className="chatbot-content">
-        <div className="intro-section">
-          <img
-            src={chatbotImage}
-            alt="Chatbot"
-            className="chatbot-avatar-small"
-          />
-          <div className="intro-message">
-            <p>
-              수강신청자료집에 대한 모든 것을 알고 있어요😏
-              <br />
-              궁금한 테마를 선택해주세요.
-            </p>
+        {isLoginChecking ? (
+          <div className="loader">
+            <div className="spinner"></div>
+            <p>로그인 확인중...</p>
           </div>
-        </div>
-        <div className="theme-selection">
-          {availableThemes.map((theme) => (
-            <button
-              key={theme}
-              onClick={() => handleThemeSelection(theme)}
-              className={`theme-button ${
-                selectedTheme === theme ? "selected" : ""
-              }`}
-            >
-              {theme}
-            </button>
-          ))}
-        </div>
-        <div className="chat-log">
-          {chatLog.map((entry, index) => (
-            <div key={index} className={`chat-message ${entry.type}`}>
-              {entry.type === "system" && (
-                <img
-                  src={chatbotImage}
-                  alt="Chatbot"
-                  className="chatbot-avatar-small"
-                />
-              )}
-              <div className="message-content">{formatText(entry.text)}</div>
+        ) : (
+          <>
+            <div className="intro-section">
+              <img
+                src={chatbotImage}
+                alt="Chatbot"
+                className="chatbot-avatar-small"
+              />
+              <div className="intro-message">
+                <p>
+                  수강신청자료집에 대한 모든 것을 알고 있어요😏
+                  <br />
+                  궁금한 테마를 선택해주세요.
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
+            <div className="theme-selection">
+              {isThemesLoading ? (
+                <div className="loading-message">
+                  <div className="loader">
+                    <div className="spinner"></div>
+                    <p>테마를 불러오고 있어요.</p>
+                  </div>
+                </div>
+              ) : (
+                availableThemes.map((theme) => (
+                  <button
+                    key={theme}
+                    onClick={() => handleThemeSelection(theme)}
+                    className={`theme-button ${
+                      selectedTheme === theme ? "selected" : ""
+                    }`}
+                  >
+                    {theme}
+                  </button>
+                ))
+              )}
+            </div>
+            <div className="chat-log" ref={chatLogRef}>
+              {chatLog.map((entry, index) => (
+                <div key={index} className={`chat-message ${entry.type}`}>
+                  {entry.type === "system" && (
+                    <img
+                      src={chatbotImage}
+                      alt="Chatbot"
+                      className="chatbot-avatar-small"
+                    />
+                  )}
+                  <div className="message-content">
+                    {formatText(entry.text)}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="chat-message system">
+                  <img
+                    src={chatbotImage}
+                    alt="Chatbot"
+                    className="chatbot-avatar-small"
+                  />
+                  <div className="message-content">
+                    <div className="chat-bot-loader">
+                      <div className="chat-bot-spinner"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
-      <div className="input-area">
+      <div className="chat-bot-input-area">
         <input
           type="text"
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="메세지를 입력해주세요..."
-          className="message-input"
+          placeholder={
+            selectedTheme ? "메세지를 입력해주세요..." : "테마를 선택해주세요."
+          }
+          className={`message-input ${
+            !selectedTheme ? "chatbot-input-disabled" : ""
+          }`}
+          disabled={!selectedTheme || isLoading}
         />
-        <button onClick={handleSendMessage} className="send-button">
-          <Send size={20} />
+        <button
+          onClick={handleSendMessage}
+          className={`send-button ${
+            !selectedTheme || isLoading ? "chatbot-button-disabled" : ""
+          }`}
+          disabled={!selectedTheme || isLoading}
+        >
+          <svg
+            version="1.1"
+            id="Icons"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+          >
+            <path
+              class="st0"
+              d="M26.4,2.9L3.8,15c-0.7,0.4-0.7,1.5,0.1,1.8l20.8,8.7c0.6,0.3,1.3-0.2,1.4-0.8l1.7-20.8
+	C27.9,3,27.1,2.5,26.4,2.9z"
+            />
+            <path class="st0" d="M26,4L13,20v7.3c0,0.9,1.2,1.4,1.8,0.7L19,23" />
+          </svg>
         </button>
       </div>
     </div>
