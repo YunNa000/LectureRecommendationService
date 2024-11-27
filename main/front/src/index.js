@@ -36,7 +36,7 @@ function LoginPage() {
 function MainPage() {
   return (
     <div>
-      <TopBar title="앱 이름 " />
+      <TopBar title="시간표" />
       <LectureManage />
     </div>
   );
@@ -120,8 +120,14 @@ root.render(
             <Route path="/users" element={<SocialFeatures2 />} />
             <Route path="/chat" element={<ChatBotPage />} />
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/lecture/:year/:semester/:lectureNumber" element={<LectureDetailPage />} />
-            <Route path="/lecture/:lectureNumber" element={<LectureDetailPage />} />
+            <Route
+              path="/lecture/:year/:semester/:lectureNumber"
+              element={<LectureDetailPage />}
+            />
+            <Route
+              path="/lecture/:lectureNumber"
+              element={<LectureDetailPage />}
+            />
           </Routes>
         </div>
       </div>
