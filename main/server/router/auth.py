@@ -14,10 +14,10 @@ load_dotenv()
 
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+REDIRECT_RESPONSE = os.getenv("REDIRECT_RESPONSE")
+REDIRECT_URL = os.getenv("REDIRECT_URL")
 
 user_sessions = {}
-
-REDIRECTRESPONSE = "http://localhost:3000/"
 
 
 def hash_user_id(user_id: str) -> str:
@@ -43,15 +43,13 @@ async def root(user_id: str = Cookie(None)):
 
 @router.get("/login")
 async def login():
-    redirect_uri = "http://localhost:8000/auth/callback"
     return RedirectResponse(
-        f"https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&scope=openid%20profile%20email&response_type=code"
+        f"https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={REDIRECT_URL}&scope=openid%20profile%20email&response_type=code"
     )
 
 
 @router.get("/auth/callback")
 async def auth_callback(code: str):
-    redirect_uri = "http://localhost:8000/auth/callback"
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
             "https://oauth2.googleapis.com/token",
@@ -59,7 +57,7 @@ async def auth_callback(code: str):
                 "code": code,
                 "client_id": client_id,
                 "client_secret": client_secret,
-                "redirect_uri": redirect_uri,
+                "redirect_uri": REDIRECT_URL,
                 "grant_type": "authorization_code",
             },
         )
@@ -106,7 +104,7 @@ async def auth_callback(code: str):
 
         user_sessions[hashed_user_id] = user_info
 
-        response = RedirectResponse(url=REDIRECTRESPONSE)
+        response = RedirectResponse(url=REDIRECT_RESPONSE)
         max_age = 300000
         response.set_cookie(key="user_id", value=hashed_user_id,
                             max_age=max_age)
