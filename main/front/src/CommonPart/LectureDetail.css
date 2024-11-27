@@ -26,7 +26,11 @@
     font-weight: bold;
   }
   
-  .lecture-code,
+  .lecture-code{
+    color: #666;
+    font-size: 14px;
+  }
+
   .lecture-department {
     color: #666;
     font-size: 12px;

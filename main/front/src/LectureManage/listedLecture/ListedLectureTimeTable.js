@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./ListedLectureTimeTable.css";
+import { useNavigate } from "react-router-dom";
 
 const ListedLectureTimeTable = ({
   lectures,
@@ -13,7 +14,7 @@ const ListedLectureTimeTable = ({
   const [editingLectureIndex, setEditingLectureIndex] = useState(null);
   const [memo, setMemo] = useState("");
   const [classroom, setClassroom] = useState("");
-
+  const navigate = useNavigate();
   lectures.forEach((lecture) => {
     if (lecture.lecTime && lecture.lecTime !== "0" && lecture.lectime == null) {
       const times = lecture.lecTime.split(",");
@@ -243,9 +244,17 @@ const ListedLectureTimeTable = ({
                               >
                                 완료
                               </button>
-                              <button className="detail-a-button">
-                                강의 자세히 보기
-                              </button>
+                              {!(lecture.lecNumber.substring(0, 4) === 'user') && (
+                                <button 
+                                  onClick={() =>
+                                    navigate(
+                                      `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
+                                    )
+                                  } 
+                                  className="detail-a-button">
+                                  강의 자세히 보기
+                                </button>
+                              )}
                             </div>
                           </>
                         )}

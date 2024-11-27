@@ -15,6 +15,8 @@ import {
 const LineGraphComponent = ({ data }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+
+  
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -30,7 +32,7 @@ const LineGraphComponent = ({ data }) => {
   // 모바일 화면에서의 설정
   const isMobile = windowWidth <= 768;
   const chartHeight = isMobile ? 220 : 300;
-
+  
   return (
     <div
       style={{
@@ -323,6 +325,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
   const [takenPeoples, setTakenPeoples] = useState([0, 0, 0, 0]);
   const defaultYear = "24";
   const defaultSemester = "2학기";
+  const [dataNumBool,setdataNumBool]=useState(false);
 
   year = year || defaultYear;
   semester = semester || defaultSemester;
@@ -374,10 +377,13 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         if (lecture.isArt) newTags["예술"] = tagDescriptions["예술"];
         if (lecture.takenPeople1yearsAgo)
           takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
+          setdataNumBool(true)
         if (lecture.takenPeople2yearsAgo)
           takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
+          setdataNumBool(true)
         if (lecture.takenPeople3yearsAgo)
           takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
+          setdataNumBool(true)
 
         console.log(newTags);
         setTags(newTags);
@@ -446,7 +452,7 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         </div>
       </div>
       <TagList tags={tags} />
-      <LineGraphComponent data={takenPeoples} />
+      {(dataNumBool) && ( <LineGraphComponent data={takenPeoples} />)}
       <h1>강의정보</h1>
       <div className="lecture-detail">
         <div className="lecture-code">교과목 개요</div>
