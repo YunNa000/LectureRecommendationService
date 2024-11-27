@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.schema import Document
@@ -13,6 +13,7 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.embeddings import OpenAIEmbeddings
 from dotenv import load_dotenv
 import json
+from langchain.memory import ConversationSummaryBufferMemory
 
 load_dotenv()
 
@@ -101,6 +102,7 @@ prompt = ChatPromptTemplate.from_messages(
             {context}
             """,
         ),
+        MessagesPlaceholder(variable_name="history"),
         ("human", "{question}"),
     ]
 )
@@ -161,6 +163,16 @@ async def select_theme(theme_select: ThemeSelect):
         raise HTTPException(
             status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    max_token_limit=1200,
+    return_messages=True,
+)
+
+
+def load_memory(_):
+    return memory.load_memory_variables({})["history"]
+
 
 @router.post("/chatbot/")
 async def ask_question(question: Question):
@@ -186,12 +198,17 @@ async def ask_question(question: Question):
                 "context": retriever | RunnableLambda(format_docs),
                 "question": RunnablePassthrough(),
             }
+            | RunnablePassthrough.assign(history=load_memory)
             | prompt
             | llm
         )
 
         final_question = f"학생 정보: {user_data_str}\n\n질문: {question.question}"
         response = chain.invoke(final_question)
+        memory.save_context({
+            "input": question.question},
+            {"output": response.content},
+        )
 
         print(f"Generated response: {response.content}")  # 로깅 추가
 
