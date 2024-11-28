@@ -8,9 +8,9 @@
 
 .friend-list-title {
   margin-bottom: 5px;
-  margin-left: 5px;
+  margin-left: 10px;
   margin-top: 5px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .friend-item {
@@ -28,11 +28,13 @@
 
 .friend-name {
   font-weight: bold;
+  margin: 0;
 }
 
 .friend-major {
   color: #666;
   font-size: 0.9em;
+  margin: 0;
 }
 
 .friend-action-button {
@@ -49,6 +51,13 @@
 .friend-request-button {
   padding: 5px 10px;
   background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.friend-request-button-agree {
+  background-color: #fff0a0;
+  padding: 5px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
@@ -94,16 +103,18 @@
 .friend-search-button:hover {
   background-color: #444544;
 }
-
 .friendrequest-list-container {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #f8f9fa;
   border-top: 1px solid #dee2e6;
   padding: 15px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   max-height: 30vh; /* 화면 높이의 30%로 제한 */
   overflow-y: auto; /* 내용이 넘칠 경우 스크롤 생성 */
+  width: 90%;
+  max-width: 400px;
+  box-sizing: border-box;
 }

@@ -94,8 +94,8 @@ const FriendRequest = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      alert(result.message);
+      await response.json();
+      window.location.reload();
       setStatus(true);
     } catch (e) {
       alert("친구 삭제 오류: " + e.message);
@@ -112,21 +112,21 @@ const FriendRequest = () => {
         {users.map((user) => (
           <div key={user.user_id} className="friend-item">
             <div className="friend-info">
-              <div className="friend-name">{user.userName}</div>
-              <div className="friend-major">{user.userMajor}</div>
+              <p className="friend-name">{user.userName}</p>
+              <p className="friend-major">{user.userMajor}</p>
             </div>
             <div className="friend-request-buttons">
-              <button
-                onClick={() => handleFriendRequest(user.user_id)}
-                className="friend-request-button"
-              >
-                수락
-              </button>
               <button
                 onClick={() => deleteFriendRequest(user.user_id)}
                 className="friend-request-button"
               >
                 거절
+              </button>
+              <button
+                onClick={() => handleFriendRequest(user.user_id)}
+                className="friend-request-button-agree"
+              >
+                수락
               </button>
             </div>
           </div>
