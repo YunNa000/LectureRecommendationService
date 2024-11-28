@@ -39,8 +39,8 @@ const FriendRequest = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      alert(result.message); // 성공 또는 실패 메시지를 표시
+      await response.json();
+      window.location.reload();
     } catch (e) {
       alert("친구 추가 오류:" + e.message + myUserId + friendId);
     }

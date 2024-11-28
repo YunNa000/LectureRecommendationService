@@ -76,7 +76,14 @@ const FriendList = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div class="center-text">추가된 친구가 없습니다.</div>;
+  if (error)
+    return (
+      <p class="center-text">
+        친구 추가 버튼을 눌러서
+        <br />
+        시간표를 공유하고 싶은 친구를 추가해주세요!
+      </p>
+    );
 
   return (
     <div className="friend-list-container">
@@ -84,8 +91,8 @@ const FriendList = () => {
         {users.map((user) => (
           <div key={user.user_id} className="friend-item">
             <div className="friend-info">
-              <div className="friend-name">{user.userName}</div>
-              <div className="friend-major">{user.userMajor}</div>
+              <p className="friend-name">{user.userName}</p>
+              <p className="friend-major">{user.userMajor}</p>
             </div>
             <button
               onClick={() => deleteFriendRequest(user.user_id)}

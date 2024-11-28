@@ -99,7 +99,11 @@ const UserList = () => {
           검색
         </button>
       </form>
-      {error && <div class="center-text">해당 유저가 존재하지 않습니다.</div>}
+      {error && (
+        <p class="center-text">
+          유저를 찾지 못했어요. <br /> 아이디를 확인해주세요.
+        </p>
+      )}
       {loading ? (
         <div className="loading-message">검색 중...</div>
       ) : (

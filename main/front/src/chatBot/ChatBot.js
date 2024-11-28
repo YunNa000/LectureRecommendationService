@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import chatbotImage from "./chatbot.png";
 import "./ChatBot.css";
+import ReactMarkdown from "react-markdown";
 
 const ChatBot = () => {
   const [inputText, setInputText] = useState("");
@@ -70,65 +71,55 @@ const ChatBot = () => {
     }
   };
 
-  const formatText = (text) => {
-    if (typeof text !== "string") return "";
-    return text.split("\n").map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        <br />
-      </React.Fragment>
-    ));
-  };
-
   const getThemeContent = (theme) => {
     switch (theme) {
       case "수강신청":
         return `<수강신청>에서는 아래의 내용에 대해 도움을 드릴 수 있습니다.
 
-• 수강신청 편성 
-• 학점범위 
-• 일정 
-• 유의사항
-• 재수강제도 
-• 수강인원 제한기준 및 폐강기준
-• 절대평가기준 
-• p/np 평가 교과목 
-• 수강신청방법
+- 수강신청 편성 
+- 학점범위 
+- 일정 
+- 유의사항
+- 재수강제도 
+- 수강인원 제한기준 및 폐강기준
+- 절대평가기준 
+- p/np 평가 교과목 
+- 수강신청방법
 
 어떤 점이 궁금하세요?`;
 
       case "졸업요건":
         return `<졸업요건>에서는 아래의 내용에 대해 도움을 드릴 수 있습니다.
 
-• 입학년도 
-• 편입생 여부
-• 공학인증학과 
-• 다전공 여부
+- 입학년도 
+- 편입생 여부
+- 공학인증학과 
+- 다전공 여부
 
 어떤 점이 궁금하세요?`;
       case "기타학사정보":
         return `<기타학사정보>에서는 아래의 내용에 대해 도움을 드릴 수 있습니다.
 
-• 교양필수교과목 
-• 공학인증제도 
-• 다전공안내
-• 다학년다학기프로젝트 
-• 현장실습학기제
-• 참빛설계학기 
-• 서비스러닝 
-• 매치업 
-• KMOOC
-• 편입생 관련 
-• 학석사연계과정 
-• 특별교육과정
+- 교양필수교과목 
+- 공학인증제도 
+- 다전공안내
+- 다학년다학기프로젝트 
+- 현장실습학기제
+- 참빛설계학기 
+- 서비스러닝 
+- 매치업 
+- KMOOC
+- 편입생 관련 
+- 학석사연계과정 
+- 특별교육과정
 
 어떤 점이 궁금하세요?`;
       case "교내전화번호안내":
         return `<교내전화번호안내>에서는 아래와 같이 적어주시면 알맞은 전화번호를 안내해드리도록 하겠습니다.
 
-        • 예) 정보융합학부(정융) 과사무실 전화번호
-        
-        어떤 점이 궁금하세요?`;
+- 예) 정보융합학부(정융) 과사무실 전화번호
+
+어떤 점이 궁금하세요?`;
       default:
         return "";
     }
@@ -334,7 +325,7 @@ const ChatBot = () => {
                     />
                   )}
                   <div className="message-content">
-                    {formatText(entry.text)}
+                    <ReactMarkdown>{entry.text}</ReactMarkdown>
                   </div>
                 </div>
               ))}

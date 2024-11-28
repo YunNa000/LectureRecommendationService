@@ -104,18 +104,20 @@
 }
 
 .message-content {
-  padding: 13px;
+  padding: 0 13px;
   border-radius: 1rem;
   line-height: 1.6;
   flex-grow: 1;
   background-color: #f3f4f6;
   font-size: 0.9rem;
+  margin-bottom: 10px;
 }
 
 .chat-message.user .message-content {
   background-color: #ffeeb7;
   color: black;
-  padding: 13px;
+  padding: 0 13px;
+  margin-bottom: 0;
 }
 
 .chat-bot-input-area {
@@ -178,11 +180,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 13px 0;
 }
 .chat-bot-spinner {
   width: 15px;
   aspect-ratio: 1;
-  --_g: no-repeat radial-gradient(farthest-side, #000 94%, #0000);
+  --_g: no-repeat radial-gradient(farthest-side, #666 94%, #0000);
   background: var(--_g) 0 0, var(--_g) 100% 0, var(--_g) 100% 100%,
     var(--_g) 0 100%;
   background-size: 40% 40%;
