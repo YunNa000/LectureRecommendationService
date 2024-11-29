@@ -7,8 +7,8 @@ const TopBar = ({ title = "강의 시간표" }) => {
     <div className="topbar-container">
       <Link to="/social" aria-label="Go to Social">
         <svg
-          width="26px"
-          height="26px"
+          width="22px"
+          height="22px"
           viewBox="0 0 16 16"
           xmlns="http://www.w3.org/2000/svg"
           fill="#000000"
@@ -25,8 +25,8 @@ const TopBar = ({ title = "강의 시간표" }) => {
       <Link to="/chat" aria-label="Go to Chat">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="22px"
+          height="22px"
           viewBox="0 0 24 24"
           fill="none"
           stroke="#000000"

@@ -77,7 +77,6 @@ const UpdateUserInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
     const hakBunLengthError = String(formData.hakBun).length !== 10;
     const isSameMajorError =
@@ -106,16 +105,11 @@ const UpdateUserInfo = () => {
         }
       } catch (error) {
         console.error("Error updating user info", error);
-      } finally {
-        setIsLoading(false);
       }
-    } else {
-      setIsLoading(false);
     }
   };
 
   const getUserInfo = async (userId) => {
-    setIsLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/user/data`,
@@ -139,8 +133,6 @@ const UpdateUserInfo = () => {
       }
     } catch (error) {
       console.error("Error fetching user data", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
