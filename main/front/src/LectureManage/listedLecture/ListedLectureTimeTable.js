@@ -209,16 +209,6 @@ const ListedLectureTimeTable = ({
                                   }
                                 }}
                               >
-                                <input
-                                  type="checkbox"
-                                  checked={
-                                    lecture.priority &&
-                                    lecture.priority
-                                      .split(" ")
-                                      .includes(priority)
-                                  }
-                                  readOnly
-                                />
                                 <p className="edit-lecture-uncheck-text">
                                   시간표에서 제외하기
                                 </p>
@@ -244,14 +234,17 @@ const ListedLectureTimeTable = ({
                               >
                                 완료
                               </button>
-                              {!(lecture.lecNumber.substring(0, 4) === 'user') && (
-                                <button 
+                              {!(
+                                lecture.lecNumber.substring(0, 4) === "user"
+                              ) && (
+                                <button
                                   onClick={() =>
                                     navigate(
                                       `/lecture/${lecture.year}/${lecture.semester}/${lecture.lecNumber}`
                                     )
-                                  } 
-                                  className="detail-a-button">
+                                  }
+                                  className="detail-a-button"
+                                >
                                   강의 자세히 보기
                                 </button>
                               )}
