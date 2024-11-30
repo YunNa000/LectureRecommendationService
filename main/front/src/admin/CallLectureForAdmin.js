@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./admin.css";
 
 const CallLectureForAdmin = () => {
   const [year, setYear] = useState("");
@@ -97,26 +98,43 @@ const CallLectureForAdmin = () => {
 
   return (
     <div>
-      <div>
-        <input
-          type="number"
-          placeholder="년도 입력"
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-        />
-        <select value={semester} onChange={(e) => setSemester(e.target.value)}>
-          <option value="1학기">1학기</option>
-          <option value="여름학기">여름학기</option>
-          <option value="2학기">2학기</option>
-          <option value="겨울학기">겨울학기</option>
-        </select>
-        <input
-          type="text"
-          placeholder="교수명/학정번호/강의명 입력"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button onClick={fetchLectureForAdmin}>검색</button>
+      <div className="admin-input-box">
+        <h4>강의 수정</h4>
+        <div className="admin-input-box-item">
+          <input
+            type="number"
+            placeholder="년도 입력"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="admin-input"
+          />
+          <select
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+            className="admin-button-or-select"
+          >
+            <option value="1학기">1학기</option>
+            <option value="여름학기">여름학기</option>
+            <option value="2학기">2학기</option>
+            <option value="겨울학기">겨울학기</option>
+          </select>
+        </div>
+        <div className="admin-input-box-item">
+          <input
+            type="text"
+            placeholder="교수명/학정번호/강의명 입력"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="admin-input"
+          />
+          <button
+            className="admin-button-or-select"
+            onClick={fetchLectureForAdmin}
+          >
+            검색
+          </button>
+        </div>
+
         {error && <p>{error.message}</p>}
       </div>
       <div>

@@ -54,29 +54,35 @@ const CrawlingNewLecture = () => {
   }, []);
 
   return (
-    <div>
+    <div className="admin-input-box">
+      <h4>강의 업데이트</h4>
       <input
         type="text"
         placeholder="강의명"
         value={lecName}
         onChange={(e) => setLecName(e.target.value)}
+        className="admin-input"
       />
       <input
         type="text"
         placeholder="학정번호"
         value={lecNumber}
         onChange={(e) => setLecNumber(e.target.value)}
+        className="admin-input"
       />
       <input
         type="password"
         placeholder="비밀번호 입력"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className="admin-input"
       />
       {loading ? (
         <p>로딩중...</p>
       ) : (
-        <button onClick={reqtoWorkCrawling}>req</button>
+        <button onClick={reqtoWorkCrawling} className="admin-button-or-select">
+          크롤링 진행
+        </button>
       )}
 
       {lectureData && (

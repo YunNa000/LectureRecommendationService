@@ -1,0 +1,25 @@
+.admin-input-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  padding: 20px;
+}
+
+.admin-input-box-item {
+  display: flex;
+  width: 300px;
+  align-items: center;
+}
+
+.admin-input {
+  width: 200px;
+  height: 30px;
+  padding: 5px;
+  margin: 5px;
+}
+.admin-button-or-select {
+  height: 45px;
+  padding: 5px;
+}
