@@ -103,7 +103,7 @@
   transform: translate(-50%, -50%);
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(3px);
-  padding: 20px;
+  padding: 28px 25px;
   z-index: 1000;
   box-shadow: 0 2px 30px rgba(9, 9, 9, 0.2);
   border-radius: 10px;
@@ -149,6 +149,12 @@
 
 .listed-lec-timetable-more-lecName {
   margin: 0;
+}
+
+.listed-lec-timetable-more-lecNumber {
+  margin: 0;
+  font-size: 12px;
+  color: #777;
 }
 
 .listed-lec-timetable-more-lecProfessor {

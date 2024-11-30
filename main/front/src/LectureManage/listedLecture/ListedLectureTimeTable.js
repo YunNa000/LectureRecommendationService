@@ -193,6 +193,9 @@ const ListedLectureTimeTable = ({
                               <p className="listed-lec-timetable-more-lecName">
                                 {lecture.lecName}
                               </p>
+                              <p className="listed-lec-timetable-more-lecNumber">
+                                {lecture.lecNumber}
+                              </p>
                               <p className="listed-lec-timetable-more-lecProfessor">
                                 {lecture.lecProfessor}
                               </p>
