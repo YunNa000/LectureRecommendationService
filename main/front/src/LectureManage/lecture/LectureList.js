@@ -5,6 +5,33 @@ import "./LectureList.css";
 import "../../loader.css";
 import { useNavigate } from "react-router-dom";
 
+const FullStar = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="#000000">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
+const HalfStar = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24">
+    <defs>
+      <linearGradient id="half" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="50%" stopColor="#000000" />
+        <stop offset="50%" stopColor="#D3D3D3" />
+      </linearGradient>
+    </defs>
+    <path
+      fill="url(#half)"
+      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+    />
+  </svg>
+);
+
+const EmptyStar = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="#D3D3D3">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 const LectureList = ({
   lectures,
   selectedLectures,
@@ -138,16 +165,16 @@ const LectureList = ({
     const emptyStars = 5 - fullStars - halfStar;
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push("★");
+      stars.push(<FullStar key={`full-${i}`} />);
     }
     if (halfStar === 1) {
-      stars.push("✮");
+      stars.push(<HalfStar key="half" />);
     }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push("☆");
+      stars.push(<EmptyStar key={`empty-${i}`} />);
     }
 
-    return <p className="lecture-list-star">{stars}</p>;
+    return <div className="listed-lec-star">{stars}</div>;
   };
 
   const formatLectureTime = (lecTime) => {
