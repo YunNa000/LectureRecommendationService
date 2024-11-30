@@ -327,76 +327,160 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
 
   year = year || defaultYear;
   semester = semester || defaultSemester;
-  useEffect(() => {
-    const fetchLecture = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/lecture/${year}/${semester}/${lectureNumber}`
-        );
-        if (!response.ok) {
-          throw new Error("강의를 불러오는데 실패했습니다.");
+
+
+    // 데이터 fetching을 위한 useEffect
+    useEffect(() => {
+      const fetchLecture = async () => {
+        try {
+          setLoading(true);
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/lecture/${year}/${semester}/${lectureNumber}`
+          );
+          
+          if (!response.ok) {
+            throw new Error("강의를 불러오는데 실패했습니다.");
+          }
+          
+          const data = await response.json();
+          setLecture(data);
+        } catch (err) {
+          setError(err.message);
+          console.error(err.message);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        setLecture(data);
+      };
+  
+      fetchLecture();
+    }, [year, semester, lectureNumber]);
 
-        console.log(data);
-        const tagDescriptions = {
-          "P/NP 여부": "Pass/No Pass 평가 방식을 사용하는 강의입니다.",
-          "공학 인증": "공학 교육 인증을 위한 강의입니다.",
-          TBL: "Team-Based Learning 방식을 사용하는 강의입니다.",
-          PBL: "Project-Based Learning 방식을 사용하는 강의입니다.",
-          세미나: "세미나 형식으로 진행되는 강의입니다.",
-          소규모: "소규모로 진행되는 강의입니다.",
-          융합: "여러 학문 분야를 융합한 강의입니다.",
-          "팀 티칭": "둘 이상의 교수자가 함께 진행하는 강의입니다.",
-          집중: "단기간 집중적으로 진행되는 강의입니다.",
-          "실험 설계": "실험 설계를 포함하는 강의입니다.",
-          "E-러닝": "온라인으로 진행되는 E-러닝 강의입니다.",
-          예술: "예술 관련 강의입니다.",
-        };
+    // 강의 데이터 처리를 위한 useEffect
+    useEffect(() => {
+      if (!lecture) return;
+  
+      const tagDescriptions = {
+        "P/NP 여부": "Pass/No Pass 평가 방식을 사용하는 강의입니다.",
+        "공학 인증": "공학 교육 인증을 위한 강의입니다.",
+        TBL: "Team-Based Learning 방식을 사용하는 강의입니다.",
+        PBL: "Project-Based Learning 방식을 사용하는 강의입니다.",
+        세미나: "세미나 형식으로 진행되는 강의입니다.",
+        소규모: "소규모로 진행되는 강의입니다.",
+        융합: "여러 학문 분야를 융합한 강의입니다.",
+        "팀 티칭": "둘 이상의 교수자가 함께 진행하는 강의입니다.",
+        집중: "단기간 집중적으로 진행되는 강의입니다.",
+        "실험 설계": "실험 설계를 포함하는 강의입니다.",
+        "E-러닝": "온라인으로 진행되는 E-러닝 강의입니다.",
+        예술: "예술 관련 강의입니다.",
+      };
+  
+      const takenPeoplesT = [0, 0, 0, 0];
+      const newTags = {};
+  
+      // 태그 처리 로직
+      const tagMappings = [
+        { condition: lecture.isPNP, tag: "P/NP 여부" },
+        { condition: lecture.isEngineering === true || lecture.isEngineering === 1, tag: "공학 인증" },
+        { condition: lecture.isTBL, tag: "TBL" },
+        { condition: lecture.isPBL, tag: "PBL" },
+        { condition: lecture.isSeminar, tag: "세미나" },
+        { condition: lecture.isSmall, tag: "소규모" },
+        { condition: lecture.isConvergence, tag: "융합" },
+        { condition: lecture.isTeamTeaching, tag: "팀 티칭" },
+        { condition: lecture.isFocus, tag: "집중" },
+        { condition: lecture.isExperimentDesign, tag: "실험 설계" },
+        { condition: lecture.isELearning, tag: "E-러닝" },
+        { condition: lecture.isArt, tag: "예술" }
+      ];
+  
+      tagMappings.forEach(({ condition, tag }) => {
+        if (condition) {
+          newTags[tag] = tagDescriptions[tag];
+        }
+      });
+      const BooleanforGraph=false
+      // 수강생 데이터 처리
+      if (lecture.takenPeople1yearsAgo) takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
+      if (lecture.takenPeople2yearsAgo) takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
+      if (lecture.takenPeople3yearsAgo) takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
+      
+      setTags(newTags);
+      setTakenPeoples(takenPeoplesT);
 
-        const takenPeoplesT = [0, 0, 0, 0];
-        const newTags = {};
+    }, [lecture]);
+  // useEffect(() => {
+  //   const fetchLecture = async () => {
+  //     try {
+  //       if(lecture.lecName){
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}/lecture/${year}/${semester}/${lectureNumber}`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("강의를 불러오는데 실패했습니다.");
+  //       }
+  //       const data = await response.json();
+  //       setLecture(data);}
 
-        if (lecture.isPNP) newTags["P/NP 여부"] = tagDescriptions["P/NP 여부"];
-        if (lecture.isEngineering === true || lecture.isEngineering === 1)
-          newTags["공학 인증"] = tagDescriptions["공학 인증"];
-        if (lecture.isTBL) newTags["TBL"] = tagDescriptions["TBL"];
-        if (lecture.isPBL) newTags["PBL"] = tagDescriptions["PBL"];
-        if (lecture.isSeminar) newTags["세미나"] = tagDescriptions["세미나"];
-        if (lecture.isSmall) newTags["소규모"] = tagDescriptions["소규모"];
-        if (lecture.isConvergence) newTags["융합"] = tagDescriptions["융합"];
-        if (lecture.isTeamTeaching)
-          newTags["팀 티칭"] = tagDescriptions["팀 티칭"];
-        if (lecture.isFocus) newTags["집중"] = tagDescriptions["집중"];
-        if (lecture.isExperimentDesign)
-          newTags["실험 설계"] = tagDescriptions["실험 설계"];
-        if (lecture.isELearning) newTags["E-러닝"] = tagDescriptions["E-러닝"];
-        if (lecture.isArt) newTags["예술"] = tagDescriptions["예술"];
-        if (lecture.takenPeople1yearsAgo)
-          takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
-        setdataNumBool(true);
-        if (lecture.takenPeople2yearsAgo)
-          takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
-        setdataNumBool(true);
-        if (lecture.takenPeople3yearsAgo)
-          takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
-        setdataNumBool(true);
 
-        console.log(newTags);
-        setTags(newTags);
-        setTakenPeoples(takenPeoplesT);
-      } catch (err) {
-        setError(err.message);
-        console.log(err.message);
-      } finally {
-        setLoading(false);
-        console.log("a");
-      }
-    };
+  //       const tagDescriptions = {
+  //         "P/NP 여부": "Pass/No Pass 평가 방식을 사용하는 강의입니다.",
+  //         "공학 인증": "공학 교육 인증을 위한 강의입니다.",
+  //         TBL: "Team-Based Learning 방식을 사용하는 강의입니다.",
+  //         PBL: "Project-Based Learning 방식을 사용하는 강의입니다.",
+  //         세미나: "세미나 형식으로 진행되는 강의입니다.",
+  //         소규모: "소규모로 진행되는 강의입니다.",
+  //         융합: "여러 학문 분야를 융합한 강의입니다.",
+  //         "팀 티칭": "둘 이상의 교수자가 함께 진행하는 강의입니다.",
+  //         집중: "단기간 집중적으로 진행되는 강의입니다.",
+  //         "실험 설계": "실험 설계를 포함하는 강의입니다.",
+  //         "E-러닝": "온라인으로 진행되는 E-러닝 강의입니다.",
+  //         예술: "예술 관련 강의입니다.",
+  //       };
 
-    fetchLecture();
-  }, [year, semester, lectureNumber]);
+  //       const takenPeoplesT = [0, 0, 0, 0];
+  //       const newTags = {};
+
+  //       if (lecture.isPNP) newTags["P/NP 여부"] = tagDescriptions["P/NP 여부"];
+  //       if (lecture.isEngineering === true || lecture.isEngineering === 1)
+  //         newTags["공학 인증"] = tagDescriptions["공학 인증"];
+  //       if (lecture.isTBL) newTags["TBL"] = tagDescriptions["TBL"];
+  //       if (lecture.isPBL) newTags["PBL"] = tagDescriptions["PBL"];
+  //       if (lecture.isSeminar) newTags["세미나"] = tagDescriptions["세미나"];
+  //       if (lecture.isSmall) newTags["소규모"] = tagDescriptions["소규모"];
+  //       if (lecture.isConvergence) newTags["융합"] = tagDescriptions["융합"];
+  //       if (lecture.isTeamTeaching)
+  //         newTags["팀 티칭"] = tagDescriptions["팀 티칭"];
+  //       if (lecture.isFocus) newTags["집중"] = tagDescriptions["집중"];
+  //       if (lecture.isExperimentDesign)
+  //         newTags["실험 설계"] = tagDescriptions["실험 설계"];
+  //       if (lecture.isELearning) newTags["E-러닝"] = tagDescriptions["E-러닝"];
+  //       if (lecture.isArt) newTags["예술"] = tagDescriptions["예술"];
+  //       if (lecture.takenPeople1yearsAgo)
+  //         takenPeoplesT[0] = lecture.takenPeople1yearsAgo;
+  //       setdataNumBool(true);
+  //       if (lecture.takenPeople2yearsAgo)
+  //         takenPeoplesT[1] = lecture.takenPeople2yearsAgo;
+  //       setdataNumBool(true);
+  //       if (lecture.takenPeople3yearsAgo)
+  //         takenPeoplesT[2] = lecture.takenPeople3yearsAgo;
+  //       setdataNumBool(true);
+
+  //       console.log(newTags);
+  //       setTags(newTags);
+  //       setTakenPeoples(takenPeoplesT);
+  //     } catch (err) {
+  //       setError(err.message);
+  //       console.log(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //       console.log("a");
+  //     }
+  //   };
+
+  //   fetchLecture();
+  // }, [year, semester, lectureNumber]);
+
+
 
   const renderField = (label, value) => {
     // 있을 경우에만 띄우는 코드
@@ -469,9 +553,10 @@ const LectureDetail = ({ year, semester, lectureNumber }) => {
         </div>
       )}
       <TagList tags={tags} />
-
+      {takenPeoples.some(value => value !== 0) && 
+      <LineGraphComponent data={takenPeoples} />}
       <LectureScheduleTable scheduleString={lecture.scheduleNcontent} />
-      {dataNumBool && <LineGraphComponent data={takenPeoples} />}
+      
       <div style={{ marginBottom: "70px" }}></div>
     </div>
   );
