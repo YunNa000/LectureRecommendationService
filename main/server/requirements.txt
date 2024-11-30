@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic
+httpx
+beautifulsoup4
+selenium
+pandas
+langchain
+langchain-openai
+langchain-community
+faiss-cpu
+sentence-transformers
+numpy
