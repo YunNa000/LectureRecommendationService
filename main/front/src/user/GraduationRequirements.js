@@ -181,11 +181,11 @@ const GraduationRequirements = () => {
             )}
             <div className="graduation-taken-credit-each-box">
               <p className="graduation-taken-credit-text">전체 평점</p>
-              <p className="graduation-taken-credit-text">{majorGpa} / 4.5</p>
+              <p className="graduation-taken-credit-text">{totalGpa} / 4.5</p>
             </div>
             <div className="graduation-taken-credit-each-box">
               <p className="graduation-taken-credit-text">전공 평점</p>
-              <p className="graduation-taken-credit-text">{totalGpa} / 4.5</p>
+              <p className="graduation-taken-credit-text">{majorGpa} / 4.5</p>
             </div>
           </div>
           <div className="graduation-gyun-gyo-box">
